@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>{% if title is defined %}{{title}} | {% endif %}OvzCP</title>
+	<script src="/static/jquery.js" type="text/javascript" language="javascript" charset="utf-8" />
+	<style type="text/css" media="screen">
+	/* <![CDATA[ */
+@import url(/static/reset.css);
+body{font-family: verdana, tahoma, sans-serif; min-height: 100%;}
+a{
+	color:inherit; text-decoration: none; text-shadow: #aaa 1px 1px 3px;
+	-webkit-transition: text-shadow .2s ease-out;
+}
+a:hover{text-shadow: yellow 0px 0px 3px;}
+#top-bar{
+	width: 100%;
+	height: 50px;
+	background: black;
+	color: white;
+}
+#top-bar #logo a{
+	font-size: 20pt;
+	float: left;
+	font-weight: bold;
+	font-family: "Segoe UI", Sawasdee;
+	text-shadow: red 0px 0px 10px;
+}
+#top-bar #logo a:hover{
+	text-shadow: red 0px 0px 20px;
+}
+#top-bar #version{
+	float: left;
+	margin-left: 10px;
+	margin-top: 5px;
+	color: #aaa;
+}
+#top-bar-in{
+	padding: 10px;
+}
+#left-bar{
+	width: 200px;
+	background: black;
+	color: white;
+	border-top: #777 solid 1px;
+	float: left;
+	min-height: 100%;
+	position: absolute;
+	left: 0px;
+}
+#left-bar ul li a{
+	display: block;
+	padding: 10px;
+}
+#left-bar ul li{
+	border-bottom: #777 solid 1px;
+	-webkit-transition: background .2s ease-in-out;
+}
+#left-bar ul li:hover{
+	background: #222;
+}
+#left-bar ul li:hover a{
+	color: white;
+	text-shadow: blue 0px 0px 5px;
+}
+#user{float: right;}
+#body{padding: 10px; width: 80%; position: absolute; left: 200px;}
+.notify{
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 10px;
+	background: rgb(255, 255, 100);
+	border: yellow solid 2px;
+}
+.notify .close{
+	float: right;
+	border: black solid 1px;
+	padding: 5px;
+	margin-top: -5px;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	background: rgba(255,255,255,0.7);
+	cursor: pointer;
+}
+#error{
+	background: rgb(255, 100, 100);
+	border: maroon solid 2px;
+	font-size: 150%;
+}
+#error pre{
+	font-size: 75%;
+	border-left: rgb(255, 0, 0) solid 2px;
+	background: white;
+	padding: 10px;
+	height: 150px;
+	overflow: auto;
+}
+#error .loghead{
+	margin-top: 10px;
+	background: rgb(255,255,100);
+	padding: 5px;
+	font-size: 50%;
+	border-top: rgb(255, 80, 80) solid 2px;
+	border-left: rgb(255, 0, 0) solid 2px;
+	cursor: pointer;
+}
+	/* ]]> */
+	</style>
+<script type="text/javascript" language="javascript" charset="utf-8">
+// <![CDATA[
+strings = {}
+strings['relogin'] = "To switch account, please logout from your account at google.com before click this link.\nOtherwise, you will be returned to this page.\n\nDo you want to continue?";
+function warn(str){
+	return alert(strings[str]);
+}
+function ask(str){
+	return confirm(strings[str]);
+}
+$(function(){
+	$(".notify .close").dblclick(function(){
+		$(this).parent().slideUp(250);
+	}).attr("title", "Double click to close");
+	$("#error .loghead").click(function(){
+		$("pre", $(this).parent()).slideToggle(250);
+	})
+});
+// ]]>
+</script>
+</head>
+<body>
+<div id="top-bar">
+	<div id="top-bar-in">
+		<div id="logo"><a href="/">OvzCP</a></div>
+		<div id="version">0.1 by whsgroup.ath.cx</div>
+		<div id="user">{{current_user}} (<a href="/auth" onclick="return ask('relogin')">Relogin</a>)</div>
+	</div>
+</div>
+<div id="left-bar">
+	<div id="left-bar-in">
+		<ul>
+			<li><a href="#">Containers</a></li>
+			<li><a href="#">IP Addresses</a></li>
+		</ul>
+	</div>
+</div>
+<div id="body">
+	{% if error %}
+	<div id="error" class="notify">
+		<div class="close">X</div>
+		{{error}}
+		{% if error_log %}
+		<div class="loghead">Collapse/Expand</div>
+		<pre>{{error_log}}</pre>
+		{% endif %}
+	</div>
+	{% endif %}
+	{% if message %}
+	<div class="notify"><div class="close">X</div>{{message}}</div>
+	{% endif %}
+	{% block body %}
+	{% endblock %}
+</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+1. Install dependencies
+
+- Python 2.6
+- Tornado (included)
+  - python-pycurl
+  - python-simplejson
+- Varnish
