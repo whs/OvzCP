@@ -3,16 +3,24 @@
 <h1>Containers</h1>
 <table>
 <thead>
-<tr><th>VEID</th><th>Hostname</th><th>IP</th><th>OS</th><th>Action</th></tr>
+<tr><th>VEID</th><th>Hostname</th><th>IP</th><th>OS</th><th>Owner</th><th>Action</th></tr>
 </thead>
 {% for i in container %}
-<tr style="background-color: {% if i.running %}lightgreen{%else%}lightred{% endif %}"><td>{{i.veid}}</td><td>{{i.hostname}}</td><td>{{i.ip}}</td><td>{{i.os|capitalize}}</td><td>
-{% if i.running %}
+<tr style="background-color: {% if i.vz.running %}lightgreen{%else%}lightred{% endif %}">
+	<td><a href="/vm/{{i.veid}}">{{i.veid}}</a></td><td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td><td>{{i.vz.os|capitalize}}</td>
+	<td>{% if i.owner == current_user %}<b>You</b>{% else %}{{i.owner}}{% endif %}</td>
+<td>
+{% if i.owner == None %}
+	<a href="/claim?veid={{i.veid}}" title="Claim">Claim</a>
+{% else %}
+{% if i.vz.running %}
 	<a href="/restart?veid={{i.veid}}" onclick="return confirm('Restart {{i.veid}}?')" title="Restart"><img src="/static/restart.png" /></a> 
 	<a href="/stop?veid={{i.veid}}" onclick="return confirm('Stop {{i.veid}}?')" title="Stop"><img src="/static/poweroff.png" /></a> 
 {% else %}
 	<a href="/start?veid={{i.veid}}" onclick="return confirm('Start {{i.veid}}?')" title="Start"><img src="/static/start.png" /></a> 
 	<a href=""><img src="/static/destroy.png" /></a> 
+{% endif %}
+	<a href="/claim?veid={{i.veid}}&revert=true" onclick="return confirm('Unclaim {{i.veid}}? Other user in the system can claim this VM.')" title="Unclaim">Unclaim</a> 
 {% endif %}
 </td></tr>
 {% endfor %}

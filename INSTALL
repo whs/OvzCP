@@ -4,4 +4,7 @@
 - Tornado (included)
   - python-pycurl
   - python-simplejson
+  - python-sqlobject
 - Varnish
+
+2. python models.py

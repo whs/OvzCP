@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block body %}
+<style>
+#veid{
+	font-size: 15pt;
+	margin-bottom: 10px;
+}
+#status{
+	font-size: 12pt;
+	color: gray;
+}
+</style>
+<h1 id="veid"><a href="/containers">&lt;</a> {{veid}} | <b>{{vm.hostname}}</b> <span id="status">{% if vm.running %}running {% else %}stopped {% endif %}</h1>
+<table>
+<thead>
+	<tr><th>Key</th><th>Value</th></tr>
+</thead>
+<tbody>
+	<tr><td>Process count</td><td>{{vm.nproc}}</td></tr>
+	<tr><td>IP</td><td>{{vm.ip}}</td></tr>
+	<tr><td>OS</td><td>{{vm.os|capitalize}}</td></tr>
+	<tr><td>Disk Capacity</td><td>{{vm.diskinfo[0]|filesizeformat}}</td></tr>
+	<tr><th colspan="2">Memory</th></tr>
+	<tr><td>Guaranteed</td><td>{{vm.memlimit[0]|filesizeformat}}</td></tr>
+	<tr><td>Burstable</td><td>{{vm.memlimit[1]|filesizeformat}}</td></tr>
+</tbody>
+</table>
+<h1>Graph</h1>
+<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}}&amp;chl=Used|Free&amp;chd=t:{{vm.meminfo['MemTotal']-vm.meminfo['MemFree']}},{{vm.meminfo['MemFree']}}" />
+{% endblock %}
