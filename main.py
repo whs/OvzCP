@@ -19,7 +19,7 @@ except ImportError:
 	import sys
 	sys.path.append(os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 	import jinja2
-import ConfigParser, cPickle
+import ConfigParser, cPickle, openvz
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -47,6 +47,45 @@ class MainHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		self.render("index.html")
+
+class Containers(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		self.render("container.html", container=openvz.list(), title="Containers")
+
+class RestartVM(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		vm = openvz.VM(self.get_argument("veid"))
+		if not vm.running:
+			self.redirect("/containers")
+			return False
+		proc = vm.restart()
+		proc.wait()
+		self.render("container.html", container=openvz.list(), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+
+class StopVM(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		vm = openvz.VM(self.get_argument("veid"))
+		if not vm.running:
+			self.redirect("/containers")
+			return False
+		proc = vm.stop()
+		proc.wait()
+		self.render("container.html", container=openvz.list(), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+
+class StartVM(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		vm = openvz.VM(self.get_argument("veid"))
+		if vm.running:
+			self.redirect("/containers")
+			return False
+		proc = vm.start()
+		proc.wait()
+		self.render("container.html", container=openvz.list(), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
 	def get(self):
@@ -72,8 +111,12 @@ settings = {
 }
 
 application = tornado.web.Application([
-    (r"/", MainHandler),
-    (r"/auth", GoogleHandler),
+	(r"/", MainHandler),
+	(r"/auth", GoogleHandler),
+	(r"/containers", Containers),
+	(r"/restart", RestartVM),
+	(r"/stop", StopVM),
+	(r"/start", StartVM),
 ], **settings)
 
 if __name__ == "__main__":

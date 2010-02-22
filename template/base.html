@@ -104,6 +104,16 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 	border-left: rgb(255, 0, 0) solid 2px;
 	cursor: pointer;
 }
+table{
+	width: 100%;
+}
+th{
+	background: #eee;
+}
+td,th{
+	border: black solid 1px;
+	padding: 3px;
+}
 	/* ]]> */
 	</style>
 <script type="text/javascript" language="javascript" charset="utf-8">
@@ -132,14 +142,14 @@ $(function(){
 	<div id="top-bar-in">
 		<div id="logo"><a href="/">OvzCP</a></div>
 		<div id="version">0.1 by whsgroup.ath.cx</div>
-		<div id="user">{{current_user}} (<a href="/auth" onclick="return ask('relogin')">Relogin</a>)</div>
+		<div id="user">{{current_user}} <a href="/auth" onclick="return ask('relogin')"><img src='/static/logout.png' /></a></div>
 	</div>
 </div>
 <div id="left-bar">
 	<div id="left-bar-in">
 		<ul>
-			<li><a href="#">Containers</a></li>
-			<li><a href="#">IP Addresses</a></li>
+			<li><a href="/containers">Containers</a></li>
+			<li><a href="#">Host IP</a></li>
 		</ul>
 	</div>
 </div>
