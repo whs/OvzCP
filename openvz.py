@@ -57,11 +57,25 @@ class VM(object):
 		return out
 	@property
 	@online_only
+	# TODO: When offline, still show total
 	def diskinfo(self):
 		""" [total, used, free] """
 		d = commands.getoutput("vzctl exec %s df"%self.veid)
 		d = re.split(" [ ]+", d.split("\n")[1])
 		return [int(d[1])*1000, int(d[2])*1000, int(d[3])*1000]
+	@property
+	def uptime(self):
+		if not self.running:
+			return 0
+		else:
+			return float(commands.getoutput("vzctl exec %s cat /proc/uptime"%self.veid).split(" ")[0])
+	@property
+	def loadAvg(self):
+		if not self.running:
+			return [0, 0, 0]
+		else:
+			d = commands.getoutput("vzctl exec %s cat /proc/loadavg"%self.veid)
+			return map(lambda x:float(x), d.split(" ")[:3])
 	@property
 	def conf(self):
 		conf = open("/etc/vz/conf/"+str(self.veid)+".conf").read()

@@ -1,15 +1,5 @@
 {% extends "base.html" %}
 {% block body %}
-<style>
-#veid{
-	font-size: 15pt;
-	margin-bottom: 10px;
-}
-#status{
-	font-size: 12pt;
-	color: gray;
-}
-</style>
 <div id="veid">
 	<a href="/" title="Go back to the containers page">&lt;</a> {{veid}} | <b>{{vm.hostname}}</b> <span id="status">{% if vm.running %}running {% else %}stopped {% endif %}
 	{% if vm.running %}
@@ -20,6 +10,21 @@
 		<a href="" title="Destroy all data on {{vm.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
 	{% endif %}
 </div>
+<h1>Billing</h1>
+<p>(All calculations are rounded up)</p>
+{% set unit=config.get("billing", "unit").decode("utf-8") %}
+<table>
+<thead>
+	<tr><th>Kind</th><th>Price ({{unit}})</th></tr>
+</thead>
+<tbody>
+	<tr><td><div title="Every VM created must paid this amount.">Per VM</div></td><td>{{billing['perVM']}}</td></tr>
+	<tr><td><div title="{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB">Memory</div></td><td>{{billing['memory']}}</td></tr>
+	<tr><td><div title="{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} MB">Disk</div></td><td>{{billing['disk']}}</td></tr>
+	<tr><th>Total</th><td>{{billing['total']}}</td></tr>
+</tbody>
+</table>
+<h1>Data</h1>
 {% if vm.running %}
 <table>
 <thead>
@@ -30,6 +35,8 @@
 	<tr><td><div title="Internal IP of this VM. Every other VM running in the same machine can access this IP so you have to keep ports secure.">IP</div></td><td>{{vm.ip}}</td></tr>
 	<tr><td><div title="OS template used to create this VM">OS</div></td><td>{{vm.os|capitalize}}</td></tr>
 	<tr><td><div title="How many space your VM can use. Note that you might able to exceed this capacity temporary.">Disk Capacity</div></td><td>{{vm.diskinfo[0]|filesizeformat}}</td></tr>
+	<tr><td><div title="How long does this VM have been started">Uptime</div></td><td><div class="time">{{vm.uptime}}</div></td></tr>
+	<tr><td>Load average</td><td><span title="5 minute">{{vm.loadAvg[0]}}</span> <span title="10 minute">{{vm.loadAvg[1]}}</span> <span title="15 minute">{{vm.loadAvg[2]}}</span></td></tr>
 	<tr><th colspan="2">Memory</th></tr>
 	<tr><td><div title="Guaranteed memory limit how much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vm.memlimit[0]|filesizeformat}}</td></tr>
 	<tr><td><div title="Burstable memory is maximum limit. You application may use these memory but if other VM that haven't reach its guaranteed memory need to use memory, your application will be terminated.">Burstable</div></td><td>{{vm.memlimit[1]|filesizeformat}}</td></tr>

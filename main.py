@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- encoding: utf-8
+from __future__ import division
+
 # trying to chdir() to dirname($0)
 import os
 if os.environ['USER'] != "root":
@@ -20,7 +24,7 @@ except ImportError:
 	sys.path.append(os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 	import jinja2
 import models
-import ConfigParser, cPickle, openvz
+import ConfigParser, cPickle, openvz, math
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -30,8 +34,34 @@ import tornado.auth
 _config = ConfigParser.SafeConfigParser()
 _config.read("config.ini")
 
+def xsrf_check(func):
+	def f(self, *args, **kwargs):
+		try:
+			if self.get_cookie("_xsrf") != self.get_argument("_xsrf"):
+				self.write("XSRF Check fail")
+				return False
+		except Exception, e:
+			self.write("XSRF Check fail by exception")
+			return False
+		return func(self, *args, **kwargs)
+	return f
+
 def myVM(user):
 	return models.VM.select(models.OR(models.VM.q.owner == user, models.VM.q.owner == None))
+def vmBilling(vm, desc=False):
+	prices = {}
+	# perVM
+	prices['perVM'] = _config.getint("billing", "perVM")
+	# memory
+	prices['memory'] = int(math.ceil((_config.getint("billing", "memory")/_config.getint("billing", "memoryPer"))*(vm.memlimit[0]/1000000)))
+	# disk
+	prices['disk'] = int(math.ceil((_config.getint("billing", "disk")/_config.getint("billing", "diskPer"))*(vm.diskinfo[0]/1000000)))
+	# sum
+	prices['total'] = reduce(lambda x,y: x+y, prices.values())
+	if desc:
+		return prices
+	else:
+		return prices['total']
 
 class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
@@ -44,7 +74,8 @@ class BaseHandler(tornado.web.RequestHandler):
 			return cPickle.loads(data)
 	def render(self, tmpl, *args, **kwargs):
 		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
-		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, config=_config, *args, **kwargs))
+		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, static_url=self.static_url,
+			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), config=_config, *args, **kwargs))
 		return
 
 class Containers(BaseHandler):
@@ -77,18 +108,11 @@ class CreateVM(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		self.render("create.html", templates=openvz.listTemplates(),
-			title="Containers")
-
-class TemplateInfo(BaseHandler):
-	@tornado.web.authenticated
-	def get(self, temp):
-		if os.path.isfile("template/template_desc/"+temp+".html"):
-			self.render("template_desc/"+temp+".html")
-		else:
-			self.write("")
+			title="Creating VM")
 
 class RestartVM(BaseHandler):
 	@tornado.web.authenticated
+	@xsrf_check
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
 		if sql.owner != self.current_user and sql.owner:
@@ -100,10 +124,11 @@ class RestartVM(BaseHandler):
 			return
 		proc = vm.restart()
 		proc.wait()
-		self.render("container.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+		self.render("index.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
 
 class StopVM(BaseHandler):
 	@tornado.web.authenticated
+	@xsrf_check
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
 		if sql.owner != self.current_user and sql.owner:
@@ -115,10 +140,11 @@ class StopVM(BaseHandler):
 			return
 		proc = vm.stop()
 		proc.wait()
-		self.render("container.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+		self.render("index.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
 
 class StartVM(BaseHandler):
 	@tornado.web.authenticated
+	@xsrf_check
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
 		if sql.owner != self.current_user and sql.owner:
@@ -130,7 +156,7 @@ class StartVM(BaseHandler):
 			return
 		proc = vm.start()
 		proc.wait()
-		self.render("container.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+		self.render("index.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
 
 class ClaimVM(BaseHandler):
 	@tornado.web.authenticated
@@ -145,6 +171,7 @@ class ClaimVM(BaseHandler):
 				return
 			sql.set(owner=self.current_user)
 		else:
+			return
 			if not sql.owner:
 				self.redirect("/?error=1")
 				return
@@ -157,11 +184,15 @@ class ClaimVM(BaseHandler):
 class VMinfo(BaseHandler):
 	@tornado.web.authenticated
 	def get(self, veid):
-		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
+		try:
+			sql = models.VM.select(models.VM.q.veid == int(veid))[0]
+		except IndexError:
+			self.redirect("/?error=1")
+			return
 		if sql.owner != self.current_user and sql.owner:
 			self.redirect("/?error=1")
 			return
-		self.render("info.html", veid=veid, vm=sql.vz, title=veid+" information")
+		self.render("info.html", veid=veid, vm=sql.vz, title=veid+" information", billing=vmBilling(sql.vz, True))
 
 class Billing(BaseHandler):
 	@tornado.web.authenticated
@@ -202,7 +233,6 @@ application = tornado.web.Application([
 	(r"/create", CreateVM),
 	(r"/billing", Billing),
 	(r"/vm/([0-9]+)", VMinfo),
-	(r"/template/(.+)", TemplateInfo),
 ], **settings)
 
 if __name__ == "__main__":

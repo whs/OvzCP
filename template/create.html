@@ -5,38 +5,51 @@
 <script type="text/javascript">
 	burst = {{config.get("billing", "memoryBurst")}}
 	memPrice = [{{config.get("billing", "memory")}}, {{config.get("billing", "memoryPer")}}]
+	diskPrice = [{{config.get("billing", "disk")}}, {{config.get("billing", "diskPer")}}]
+	function calcTotal(){
+		mem = parseInt($("input[name=ram]").val())
+		mem = Math.ceil(mem * (memPrice[0]/memPrice[1]))
+		disk = parseInt($("input[name=disk]").val())
+		disk = Math.ceil(disk * (diskPrice[0]/diskPrice[1]))
+		$("#totalmoney").html(disk + mem + {{config.get("billing", "perVM")}})
+	}
 	$(function(){
-		$("#accordion").accordion({collapsible: true});
-		$("#ram-slider").slider({animate: true, max: 1000, min: 150, slide: function(event, ui){
+		$("#accordion").accordion({fillSpace: true});
+		$("#ram-slider").slider({animate: true, max: 1000, min: 150, step: 25, slide: function(event, ui){
 			price = Math.ceil(ui.value * (memPrice[0]/memPrice[1])) + " {{unit}}"
-			$("#ram-amount").html(ui.value+" MB (burstable to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
+			$("#ram-amount").html(ui.value+" MB (burstable up to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
 			$("input[name=ram]").val(ui.value);
+			calcTotal()
 		}});
-		$("input[name=os]").click(function(){
-			$.get("/template/"+$(this).val(), {}, function(d){
-				if(d)
-					$("#os .tipbox").html(d).fadeIn()
-				else
-					$("#os .tipbox").fadeOut()
-			});
-		});
+		$("#disk-slider").slider({animate: true, max: 50000, min: 1000, step: 500, slide: function(event, ui){
+			price = Math.ceil(ui.value * (diskPrice[0]/diskPrice[1])) + " {{unit}}"
+			$("#disk-amount").html((ui.value/1000)+" GB<br />"+price);
+			$("input[name=disk]").val(ui.value);
+			calcTotal()
+		}});
+		$("#tos").change(function(){
+			$("input[type=submit]").attr("disabled", !this.value)
+		})
 	});
 	</script>
-<form action="/create" method="post">
+<form action="/create" method="post" style="height: 100%;">
+{{ xsrf_form_html() }}
 <div id="accordion">
 <h2><a href="#">1: Pick your OS</a></h2>
 <div id="os" class="block">
-	<div class="tipbox" style="width: 70%; display: none;">
-	</div>
 	<ul>
 	{% for i in templates %}
-		<li><input type='radio' name='os' value='{{i}}' id="temp_{{i}}" /><label for="temp_{{i}}">{{i|capitalize}}</label></li>
+		<li>
+			<input type='radio' name='os' value='{{i}}' id="temp_{{i}}" /><label for="temp_{{i}}">{{i|capitalize}}</label>
+			<p>{% include "template_desc/"+i+".html" ignore missing %}</p>
+		</li>
 	{% endfor %}
 	</ul>
 </div>
 <h2><a href="#">2: How much memory</a></h2>
 <div id="ram" class="block">
-	<div class="tipbox">
+	<div id="ram-slider" style="margin: 10px;"></div>
+	<div class="tipbox" style="float: right;">
 		<b>TIP:</b> Optimum memory
 		<table>
 		<thead>
@@ -49,12 +62,38 @@
 		</tbody>
 		</table>
 	</div>
-	<div id="ram-slider" style="width: 400px; margin: 10px;"></div>
 	<b id="ram-amount">Slide the slider to change.<br />Minimum is 150MB, maximum is 1000MB<br />Burstable up to {{config.get("billing", "memoryBurst")}}%</b><br />
 	{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB
 	<input type="hidden" name="ram" value="150" />
-	<br style="clear: both;" />
-	<br style="clear: both;" /> <!-- animate:true cause this bug -->
+</div>
+<h2><a href="#">3: How many disk space</a></h2>
+<div id="disk" class="block">
+	<div id="disk-slider" style="margin: 10px;"></div>
+	<div class="tipbox" style="float: right;">
+		<b>TIP:</b> Optimum disk space
+		<table>
+		<thead>
+		<tr><th>Kind</th><th>Space</th></tr>
+		</thead>
+		<tbody>
+		<tr><td>Static website (Plain HTML)</td><td>1 GB</td></tr>
+		<tr><td>Weblog</td><td>5 GB</td></tr>
+		<tr><td>Crowded forum</td><td>10 GB</td></tr>
+		</tbody>
+		</table>
+	</div>
+	<b id="disk-amount">Slide the slider to change.<br />Minimum is 1GB, maximum is 50GB</b><br />
+	{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} MB
+	<input type="hidden" name="disk" value="2048" />
+</div>
+<h2><a href="#">4: Final steps</a></h2>
+<div id="final" class="block">
+	<span title="Hostname is the name of your machine. This must be unique but have no impact on your machine.">Hostname: <input type="text" name="hostname" value="" /></span><br />
+	<p>
+		You will be billed <b id="totalmoney"></b> {{unit}} per month. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})
+	</p>
+	<p><input type='checkbox' name="tos" id="tos"> <label for="tos">I accept the terms of services</label></p>
+	<p><b>Check every setting before click on </b><input type="submit" value="Create" disabled /></p>
 </div>
 </div>
 </form>

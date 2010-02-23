@@ -3,14 +3,14 @@
 <html>
 <head>
 	<title>{% if title is defined %}{{title}} | {% endif %}OvzCP</title>
-	<script src="/static/jquery.js" type="text/javascript" language="javascript" charset="utf-8"></script>
-	<script src="/static/tips.js" type="text/javascript" language="javascript" charset="utf-8"></script>
-	<script src="/static/ui.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+	<script src="{{static_url("jquery.js")}}" type="text/javascript" language="javascript" charset="utf-8"></script>
+	<script src="{{static_url("tips.js")}}" type="text/javascript" language="javascript" charset="utf-8"></script>
+	<script src="{{static_url("ui.js")}}" type="text/javascript" language="javascript" charset="utf-8"></script>
 	<style type="text/css" media="screen">
 	/* <![CDATA[ */
-@import url(/static/reset.css);
-@import url(/static/tinyTips.css);
-@import url(/static/ui-dark.css);
+@import url({{static_url("reset.css")}});
+@import url({{static_url("tinyTips.css")}});
+@import url({{static_url("ui-dark.css")}});
 body{font-family: verdana, tahoma, sans-serif; min-height: 100%;}
 a{
 	color:inherit; text-decoration: none; text-shadow: #aaa 1px 1px 3px;
@@ -89,6 +89,8 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 #error{
 	background: rgb(255, 100, 100);
 	border: maroon solid 2px;
+}
+#error>pre{
 	font-size: 150%;
 }
 #error pre{
@@ -132,13 +134,28 @@ h1{
 	margin-top: 5px;
 	width: 400px;
 }
+.block li p{
+	margin-left: 22px;
+	color: gray;
+}
 .block .tipbox{
-	float: right;
 	background: yellow;
 	padding: 10px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	color: black;
+	margin-top: 10px;
+}
+#body{
+	height: 50%;
+}
+#veid{
+	font-size: 15pt;
+	margin-bottom: 10px;
+}
+#status{
+	font-size: 12pt;
+	color: gray;
 }
 	/* ]]> */
 	</style>
@@ -152,6 +169,51 @@ function warn(str){
 function ask(str){
 	return confirm(strings[str]);
 }
+function formatTime(time, sh){
+	out = []
+	if(time >= 86400){
+		date = Math.floor(time / 86400)
+		if(date > 1) phural="s"
+		else phural=""
+		if(sh)
+			out.push(date+"d")
+		else
+			out.push(date+" day"+phural)
+		time = time - (date*86400)
+	}
+	if(time >= 3600){
+		hour = Math.floor(time / 3600)
+		if(hour > 1) phural="s"
+		else phural=""
+		if(sh)
+			out.push(hour+"h")
+		else
+			out.push(hour+" hour"+phural)
+		time = time - (hour*3600)
+	}
+	if(time >= 60){
+		min = Math.floor(time / 60)
+		if(min > 1) phural="s"
+		else phural=""
+		if(sh)
+			out.push(min+"m")
+		else
+			out.push(min+" minute"+phural)
+		time = time - (min*60)
+	}
+	if(time > 0){
+		if(time > 1) phural = "s"
+		else phural=""
+		if(sh)
+			out.push(parseInt(time)+"s")
+		else
+			out.push(parseInt(time)+" second"+phural)
+	}
+	if(sh)
+		return out.join("")
+	else
+		return out.join(" ")
+}
 $(function(){
 	$(".notify .close").dblclick(function(){
 		$(this).parent().slideUp(250);
@@ -159,8 +221,10 @@ $(function(){
 	$("#error .loghead").click(function(){
 		$("pre", $(this).parent()).slideToggle(250);
 	})
-	$('a[title]').tinyTips('title');
-	$('div[title]').tinyTips('title');
+	$('div[title], span[title], a[title]').tinyTips('title');
+	$('.time').html(function(ind, i){
+		return formatTime(parseFloat(i));
+	});
 });
 // ]]>
 </script>
