@@ -1,4 +1,28 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>Welcome</h1>
+<h1>Containers <a href="/create" title="Create new VM">+</a></h1>
+<table>
+<thead>
+<tr><th>VEID</th><th>Hostname</th><th>IP</th><th>OS</th><th>Owner</th><th>Action</th></tr>
+</thead>
+{% for i in container %}
+<tr style="background-color: {% if i.vz.running %}lightgreen{%else%}lightred{% endif %}">
+	<td><a href="/vm/{{i.veid}}" title="Click to show more information of {{i.veid}}">{{i.veid}}</a></td><td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td><td>{{i.vz.os|capitalize}}</td>
+	<td>{% if i.owner == current_user %}<b>You</b>{% else %}{{i.owner}}{% endif %}</td>
+<td>
+{% if i.owner == None %}
+	<a href="/claim?veid={{i.veid}}" title="Add {{i.veid}} to your account. No other user can access this VM">Claim</a>
+{% else %}
+{% if i.vz.running %}
+	<a href="/restart?veid={{i.veid}}" onclick="return confirm('Restart {{i.veid}}?')" title="Restart {{i.veid}}"><img src="/static/restart.png" /></a> 
+	<a href="/stop?veid={{i.veid}}" onclick="return confirm('Stop {{i.veid}}?')" title="Stop {{i.veid}}"><img src="/static/poweroff.png" /></a> 
+{% else %}
+	<a href="/start?veid={{i.veid}}" onclick="return confirm('Start {{i.veid}}?')" title="Start {{i.veid}}"><img src="/static/start.png" /></a> 
+	<a href="" title="Destroy all data on {{i.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
+{% endif %}
+	<a href="/claim?veid={{i.veid}}&revert=true" onclick="return confirm('Unclaim {{i.veid}}? Other user in the system can claim this VM.')" title="Remove ownership of {{i.veid}}">Unclaim</a> 
+{% endif %}
+</td></tr>
+{% endfor %}
+</table>
 {% endblock %}

@@ -44,13 +44,8 @@ class BaseHandler(tornado.web.RequestHandler):
 			return cPickle.loads(data)
 	def render(self, tmpl, *args, **kwargs):
 		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
-		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, *args, **kwargs))
+		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, config=_config, *args, **kwargs))
 		return
-
-class MainHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		self.render("index.html")
 
 class Containers(BaseHandler):
 	@tornado.web.authenticated
@@ -75,19 +70,33 @@ class Containers(BaseHandler):
 				txtmsg = "VM now belongs to you"
 			elif msg == "2":
 				txtmsg = "VM ownership removed. Other can now claim this VM"
-		self.render("container.html", container=myVM(self.current_user),
+		self.render("index.html", container=myVM(self.current_user),
 			title="Containers", error=errmsg, msg=txtmsg)
+
+class CreateVM(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		self.render("create.html", templates=openvz.listTemplates(),
+			title="Containers")
+
+class TemplateInfo(BaseHandler):
+	@tornado.web.authenticated
+	def get(self, temp):
+		if os.path.isfile("template/template_desc/"+temp+".html"):
+			self.render("template_desc/"+temp+".html")
+		else:
+			self.write("")
 
 class RestartVM(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
 		if sql.owner != self.current_user and sql.owner:
-			self.redirect("/containers?error=1")
+			self.redirect("/?error=1")
 			return
 		vm = sql.vz
 		if not vm.running:
-			self.redirect("/containers?error=2")
+			self.redirect("/?error=2")
 			return
 		proc = vm.restart()
 		proc.wait()
@@ -98,11 +107,11 @@ class StopVM(BaseHandler):
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
 		if sql.owner != self.current_user and sql.owner:
-			self.redirect("/containers?error=1")
+			self.redirect("/?error=1")
 			return
 		vm = sql.vz
 		if not vm.running:
-			self.redirect("/containers?error=2")
+			self.redirect("/?error=2")
 			return
 		proc = vm.stop()
 		proc.wait()
@@ -113,11 +122,11 @@ class StartVM(BaseHandler):
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
 		if sql.owner != self.current_user and sql.owner:
-			self.redirect("/containers?error=1")
+			self.redirect("/?error=1")
 			return
 		vm = sql.vz
 		if vm.running:
-			self.redirect("/containers?error=2")
+			self.redirect("/?error=2")
 			return
 		proc = vm.start()
 		proc.wait()
@@ -129,30 +138,35 @@ class ClaimVM(BaseHandler):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
 		if not self.get_argument("revert", False):
 			if sql.owner:
-				self.redirect("/containers?error=1")
+				self.redirect("/?error=1")
 				return
 			if sql.owner == self.current_user:
-				self.redirect("/containers?error=3")
+				self.redirect("/?error=3")
 				return
 			sql.set(owner=self.current_user)
 		else:
 			if not sql.owner:
-				self.redirect("/containers?error=1")
+				self.redirect("/?error=1")
 				return
 			if sql.owner != self.current_user:
-				self.redirect("/containers?error=1")
+				self.redirect("/?error=1")
 				return
 			sql.set(owner=None)
-		self.redirect("/containers?msg=2")
+		self.redirect("/?msg=2")
 
 class VMinfo(BaseHandler):
 	@tornado.web.authenticated
 	def get(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.owner != self.current_user and sql.owner:
-			self.redirect("/containers?error=1")
+			self.redirect("/?error=1")
 			return
-		self.render("info.html", veid=veid, vm=sql.vz)
+		self.render("info.html", veid=veid, vm=sql.vz, title=veid+" information")
+
+class Billing(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		pass
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
@@ -179,14 +193,16 @@ settings = {
 }
 
 application = tornado.web.Application([
-	(r"/", MainHandler),
 	(r"/auth", GoogleHandler),
-	(r"/containers", Containers),
+	(r"/", Containers),
 	(r"/restart", RestartVM),
 	(r"/stop", StopVM),
 	(r"/start", StartVM),
 	(r"/claim", ClaimVM),
+	(r"/create", CreateVM),
+	(r"/billing", Billing),
 	(r"/vm/([0-9]+)", VMinfo),
+	(r"/template/(.+)", TemplateInfo),
 ], **settings)
 
 if __name__ == "__main__":

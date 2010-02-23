@@ -1,9 +1,14 @@
-import commands, re, subprocess
+import commands, re, subprocess, os
 ARCH_PAGE = 4 * 1000  # memory pages of current arch, on i386/amd64 is 4kB, ia64 is 16kB
-def online_only(func, self):
-	def f(*args, **kwargs):
+service_proc = {
+	"apache": ["apache", "apache2", "httpd"],
+	"mysql": ["mysqld"],
+	"mail": ["exim4", "exim", "postfix"],
+}
+def online_only(func):
+	def f(self, *args, **kwargs):
 		if self.running:
-			return func(*args, **kwargs)
+			return func(self, *args, **kwargs)
 		else:
 			return False
 	return f
@@ -40,7 +45,7 @@ class VM(object):
 		""" soft cap of [guaranteed, burstable, max] (vmguar, privvm, oomguar) """
 		return [self.conf['VMGUARPAGES'][0]*ARCH_PAGE, self.conf['PRIVVMPAGES'][0]*ARCH_PAGE, self.conf['OOMGUARPAGES'][0]*ARCH_PAGE]
 	@property
-	#@online_only(self)
+	@online_only
 	def meminfo(self):
 		d = commands.getoutput("vzctl exec %s cat /proc/meminfo"%self.veid)
 		out = {}
@@ -51,7 +56,7 @@ class VM(object):
 			out[i[0]] = i[1]
 		return out
 	@property
-	#@online_only
+	@online_only
 	def diskinfo(self):
 		""" [total, used, free] """
 		d = commands.getoutput("vzctl exec %s df"%self.veid)
@@ -97,4 +102,9 @@ def listVM():
 	out = []
 	for i in commands.getoutput("vzlist -a -H -o veid").split("\n"):
 		out.append(VM(i.strip()))
+	return out
+def listTemplates():
+	out = []
+	for i in os.listdir("/var/lib/vz/template/cache/"):
+		out.append(i.replace(".tar.gz", ""))
 	return out

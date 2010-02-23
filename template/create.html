@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block body %}
+{% set unit=config.get("billing", "unit").decode("utf-8")%}
+<h1>Create VM</h1>
+<script type="text/javascript">
+	burst = {{config.get("billing", "memoryBurst")}}
+	memPrice = [{{config.get("billing", "memory")}}, {{config.get("billing", "memoryPer")}}]
+	$(function(){
+		$("#accordion").accordion({collapsible: true});
+		$("#ram-slider").slider({animate: true, max: 1000, min: 150, slide: function(event, ui){
+			price = Math.ceil(ui.value * (memPrice[0]/memPrice[1])) + " {{unit}}"
+			$("#ram-amount").html(ui.value+" MB (burstable to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
+			$("input[name=ram]").val(ui.value);
+		}});
+		$("input[name=os]").click(function(){
+			$.get("/template/"+$(this).val(), {}, function(d){
+				if(d)
+					$("#os .tipbox").html(d).fadeIn()
+				else
+					$("#os .tipbox").fadeOut()
+			});
+		});
+	});
+	</script>
+<form action="/create" method="post">
+<div id="accordion">
+<h2><a href="#">1: Pick your OS</a></h2>
+<div id="os" class="block">
+	<div class="tipbox" style="width: 70%; display: none;">
+	</div>
+	<ul>
+	{% for i in templates %}
+		<li><input type='radio' name='os' value='{{i}}' id="temp_{{i}}" /><label for="temp_{{i}}">{{i|capitalize}}</label></li>
+	{% endfor %}
+	</ul>
+</div>
+<h2><a href="#">2: How much memory</a></h2>
+<div id="ram" class="block">
+	<div class="tipbox">
+		<b>TIP:</b> Optimum memory
+		<table>
+		<thead>
+		<tr><th>Kind</th><th>Memory</th></tr>
+		</thead>
+		<tbody>
+		<tr><td>Static website (Plain HTML)</td><td>150 MB</td></tr>
+		<tr><td>Weblog</td><td>600 MB</td></tr>
+		<tr><td>Crowded forum</td><td>1000 MB</td></tr>
+		</tbody>
+		</table>
+	</div>
+	<div id="ram-slider" style="width: 400px; margin: 10px;"></div>
+	<b id="ram-amount">Slide the slider to change.<br />Minimum is 150MB, maximum is 1000MB<br />Burstable up to {{config.get("billing", "memoryBurst")}}%</b><br />
+	{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB
+	<input type="hidden" name="ram" value="150" />
+	<br style="clear: both;" />
+	<br style="clear: both;" /> <!-- animate:true cause this bug -->
+</div>
+</div>
+</form>
+{% endblock %}
