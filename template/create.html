@@ -15,16 +15,21 @@
 	}
 	$(function(){
 		$("#accordion").accordion({fillSpace: true});
+		$("input[name=os]").change(function(){
+			$("#os").html("1: "+$("label[for="+this.id+"]").text());
+		});
 		$("#ram-slider").slider({animate: true, max: 1000, min: 150, step: 25, slide: function(event, ui){
 			price = Math.ceil(ui.value * (memPrice[0]/memPrice[1])) + " {{unit}}"
 			$("#ram-amount").html(ui.value+" MB (burstable up to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
 			$("input[name=ram]").val(ui.value);
+			$("#ram").html("2: "+ui.value+" MB memory");
 			calcTotal()
 		}});
 		$("#disk-slider").slider({animate: true, max: 50000, min: 1000, step: 500, slide: function(event, ui){
 			price = Math.ceil(ui.value * (diskPrice[0]/diskPrice[1])) + " {{unit}}"
 			$("#disk-amount").html((ui.value/1000)+" GB<br />"+price);
 			$("input[name=disk]").val(ui.value);
+			$("#disk").html("3: "+(ui.value/1000)+" GB disk");
 			calcTotal()
 		}});
 		$("#tos").change(function(){
@@ -35,19 +40,19 @@
 <form action="/create" method="post" style="height: 100%;">
 {{ xsrf_form_html() }}
 <div id="accordion">
-<h2><a href="#">1: Pick your OS</a></h2>
-<div id="os" class="block">
-	<ul>
+<h2><a href="#" id="os">1: Pick your OS</a></h2>
+<div class="block">
+	<ul style="list-style: none; padding-left: 0;">
 	{% for i in templates %}
-		<li>
-			<input type='radio' name='os' value='{{i}}' id="temp_{{i}}" /><label for="temp_{{i}}">{{i|capitalize}}</label>
-			<p>{% include "template_desc/"+i+".html" ignore missing %}</p>
+		<li class="os">
+			<div><input type='radio' name='os' value='{{i}}' id="temp_{{i}}" /><label for="temp_{{i}}">{{i|capitalize}}</label></div>
+			{% include "template_desc/"+i+".html" ignore missing %}
 		</li>
 	{% endfor %}
 	</ul>
 </div>
-<h2><a href="#">2: How much memory</a></h2>
-<div id="ram" class="block">
+<h2><a href="#" id="ram">2: How much memory</a></h2>
+<div class="block">
 	<div id="ram-slider" style="margin: 10px;"></div>
 	<div class="tipbox" style="float: right;">
 		<b>TIP:</b> Optimum memory
@@ -66,8 +71,8 @@
 	{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB
 	<input type="hidden" name="ram" value="150" />
 </div>
-<h2><a href="#">3: How many disk space</a></h2>
-<div id="disk" class="block">
+<h2><a href="#" id="disk">3: How many disk space</a></h2>
+<div class="block">
 	<div id="disk-slider" style="margin: 10px;"></div>
 	<div class="tipbox" style="float: right;">
 		<b>TIP:</b> Optimum disk space
@@ -86,8 +91,8 @@
 	{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} MB
 	<input type="hidden" name="disk" value="2048" />
 </div>
-<h2><a href="#">4: Final steps</a></h2>
-<div id="final" class="block">
+<h2><a href="#" id="final">4: Final steps</a></h2>
+<div class="block">
 	<span title="Hostname is the name of your machine. This must be unique but have no impact on your machine.">Hostname: <input type="text" name="hostname" value="" /></span><br />
 	<p>
 		You will be billed <b id="totalmoney"></b> {{unit}} per month. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})
