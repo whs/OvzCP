@@ -36,6 +36,7 @@ class VM(object):
 	@property
 	def hostname(self):
 		d = commands.getoutput("vzlist -a -H -o hostname %s"%self.veid)
+		if d.strip() == "-": d=""
 		return d.strip()
 	@property
 	def os(self):
@@ -56,13 +57,15 @@ class VM(object):
 			out[i[0]] = i[1]
 		return out
 	@property
-	@online_only
-	# TODO: When offline, still show total
 	def diskinfo(self):
 		""" [total, used, free] """
-		d = commands.getoutput("vzctl exec %s df"%self.veid)
-		d = re.split(" [ ]+", d.split("\n")[1])
-		return [int(d[1])*1000, int(d[2])*1000, int(d[3])*1000]
+		if self.running:
+			d = commands.getoutput("vzctl exec %s df"%self.veid)
+			d = re.split(" [ ]+", d.split("\n")[1])
+			return [int(d[1]), int(d[2]), int(d[3])]
+		else:
+			data = self.conf['DISKSPACE']
+			return [data[0], 0, 0]
 	@property
 	def uptime(self):
 		if not self.running:

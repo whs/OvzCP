@@ -55,7 +55,7 @@ def vmBilling(vm, desc=False):
 	# memory
 	prices['memory'] = int(math.ceil((_config.getint("billing", "memory")/_config.getint("billing", "memoryPer"))*(vm.memlimit[0]/1000000)))
 	# disk
-	prices['disk'] = int(math.ceil((_config.getint("billing", "disk")/_config.getint("billing", "diskPer"))*(vm.diskinfo[0]/1000000)))
+	prices['disk'] = int(math.ceil((_config.getint("billing", "disk")/_config.getint("billing", "diskPer"))*(vm.diskinfo[0]/1000)))
 	# sum
 	prices['total'] = reduce(lambda x,y: x+y, prices.values())
 	if desc:
@@ -136,7 +136,8 @@ class HostSpec(BaseHandler):
 class CreateVM(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		self.render("create.html", templates=openvz.listTemplates(),
+		hostnames = map(lambda x: x.hostname,openvz.listVM())
+		self.render("create.html", templates=openvz.listTemplates(), hostnames = hostnames,
 			title="Creating VM")
 
 class RestartVM(BaseHandler):
