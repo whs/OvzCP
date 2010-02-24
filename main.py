@@ -46,8 +46,12 @@ def xsrf_check(func):
 		return func(self, *args, **kwargs)
 	return f
 
-def myVM(user):
-	return models.VM.select(models.OR(models.VM.q.owner == user, models.VM.q.owner == None))
+def myVM(user, ownerOnly=False):
+	if ownerOnly:
+		cond = models.VM.q.owner == user
+	else:
+		cond = models.OR(models.VM.q.owner == user, models.VM.q.owner == None)
+	return models.VM.select(cond)
 def vmBilling(vm, desc=False):
 	prices = {}
 	# perVM
@@ -234,7 +238,7 @@ class Billing(BaseHandler):
 			if not models.VM.select(models.VM.q.veid == i.veid).count():
 				models.VM(veid=i.veid)
 		vmcost = []
-		for i in myVM(self.current_user):
+		for i in myVM(self.current_user, True):
 			vmcost.append((i.veid, vmBilling(i.vz)))
 		totalcost = sum(map(lambda x: x[1],vmcost))
 		self.render("billing.html", vmcost=vmcost, total=totalcost)
