@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+<table>
+<thead>
+	<tr><th>VEID</th><th>Price ({{unit}})</th></tr>
+</thead>
+<tbody>
+{% for i in vmcost %}
+	<tr><td><a href="/vm/{{i[0]}}">{{i[0]}}</a></td><td>{{i[1]}}</td></tr>
+{% endfor %}
+</tbody>
+<tfooter>
+	<tr><th>Total</th><td>{{total}}</td></tr>
+</tfooter>
+</table><br />
+<form method="post" action="http://demo.paysbuy.com/paynow.aspx">
+	<input type="hidden" Name="psb" value="psb"/>
+	<input type="hidden" Name="biz" value="test@example.com"/>
+	<input type="hidden" Name="inv" value="100"/>
+	<input type="hidden" Name="itm" value="VPS hosting"/>
+	<input type="hidden" Name="amt" value="{{total}}"/>
+	<input type="hidden" Name="postURL" value="http://{{request.host}}/payreceive"/>
+	<input type="image" src="https://www.paysbuy.com/imgs/S_click2buy.gif" border="0" alt="Make it easier,PaySbuy - it's fast,free and secure!"/>
+</form >
+{% endblock %}
