@@ -106,7 +106,7 @@ class Containers(BaseHandler):
 			elif msg == "2":
 				txtmsg = "VM ownership removed. Other can now claim this VM"
 		self.render("index.html", container=myVM(self.current_user),
-			title="Containers", error=errmsg, msg=txtmsg)
+			title="Containers", error=errmsg, message=txtmsg)
 
 class HostSpec(BaseHandler):
 	@tornado.web.authenticated
@@ -215,7 +215,7 @@ class ClaimVM(BaseHandler):
 				self.redirect("/?error=1")
 				return
 			sql.set(owner=None)
-		self.redirect("/?msg=2")
+		self.redirect("/?msg=1")
 
 class VMinfo(BaseHandler):
 	@tornado.web.authenticated
@@ -228,7 +228,7 @@ class VMinfo(BaseHandler):
 		if sql.owner != self.current_user and sql.owner:
 			self.redirect("/?error=1")
 			return
-		self.render("info.html", veid=veid, vm=sql.vz, title=veid+" information", billing=vmBilling(sql.vz, True))
+		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=veid+" information", billing=vmBilling(sql.vz, True))
 
 class Billing(BaseHandler):
 	@tornado.web.authenticated

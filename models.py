@@ -5,7 +5,7 @@ sqlhub.processConnection = connectionForURI("sqlite://"+os.path.join(os.getcwd()
 class VM(SQLObject):
 	veid = IntCol()
 	owner = StringCol(default=None)
-	varnish_backend = MultipleJoin('VarnishBackend')
+	varnishBackend = SQLMultipleJoin('VarnishBackend')
 	@property
 	def vz(self):
 		return openvz.VM(self.veid)
@@ -14,11 +14,15 @@ class VarnishBackend(SQLObject):
 	name = StringCol()
 	vm = ForeignKey('VM')
 	port = IntCol()
-	cond = MultipleJoin('VarnishCond')
+	cond = SQLMultipleJoin('VarnishCond')
 
 class VarnishCond(SQLObject):
 	hostname = StringCol()
-	backend = ForeignKey('VarnishBackend')
+	subdomain = BoolCol(default=True)
+	varnishBackend = ForeignKey('VarnishBackend')
+	@property
+	def backend(self):
+		return self.varnishBackend
 
 if __name__ == "__main__":
 	VM.createTable(True)

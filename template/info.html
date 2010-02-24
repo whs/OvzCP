@@ -1,14 +1,25 @@
 {% extends "base.html" %}
+{% block javascript %}
+function editweb(){
+	$("#webedit").dialog({modal: true, title: "Web forward", width: "50%", height: 300, close: function(x,y){window.location.reload()}});
+}
+$(function(){
+	if(window.location.hash == "#webedit"){
+		editweb();
+	}
+});
+{% endblock %}
 {% block body %}
-<div id="bighead">{{vm.hostname}} ({{veid}})</div>
-<div id="subhead">{% if vm.running %}Running{% else %}Stopped{% endif %}</div>
-{% if vm.running %}
-<a href="/restart?veid={{vm.veid}}" onclick="return confirm('Restart {{vm.veid}}?')" title="Restart {{vm.veid}}"><img src="/static/restart.png" /></a> 
-<a href="/stop?veid={{vm.veid}}" onclick="return confirm('Stop {{vm.veid}}?')" title="Stop {{vm.veid}}"><img src="/static/poweroff.png" /></a> 
+<div id="bighead">{{vz.hostname}} ({{veid}})</div>
+<div id="subhead">{% if vz.running %}Running{% else %}Stopped{% endif %}</div>
+{% if vz.running %}
+<a href="/restart?veid={{vz.veid}}" onclick="return confirm('Restart {{vz.veid}}?')" title="Restart {{vz.veid}}"><img src="{{static_url('restart.png')}}" /></a> 
+<a href="/stop?veid={{vz.veid}}" onclick="return confirm('Stop {{vz.veid}}?')" title="Stop {{vz.veid}}"><img src="{{static_url('poweroff.png')}}" /></a> 
 {% else %}
-<a href="/start?veid={{vm.veid}}" onclick="return confirm('Start {{vm.veid}}?')" title="Start {{vm.veid}}"><img src="/static/start.png" /></a> 
-<a href="" title="Destroy all data on {{vm.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
+<a href="/start?veid={{vz.veid}}" onclick="return confirm('Start {{vz.veid}}?')" title="Start {{vz.veid}}"><img src="{{static_url('start.png')}}" /></a> 
+<a href="" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="{{static_url('destroy.png')}}" /></a> 
 {% endif %}
+<a href="#" onclick="editweb()" title="Forward HTTP application port to port 80 on specified hostname.">Web forward</a>
 <h1>Billing</h1>
 <p>(All calculations are rounded up)</p>
 <table>
@@ -28,27 +39,52 @@
 	<tr><th>Data</th><th>Value</th></tr>
 </thead>
 <tbody>
-	<tr><td><div title="Internal IP of this VM. Every other VM running in the same machine can access this IP so you have to keep ports secure.">IP</div></td><td>{{vm.ip}}</td></tr>
-	<tr><td><div title="OS template used to create this VM">OS</div></td><td>{{vm.os|capitalize}}</td></tr>
-	<tr><td><div title="How many space your VM can use. Note that you might able to exceed this capacity temporary.">Disk Capacity</div></td><td>{{(vm.diskinfo[0]*1000)|filesizeformat}}</td></tr>
-{% if vm.running %}
-	<tr><td><div title="How long does this VM have been started">Uptime</div></td><td><div class="time">{{vm.uptime}}</div></td></tr>
-	<tr><td>Load average</td><td><span title="5 minute">{{vm.loadAvg[0]}}</span> <span title="10 minute">{{vm.loadAvg[1]}}</span> <span title="15 minute">{{vm.loadAvg[2]}}</span></td></tr>
-	<tr><td><div title="The more process, the slower your machine">Process count</div></td><td>{{vm.nproc}}</td></tr>
+	<tr><td><div title="Internal IP of this VM. Every other VM running in the same machine can access this IP so you have to keep ports secure.">IP</div></td><td>{{vz.ip}}</td></tr>
+	<tr><td><div title="OS template used to create this VM">OS</div></td><td>{{vz.os|capitalize}}</td></tr>
+	<tr><td><div title="How many space your VM can use. Note that you might able to exceed this capacity temporary.">Disk Capacity</div></td><td>{{(vz.diskinfo[0]*1000)|filesizeformat}}</td></tr>
+{% if vz.running %}
+	<tr><td><div title="How long does this VM have been started">Uptime</div></td><td><div class="time">{{vz.uptime}}</div></td></tr>
+	<tr><td>Load average</td><td><span title="5 minute">{{vz.loadAvg[0]}}</span> <span title="10 minute">{{vz.loadAvg[1]}}</span> <span title="15 minute">{{vz.loadAvg[2]}}</span></td></tr>
+	<tr><td><div title="The more process, the slower your machine">Process count</div></td><td>{{vz.nproc}}</td></tr>
 {% endif %}
 	<tr><th colspan="2">Memory</th></tr>
-	<tr><td><div title="Guaranteed memory limit how much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vm.memlimit[0]|filesizeformat}}</td></tr>
-	<tr><td><div title="Burstable memory is maximum limit. You application may use these memory but if other VM that haven't reach its guaranteed memory need to use memory, your application will be terminated.">Burstable</div></td><td>{{vm.memlimit[1]|filesizeformat}}</td></tr>
+	<tr><td><div title="Guaranteed memory limit how much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vz.memlimit[0]|filesizeformat}}</td></tr>
+	<tr><td><div title="Burstable memory is maximum limit. You application may use these memory but if other VM that haven't reach its guaranteed memory need to use memory, your application will be terminated.">Burstable</div></td><td>{{vz.memlimit[1]|filesizeformat}}</td></tr>
 </tbody>
 </table>
-{% if vm.running %}
+{% if vz.running %}
 <h1>Graph</h1>
-{% set memused=vm.meminfo['MemTotal']-vm.meminfo['MemFree'] %}
-{% if memused < vm.memlimit[0] %}
-<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vm.meminfo['MemTotal']|filesizeformat}})&amp;chl=Used {{memused|filesizeformat}}|Free {{vm.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{memused}},{{vm.meminfo['MemFree']}}&amp;chds=0,{{vm.meminfo['MemTotal']}}" />
+{% set memused=vz.meminfo['MemTotal']-vz.meminfo['MemFree'] %}
+{% if memused < vz.memlimit[0] %}
+<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vz.meminfo['MemTotal']|filesizeformat}})&amp;chl=Used {{memused|filesizeformat}}|Free {{vz.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{memused}},{{vz.meminfo['MemFree']}}&amp;chds=0,{{vz.meminfo['MemTotal']}}" />
 {% else %}
-<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vm.meminfo['MemTotal']|filesizeformat}})&amp;chl=Guaranteed Used {{vm.memlimit[0]|filesizeformat}}|Burst {{(memused-vm.memlimit[0])|filesizeformat}}|Free {{vm.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{vm.memlimit[0]}},{{memused-vm.memlimit[0]}},{{vm.meminfo['MemFree']}}&amp;chds=0,{{vm.meminfo['MemTotal']}}" />
+<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vz.meminfo['MemTotal']|filesizeformat}})&amp;chl=Guaranteed Used {{vz.memlimit[0]|filesizeformat}}|Burst {{(memused-vz.memlimit[0])|filesizeformat}}|Free {{vz.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{vz.memlimit[0]}},{{memused-vz.memlimit[0]}},{{vz.meminfo['MemFree']}}&amp;chds=0,{{vz.meminfo['MemTotal']}}" />
 {% endif %}
-<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vm.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vm.diskinfo[1]*1000)|filesizeformat}}|Free {{(vm.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vm.diskinfo[1]}},{{vm.diskinfo[2]}}&amp;chds=0,{{vm.diskinfo[0]}}" />
+<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vz.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vz.diskinfo[1]*1000)|filesizeformat}}|Free {{(vz.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vz.diskinfo[1]}},{{vz.diskinfo[2]}}&amp;chds=0,{{vz.diskinfo[0]}}" />
 {% endif %}
+<div id="webedit" style="display: none;">
+Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.
+<form style="margin-top: 10px;">
+<table>
+<thead>
+	<tr><th>Domain</th><th>Port</th><th>Wildcard</th><th>Action</th></tr>
+</thead>
+<tbody>
+{% for i in vm.varnishBackend %}
+{% for i2 in i.cond %}
+	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td>{{i2.subdomain}}</td><td><img src="{{static_url('delete.png')}}" /></td></tr>
+{% endfor %}
+{% endfor %}
+</tbody>
+<tfooter>
+	<tr>
+		<th><input type="text" name="host" /></th>
+		<th><input type="text" name="port" /></th>
+		<th><input type="checkbox" name="subdomain" checked="checked" /></th>
+		<th><input type="submit" value="Save" /></th>
+	</tr>
+</tfooter>
+</table>
+</form>
+</div>
 {% endblock %}
