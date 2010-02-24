@@ -104,6 +104,35 @@ class Containers(BaseHandler):
 		self.render("index.html", container=myVM(self.current_user),
 			title="Containers", error=errmsg, msg=txtmsg)
 
+class HostSpec(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		import commands, re
+		# copied from openvz.VM.meminfo
+		d = open("/proc/meminfo").read().strip()
+		out= {}
+		for i in d.split("\n"):
+			i = re.split(":[ ]+", i)
+			if i[1].endswith(" kB"):
+				i[1] = int(i[1].split(" ")[0])*1024
+			out[i[0]] = i[1]
+		mem=out.copy()
+		# copied from openvz.VM.diskinfo
+		d = commands.getoutput("df")
+		d = re.split(" [ ]+", d.split("\n")[1])
+		disk = [int(d[1])*1000, int(d[2])*1000, int(d[3])*1000]
+		# copied from openvz.VM.loadAvg
+		d = open("/proc/loadavg").read()
+		loadAvg= map(lambda x:float(x), d.split(" ")[:3])
+		# copied from openvz.VM.uptime
+		uptime = float(open("/proc/uptime").read().split(" ")[0])
+		dist = commands.getoutput("lsb_release -a|grep Description").split("\n")[1].split("\t")[1]
+		kernel = commands.getoutput("uname -a")
+		nproc = commands.getoutput('ps ax | wc -l | tr -d " "')
+		runningVM = len(filter(lambda x: x.running,openvz.listVM()))
+		self.render("spec.html", mem=mem, disk=disk, loadAvg=loadAvg, os=dist, uptime=uptime, kernel=kernel, nproc=nproc,
+			runningVM=runningVM, title="Host OS specification")
+
 class CreateVM(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
@@ -232,6 +261,7 @@ application = tornado.web.Application([
 	(r"/claim", ClaimVM),
 	(r"/create", CreateVM),
 	(r"/billing", Billing),
+	(r"/spec", HostSpec),
 	(r"/vm/([0-9]+)", VMinfo),
 ], **settings)
 
