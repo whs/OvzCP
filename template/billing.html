@@ -6,7 +6,7 @@
 </thead>
 <tbody>
 {% for i in vmcost %}
-	<tr><td><a href="/vm/{{i[0]}}">{{i[0]}}</a></td><td>{{i[1]}}</td></tr>
+	<tr><td><a href="/vm/{{i[0]}}"><img src="{{static_url('info.png')}}" /> {{i[0]}}</a></td><td>{{i[1]}}</td></tr>
 {% endfor %}
 </tbody>
 <tfooter>

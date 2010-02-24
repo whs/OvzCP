@@ -2,6 +2,7 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
+	{% set unit=config.get("billing", "unit").decode("utf-8")%}
 	<title>{% if title is defined %}{{title}} | {% endif %}OvzCP</title>
 	<script src="{{static_url("jquery.js")}}" type="text/javascript" language="javascript" charset="utf-8"></script>
 	<script src="{{static_url("tips.js")}}" type="text/javascript" language="javascript" charset="utf-8"></script>
@@ -289,7 +290,6 @@ $(function(){
 	{% if message %}
 	<div class="notify"><div class="close"><img src="{{static_url("close.png")}}" /></div>{{message}}</div>
 	{% endif %}
-	{% set unit=config.get("billing", "unit").decode("utf-8")%}
 	{% block body %}
 	{% endblock %}
 	<br style="clear: both;" />
