@@ -13,15 +13,17 @@ function calcTotal(){
 	$("#totalmoney").html(disk + mem + {{config.get("billing", "perVM")}})
 }
 $(function(){
-	$("#accordion").accordion({fillSpace: true});
+	$("#accordion").accordion({autoHeight: false});
 	$("input[name=os]").change(function(){
 		$("#os").html("1: "+$("label[for="+this.id+"]").text());
+		$("h2 #ram").parent().show();
 	});
 	$("#ram-slider").slider({animate: true, max: 1000, min: 150, step: 25, slide: function(event, ui){
 		price = Math.ceil(ui.value * (memPrice[0]/memPrice[1])) + " {{unit}}"
 		$("#ram-amount").html(ui.value+" MB (burstable up to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
 		$("input[name=ram]").val(ui.value);
 		$("#ram").html("2: "+ui.value+" MB memory");
+		$("h2 #disk").parent().show();
 		calcTotal()
 	}});
 	$("#disk-slider").slider({animate: true, max: 50000, min: 1000, step: 500, slide: function(event, ui){
@@ -29,15 +31,18 @@ $(function(){
 		$("#disk-amount").html((ui.value/1000)+" GB<br />"+price);
 		$("input[name=disk]").val(ui.value);
 		$("#disk").html("3: "+(ui.value/1000)+" GB disk");
+		$("h2 #final").parent().show();
 		calcTotal()
 	}});
 	$("input[name=hostname]").keyup(function(){
-		if(hostnames.indexOf(this.value) != -1){
+		if(this.value == "" || hostnames.indexOf(this.value) != -1){
 			$(this).css("backgroundColor", "red");
 			$(this).css("color", "white");
+			$("#createp").hide()
 		}else{
 			$(this).css("backgroundColor", "white");
 			$(this).css("color", "black");
+			$("#createp").show()
 		}
 	});
 	$("#tos").change(function(){
@@ -47,7 +52,7 @@ $(function(){
 {% endblock %}
 {% block body %}
 <h1>Create VM</h1>
-<form action="/create" method="post" style="height: 100%;">
+<form action="/create" method="post">
 {{ xsrf_form_html() }}
 <div id="accordion">
 <h2><a href="#" id="os">1: Pick your OS</a></h2>
@@ -61,7 +66,7 @@ $(function(){
 	{% endfor %}
 	</ul>
 </div>
-<h2><a href="#" id="ram">2: How much memory</a></h2>
+<h2 style="display: none"><a href="#" id="ram">2: How much memory</a></h2>
 <div class="block">
 	<div id="ram-slider" style="margin: 10px;"></div>
 	<div class="tipbox" style="float: right;">
@@ -81,7 +86,7 @@ $(function(){
 	{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB
 	<input type="hidden" name="ram" value="150" />
 </div>
-<h2><a href="#" id="disk">3: How many disk space</a></h2>
+<h2 style="display: none"><a href="#" id="disk">3: How many disk space</a></h2>
 <div class="block">
 	<div id="disk-slider" style="margin: 10px;"></div>
 	<div class="tipbox" style="float: right;">
@@ -101,15 +106,17 @@ $(function(){
 	{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} MB
 	<input type="hidden" name="disk" value="2048" />
 </div>
-<h2><a href="#" id="final">4: Final steps</a></h2>
+<h2 style="display: none"><a href="#" id="final">4: Final steps</a></h2>
 <div class="block">
 	<span title="Hostname is the name of your machine. This must be unique but have no impact on your machine.">Hostname: <input type="text" name="hostname" value="" /></span><br />
 	<p>
 		You will be billed <b id="totalmoney"></b> {{unit}} per month. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})
 	</p>
-	<p><input type='checkbox' name="tos" id="tos"> <label for="tos">I accept the terms of services</label></p>
-	<p><b>Check every setting before click on </b><input type="submit" value="Create" disabled /></p>
-</div>
+	<div id="createp" style="display: none;">
+		<p><input type='checkbox' name="tos" id="tos"> <label for="tos">I accept the terms of services</label></p>
+		<p><b>Check every setting before click on </b><input type="submit" value="Create" disabled /></p>
+	</div>
 </div>
 </form>
+</div>
 {% endblock %}

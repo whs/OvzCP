@@ -11,7 +11,7 @@
 	<td>{% if i.owner == current_user %}<b>You</b>{% else %}{{i.owner}}{% endif %}</td>
 <td>
 {% if i.owner == None %}
-	<a href="/claim?veid={{i.veid}}" title="Add {{i.veid}} to your account. No other user can access this VM. This is <b>IRREVERSIBLE</b>">Claim</a>
+	<a href="/claim?veid={{i.veid}}" title="Add {{i.veid}} to your account. No other user can access this VM. You have to pay for this VM. This is <b>IRREVERSIBLE</b>">Claim</a>
 {% else %}
 {% if i.vz.running %}
 	<a href="/restart?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Restart {{i.veid}}?')" title="Restart {{i.veid}}"><img src="/static/restart.png" /></a> 

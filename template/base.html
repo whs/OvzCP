@@ -11,12 +11,15 @@
 @import url({{static_url("reset.css")}});
 @import url({{static_url("tinyTips.css")}});
 @import url({{static_url("ui-dark.css")}});
-body{font-family: verdana, tahoma, sans-serif; min-height: 100%;}
+body{font-family: tahoma, sans-serif; min-height: 100%; background: black;}
 a{
 	color:inherit; text-decoration: none; text-shadow: #aaa 1px 1px 3px;
 	-webkit-transition: text-shadow .2s ease-out;
 }
 a:hover{text-shadow: yellow 0px 0px 3px;}
+#container{
+	width: 100%; height: 100%;
+}
 #top-bar{
 	width: 100%;
 	height: 50px;
@@ -43,15 +46,12 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 	padding: 10px;
 }
 #left-bar{
-	width: 200px;
+	width: 15%;
 	background: black;
 	color: white;
 	border-top: #777 solid 1px;
 	float: left;
 	min-height: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0px;
 }
 #left-bar ul li a{
 	display: block;
@@ -68,8 +68,18 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 	color: white;
 	text-shadow: blue 0px 0px 5px;
 }
-#user{float: right;}
-#body{padding: 10px; width: 80%; position: absolute; left: 200px;}
+#user{float: right; margin-top: 2px;}
+#body{
+	padding: 10px;
+	width: 83%;
+	background: white;
+	float: right;
+}
+#bottom{
+	color: gray; margin-top: 15px; font-size: 10pt;
+	padding-left: 10px;
+	margin-bottom: 25px;
+}
 .notify{
 	width: 100%;
 	padding: 10px;
@@ -79,12 +89,8 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 }
 .notify .close{
 	float: right;
-	border: black solid 1px;
 	padding: 5px;
-	margin-top: -5px;
-	-webkit-border-radius: 15px;
-	-moz-border-radius: 15px;
-	background: rgba(255,255,255,0.7);
+	margin-top: -10px;
 	cursor: pointer;
 }
 #error{
@@ -110,6 +116,14 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 	border-top: rgb(255, 80, 80) solid 2px;
 	border-left: rgb(255, 0, 0) solid 2px;
 	cursor: pointer;
+}
+#bighead{
+	font-size: 18pt;
+}
+#subhead{
+	font-size: 15pt;
+	margin-bottom: 10px;
+	color: gray;
 }
 table{
 	width: 100%;
@@ -151,17 +165,6 @@ h1{
 	color: black;
 	width: 100%;
 }
-#body{
-	height: 70%;
-}
-#veid{
-	font-size: 15pt;
-	margin-bottom: 10px;
-}
-#status{
-	font-size: 12pt;
-	color: gray;
-}
 #body ul{
 	list-style: circle;
 	padding-left: 25px;
@@ -175,6 +178,9 @@ li.os{
 }
 li.os label{
 	text-shadow: #aaa 0px 1px 3px;
+}
+#accordion .block{
+	height: 400px;
 }
 	/* ]]> */
 	</style>
@@ -251,11 +257,12 @@ $(function(){
 </script>
 </head>
 <body>
+<div id="container">
 <div id="top-bar">
 	<div id="top-bar-in">
 		<div id="logo"><a href="/">OvzCP</a></div>
 		<div id="version">0.1 by whsgroup.ath.cx</div>
-		<div id="user">{{current_user}} <a href="/auth" onclick="return ask('relogin')"><img src='/static/logout.png' /></a></div>
+		<div id="user">{{current_user}} <a href="/auth" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /></a></div>
 	</div>
 </div>
 <div id="left-bar">
@@ -270,7 +277,7 @@ $(function(){
 <div id="body">
 	{% if error %}
 	<div id="error" class="notify">
-		<div class="close">X</div>
+		<div class="close"><img src="{{static_url("close.png")}}" /></div>
 		{{error}}
 		{% if error_log %}
 		<div class="loghead">Collapse/Expand</div>
@@ -279,10 +286,16 @@ $(function(){
 	</div>
 	{% endif %}
 	{% if message %}
-	<div class="notify"><div class="close">X</div>{{message}}</div>
+	<div class="notify"><div class="close"><img src="{{static_url("close.png")}}" /></div>{{message}}</div>
 	{% endif %}
 	{% block body %}
 	{% endblock %}
+	<br style="clear: both;" />
+</div>
+<br style="clear: both;" />
+<div id="bottom">
+	<a href="http://pinvoke.com/">Fugue Icons</a> | <a href="http://whsgroup.ath.cx">whsgroup.ath.cx</a> | Google Charts API
+</div>
 </div>
 </body>
 </html>

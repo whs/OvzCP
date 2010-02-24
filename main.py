@@ -130,8 +130,10 @@ class HostSpec(BaseHandler):
 		kernel = commands.getoutput("uname -a")
 		nproc = commands.getoutput('ps ax | wc -l | tr -d " "')
 		runningVM = len(filter(lambda x: x.running,openvz.listVM()))
+		cpu = commands.getoutput('cat /proc/cpuinfo |grep "model name"').split("\n")[0].split("\t")[1][2:]
+		hostname = open("/etc/hostname").read().strip()
 		self.render("spec.html", mem=mem, disk=disk, loadAvg=loadAvg, os=dist, uptime=uptime, kernel=kernel, nproc=nproc,
-			runningVM=runningVM, title="Host OS specification")
+			runningVM=runningVM, cpu=cpu, hostname=hostname, title="Host OS specification")
 
 class CreateVM(BaseHandler):
 	@tornado.web.authenticated

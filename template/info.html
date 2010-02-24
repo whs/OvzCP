@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 {% block body %}
-<div id="veid">
-	<a href="/" title="Go back to the containers page">&lt;</a> {{veid}} | <b>{{vm.hostname}}</b> <span id="status">{% if vm.running %}running {% else %}stopped {% endif %}
-	{% if vm.running %}
-		<a href="/restart?veid={{vm.veid}}" onclick="return confirm('Restart {{vm.veid}}?')" title="Restart {{vm.veid}}"><img src="/static/restart.png" /></a> 
-		<a href="/stop?veid={{vm.veid}}" onclick="return confirm('Stop {{vm.veid}}?')" title="Stop {{vm.veid}}"><img src="/static/poweroff.png" /></a> 
-	{% else %}
-		<a href="/start?veid={{vm.veid}}" onclick="return confirm('Start {{vm.veid}}?')" title="Start {{vm.veid}}"><img src="/static/start.png" /></a> 
-		<a href="" title="Destroy all data on {{vm.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
-	{% endif %}
-</div>
+<div id="bighead">{{vm.hostname}} ({{veid}})</div>
+<div id="subhead">{% if vm.running %}Running{% else %}Stopped{% endif %}</div>
+{% if vm.running %}
+<a href="/restart?veid={{vm.veid}}" onclick="return confirm('Restart {{vm.veid}}?')" title="Restart {{vm.veid}}"><img src="/static/restart.png" /></a> 
+<a href="/stop?veid={{vm.veid}}" onclick="return confirm('Stop {{vm.veid}}?')" title="Stop {{vm.veid}}"><img src="/static/poweroff.png" /></a> 
+{% else %}
+<a href="/start?veid={{vm.veid}}" onclick="return confirm('Start {{vm.veid}}?')" title="Start {{vm.veid}}"><img src="/static/start.png" /></a> 
+<a href="" title="Destroy all data on {{vm.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
+{% endif %}
 <h1>Billing</h1>
 <p>(All calculations are rounded up)</p>
 {% set unit=config.get("billing", "unit").decode("utf-8") %}
