@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% set unit=config.get("billing", "unit").decode("utf-8")%}
 {% block javascript %}
 burst = {{config.get("billing", "memoryBurst")}}
 memPrice = [{{config.get("billing", "memory")}}, {{config.get("billing", "memoryPer")}}]

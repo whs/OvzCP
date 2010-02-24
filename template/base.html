@@ -198,41 +198,41 @@ function formatTime(time, sh){
 	out = []
 	if(time >= 86400){
 		date = Math.floor(time / 86400)
-		if(date > 1) phural="s"
-		else phural=""
+		if(date > 1) plural="s"
+		else plural=""
 		if(sh)
 			out.push(date+"d")
 		else
-			out.push(date+" day"+phural)
+			out.push(date+" day"+plural)
 		time = time - (date*86400)
 	}
 	if(time >= 3600){
 		hour = Math.floor(time / 3600)
-		if(hour > 1) phural="s"
-		else phural=""
+		if(hour > 1) plural="s"
+		else plural=""
 		if(sh)
 			out.push(hour+"h")
 		else
-			out.push(hour+" hour"+phural)
+			out.push(hour+" hour"+plural)
 		time = time - (hour*3600)
 	}
 	if(time >= 60){
 		min = Math.floor(time / 60)
-		if(min > 1) phural="s"
-		else phural=""
+		if(min > 1) plural="s"
+		else plural=""
 		if(sh)
 			out.push(min+"m")
 		else
-			out.push(min+" minute"+phural)
+			out.push(min+" minute"+plural)
 		time = time - (min*60)
 	}
 	if(time > 0){
-		if(time > 1) phural = "s"
-		else phural=""
+		if(time > 1) plural = "s"
+		else plural=""
 		if(sh)
 			out.push(parseInt(time)+"s")
 		else
-			out.push(parseInt(time)+" second"+phural)
+			out.push(parseInt(time)+" second"+plural)
 	}
 	if(sh)
 		return out.join("")
@@ -269,6 +269,7 @@ $(function(){
 	<div id="left-bar-in">
 		<ul>
 			<li><a href="/">Containers</a></li>
+			<li><a href="/billing">Billing</a></li>
 			<li><a href="/spec">Host Info</a></li>
 			<li><a href="#">Host IP</a></li>
 		</ul>
@@ -288,6 +289,7 @@ $(function(){
 	{% if message %}
 	<div class="notify"><div class="close"><img src="{{static_url("close.png")}}" /></div>{{message}}</div>
 	{% endif %}
+	{% set unit=config.get("billing", "unit").decode("utf-8")%}
 	{% block body %}
 	{% endblock %}
 	<br style="clear: both;" />

@@ -75,7 +75,7 @@ class BaseHandler(tornado.web.RequestHandler):
 	def render(self, tmpl, *args, **kwargs):
 		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
 		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, static_url=self.static_url,
-			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), config=_config, *args, **kwargs))
+			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), request=self.request, config=_config, *args, **kwargs))
 		return
 
 class Containers(BaseHandler):
@@ -229,7 +229,23 @@ class VMinfo(BaseHandler):
 class Billing(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		pass
+		# sync the vm list
+		for i in openvz.listVM():
+			if not models.VM.select(models.VM.q.veid == i.veid).count():
+				models.VM(veid=i.veid)
+		vmcost = []
+		for i in myVM(self.current_user):
+			vmcost.append((i.veid, vmBilling(i.vz)))
+		totalcost = sum(map(lambda x: x[1],vmcost))
+		self.render("billing.html", vmcost=vmcost, total=totalcost)
+
+class PayReceive(BaseHandler):
+	def check_xsrf_cookie(self):
+		""" Bypass XSRF check """
+		return
+	@tornado.web.authenticated
+	def post(self):
+		self.write(self.request.arguments)
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
@@ -264,6 +280,7 @@ application = tornado.web.Application([
 	(r"/claim", ClaimVM),
 	(r"/create", CreateVM),
 	(r"/billing", Billing),
+	(r"/payreceive", PayReceive),
 	(r"/spec", HostSpec),
 	(r"/vm/([0-9]+)", VMinfo),
 ], **settings)
@@ -271,4 +288,6 @@ application = tornado.web.Application([
 if __name__ == "__main__":
 	http_server = tornado.httpserver.HTTPServer(application)
 	http_server.listen(21212)
+	import tornado.autoreload
+	tornado.autoreload.start()
 	tornado.ioloop.IOLoop.instance().start()
