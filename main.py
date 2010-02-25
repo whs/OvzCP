@@ -24,7 +24,7 @@ except ImportError:
 	sys.path.append(os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 	import jinja2
 import models
-import ConfigParser, cPickle, openvz, math
+import ConfigParser, cPickle, openvz, math, time, re
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -234,6 +234,11 @@ class VMinfo(BaseHandler):
 			err = self.get_argument("error")
 			if err == "1":
 				errmsg = "Web forward for that host already exists"
+			elif err == "2":
+				restart = time.time() - (int(self.get_secure_cookie("varnishrestart"))+300)
+				errmsg = "You have to wait <span class='time'>%s</span> before you can restart the reverse proxy again"%restart
+			elif err == "3":
+				errmsg = "Invalid hostname"
 		#if self.get_argument("msg", None):
 		#	msg = self.get_argument("msg")
 		#	if msg == "1":
@@ -270,11 +275,13 @@ class AddVarnish(BaseHandler):
 		if sql.owner != self.current_user and sql.owner:
 			self.redirect("/?error=1")
 			return
+		if not re.match(r"^[a-zA-Z0-9\.\-_]+$", self.get_argument("host")):
+			self.redirect("/vm/%s?error=3"%sql.veid)
+			return
 		if models.VarnishCond.select(models.VarnishCond.q.hostname==self.get_argument("host")):
 			self.redirect("/vm/%s?error=1"%sql.veid)
 			return
-		backendUpdate=False
-		backend = models.VarnishBackend.select(models.VarnishBackend.q.port == int(self.get_argument("port")))
+		backend = models.VarnishBackend.select(models.AND(models.VarnishBackend.q.port == int(self.get_argument("port")), models.VarnishBackend.q.vm==sql))
 		if backend.count():
 			backend = backend[0]
 		else:
@@ -285,7 +292,22 @@ class AddVarnish(BaseHandler):
 		if backendUpdate:
 			varnish.updateBackend(models.VarnishBackend.select())
 		varnish.updateRecv(models.VarnishCond.select())
+		self.redirect("/vm/%s#webedit"&sql.veid)
+
+class VarnishRestart(BaseHandler):
+	@tornado.web.authenticated
+	@xsrf_check
+	def get(self):
+		cookie = self.get_secure_cookie("varnishrestart")
+		if not cookie:
+			cookie=1
+		if time.time() - (int(cookie)+300) < 0:
+			self.redirect("/vm/%s?error=2"%self.get_argument("veid"))
+			return
+		self.set_secure_cookie("varnishrestart", str(int(time.time())))
+		import varnish
 		varnish.restart()
+		self.redirect("/vm/%s#webedit"%self.get_argument("veid"))
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
@@ -323,6 +345,7 @@ application = tornado.web.Application([
 	(r"/payreceive", PayReceive),
 	(r"/spec", HostSpec),
 	(r"/addweb", AddVarnish),
+	(r"/varnishRestart", VarnishRestart),
 	(r"/vm/([0-9]+)", VMinfo),
 ], **settings)
 

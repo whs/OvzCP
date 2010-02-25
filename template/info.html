@@ -70,7 +70,9 @@ $(function(){
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vz.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vz.diskinfo[1]*1000)|filesizeformat}}|Free {{(vz.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vz.diskinfo[1]}},{{vz.diskinfo[2]}}&amp;chds=0,{{vz.diskinfo[0]}}" />
 {% endif %}
 <div id="webedit" style="display: none;">
-Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.
+Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
+After edit changes will <b>NOT</b> be visible until you click <a href="/varnishRestart?_xsrf={{xsrf}}&veid={{veid}}"><button>restart proxy</button></a>. (Every site, including this may not be accessible for few seconds)
+Note that you can restart the proxy once only five minutes.
 <form style="margin-top: 10px;" action="/addweb" method="post">
 {{ xsrf_form_html() }}
 <input type="hidden" name="veid" value="{{veid}}" />
