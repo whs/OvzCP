@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block javascript %}
 function editweb(){
-	$("#webedit").dialog({modal: true, title: "Web forward", width: "50%", height: 300, close: function(x,y){window.location.reload()}});
+	window.location.hash = "webedit"
+	$("#webedit").dialog({modal: true, title: "Web forward", width: "75%", height: 400, close: function(x,y){
+		window.location.hash = ""
+		window.location.reload()
+	}});
 }
 $(function(){
 	if(window.location.hash == "#webedit"){
@@ -12,14 +16,17 @@ $(function(){
 {% block body %}
 <div id="bighead">{{vz.hostname}} ({{veid}})</div>
 <div id="subhead">{% if vz.running %}Running{% else %}Stopped{% endif %}</div>
+<ul>
 {% if vz.running %}
-<a href="/restart?veid={{vz.veid}}" onclick="return confirm('Restart {{vz.veid}}?')" title="Restart {{vz.veid}}"><img src="{{static_url('restart.png')}}" /></a> 
-<a href="/stop?veid={{vz.veid}}" onclick="return confirm('Stop {{vz.veid}}?')" title="Stop {{vz.veid}}"><img src="{{static_url('poweroff.png')}}" /></a> 
+	<li><a href="/restart?veid={{vz.veid}}" onclick="return confirm('Restart {{vz.veid}}?')" title="Restart {{vz.veid}}"><img src="{{static_url('restart.png')}}" / > Restart</a></li>
+	<li><a href="/stop?veid={{vz.veid}}" onclick="return confirm('Stop {{vz.veid}}?')" title="Stop {{vz.veid}}"><img src="{{static_url('poweroff.png')}}" /> Stop</a></li>
 {% else %}
-<a href="/start?veid={{vz.veid}}" onclick="return confirm('Start {{vz.veid}}?')" title="Start {{vz.veid}}"><img src="{{static_url('start.png')}}" /></a> 
-<a href="" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="{{static_url('destroy.png')}}" /></a> 
+	<li><a href="/start?veid={{vz.veid}}" onclick="return confirm('Start {{vz.veid}}?')" title="Start {{vz.veid}}"><img src="{{static_url('start.png')}}" /> Start</a></li>
+	<li><a href="" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="{{static_url('destroy.png')}}" /> Destroy</a></li>
 {% endif %}
-<a href="#" onclick="editweb()" title="Forward HTTP application port to port 80 on specified hostname.">Web forward</a>
+	<li><a href="#" onclick="editweb(); return false" title="Forward HTTP application port to port 80 on specified hostname.">Web forward</a></li>
+	<li><a href="#" onclick="editip(); return false" title="Forward port on an interface">Port forward</a></li>
+</ul>
 <h1>Billing</h1>
 <p>(All calculations are rounded up)</p>
 <table>
@@ -64,7 +71,9 @@ $(function(){
 {% endif %}
 <div id="webedit" style="display: none;">
 Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.
-<form style="margin-top: 10px;">
+<form style="margin-top: 10px;" action="/addweb" method="post">
+{{ xsrf_form_html() }}
+<input type="hidden" name="veid" value="{{veid}}" />
 <table>
 <thead>
 	<tr><th>Domain</th><th>Port</th><th>Wildcard</th><th>Action</th></tr>

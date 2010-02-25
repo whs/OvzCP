@@ -228,7 +228,19 @@ class VMinfo(BaseHandler):
 		if sql.owner != self.current_user and sql.owner:
 			self.redirect("/?error=1")
 			return
-		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=veid+" information", billing=vmBilling(sql.vz, True))
+		errmsg = ""
+		txtmsg = ""
+		if self.get_argument("error", None):
+			err = self.get_argument("error")
+			if err == "1":
+				errmsg = "Web forward for that host already exists"
+		#if self.get_argument("msg", None):
+		#	msg = self.get_argument("msg")
+		#	if msg == "1":
+		#		txtmsg = "VM now belongs to you"
+		#	elif msg == "2":
+		#		txtmsg = "VM ownership removed. Other can now claim this VM"
+		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=veid+" information", billing=vmBilling(sql.vz, True), error=errmsg, message=txtmsg)
 
 class Billing(BaseHandler):
 	@tornado.web.authenticated
@@ -250,6 +262,30 @@ class PayReceive(BaseHandler):
 	@tornado.web.authenticated
 	def post(self):
 		self.write(self.request.arguments)
+
+class AddVarnish(BaseHandler):
+	@tornado.web.authenticated
+	def post(self):
+		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
+		if sql.owner != self.current_user and sql.owner:
+			self.redirect("/?error=1")
+			return
+		if models.VarnishCond.select(models.VarnishCond.q.hostname==self.get_argument("host")):
+			self.redirect("/vm/%s?error=1"%sql.veid)
+			return
+		backendUpdate=False
+		backend = models.VarnishBackend.select(models.VarnishBackend.q.port == int(self.get_argument("port")))
+		if backend.count():
+			backend = backend[0]
+		else:
+			backend = models.VarnishBackend(name=sql.vz.hostname+str(self.get_argument("port")), vm=sql, port=self.get_argument("port"))
+			backendUpdate=True
+		models.VarnishCond(hostname=self.get_argument("host"), subdomain=bool(self.get_argument("subdomain", False)), varnishBackend=backend)
+		import varnish
+		if backendUpdate:
+			varnish.updateBackend(models.VarnishBackend.select())
+		varnish.updateRecv(models.VarnishCond.select())
+		varnish.restart()
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
@@ -286,6 +322,7 @@ application = tornado.web.Application([
 	(r"/billing", Billing),
 	(r"/payreceive", PayReceive),
 	(r"/spec", HostSpec),
+	(r"/addweb", AddVarnish),
 	(r"/vm/([0-9]+)", VMinfo),
 ], **settings)
 
