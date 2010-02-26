@@ -235,7 +235,7 @@ class VMinfo(BaseHandler):
 			if err == "1":
 				errmsg = "Web forward for that host already exists"
 			elif err == "2":
-				restart = time.time() - (int(self.get_secure_cookie("varnishrestart"))+300)
+				restart = (int(self.get_secure_cookie("varnishrestart"))+300) - time.time()
 				errmsg = "You have to wait <span class='time'>%s</span> before you can restart the reverse proxy again"%restart
 			elif err == "3":
 				errmsg = "Invalid hostname"
@@ -298,16 +298,22 @@ class VarnishRestart(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
 	def get(self):
-		cookie = self.get_secure_cookie("varnishrestart")
-		if not cookie:
-			cookie=1
-		if time.time() - (int(cookie)+300) < 0:
-			self.redirect("/vm/%s?error=2"%self.get_argument("veid"))
-			return
-		self.set_secure_cookie("varnishrestart", str(int(time.time())))
-		import varnish
-		varnish.restart()
-		self.redirect("/vm/%s#webedit"%self.get_argument("veid"))
+		if self.get_argument("state") == "0":
+			cookie = self.get_secure_cookie("varnishrestart")
+			if not cookie:
+				cookie=1
+			if (int(cookie)+300) - time.time() > 0:
+				#self.redirect("/vm/%s?error=2"%self.get_argument("veid"))
+				self.write("Limit not reached. Please wait "+str((int(cookie)+300) - time.time())+" seconds")
+				return
+			self.set_secure_cookie("varnishrestart", str(int(time.time())))
+			self.set_secure_cookie("varnishcookie", str(int(time.time())))
+		else:
+			t = int(self.get_secure_cookie("varnishcookie"))
+			if time.time()-t > 3:
+				return
+			import varnish
+			varnish.restart()
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous

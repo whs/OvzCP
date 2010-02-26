@@ -7,6 +7,16 @@ function editweb(){
 		window.location.reload()
 	}});
 }
+function restartVarnish(){
+	if(!confirm("Restart reverse proxy")) return;
+	$("#varnishRestartButton").attr("disabled", true);
+	$.get("/varnishRestart", {"_xsrf": "{{xsrf}}", veid: "{{veid}}", state: 0}, function(d){
+		if(d){ alert(d); return; }
+		$.get("/varnishRestart", {"_xsrf": "{{xsrf}}", state: 1}, function(){
+			alert("Varnish is being restarted. Please be patience, every sites may not be accesible for few seconds.");
+		})
+	});
+}
 $(function(){
 	if(window.location.hash == "#webedit"){
 		editweb();
@@ -71,7 +81,7 @@ $(function(){
 {% endif %}
 <div id="webedit" style="display: none;">
 Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
-After edit changes will <b>NOT</b> be visible until you click <a href="/varnishRestart?_xsrf={{xsrf}}&veid={{veid}}"><button>restart proxy</button></a>. (Every site, including this may not be accessible for few seconds)
+After edit changes will <b>NOT</b> be visible until you click <button onclick="restartVarnish()" id="varnishRestartButton">restart proxy</button>. (Every site, including this may not be accessible for few seconds)
 Note that you can restart the proxy once only five minutes.
 <form style="margin-top: 10px;" action="/addweb" method="post">
 {{ xsrf_form_html() }}
