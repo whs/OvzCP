@@ -314,6 +314,29 @@ class VarnishRestart(BaseHandler):
 				return
 			import varnish
 			varnish.restart()
+			
+class Dashboard(BaseHandler):
+	def check_xsrf_cookie(self):
+		""" Bypass XSRF check """
+		return
+	@tornado.web.authenticated
+	def get(self):
+		myvm = myVM(self.current_user, True)
+		billing=0
+		for i in myvm:
+			billing += vmBilling(i.vz)
+		self.render("dashboard.html", title="Dashboard", container=myvm, billing=billing)
+	def post(self):
+		data = self.get_argument("data")
+		if data == "vmload":
+			out = {}
+			for i in myVM(self.current_user, True):
+				if i.vz.running:
+					out[i.vz.hostname] = i.vz.loadAvg[0]
+			d = open("/proc/loadavg").read()
+			loadAvg= map(lambda x:float(x), d.split(" ")[:3])
+			out['Host OS'] = loadAvg[0]
+			self.write(`[out]`)
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
@@ -342,6 +365,7 @@ settings = {
 application = tornado.web.Application([
 	(r"/auth", GoogleHandler),
 	(r"/", Containers),
+	(r"/dashboard", Dashboard),
 	(r"/restart", RestartVM),
 	(r"/stop", StopVM),
 	(r"/start", StartVM),

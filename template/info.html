@@ -28,11 +28,11 @@ $(function(){
 <div id="subhead">{% if vz.running %}Running{% else %}Stopped{% endif %}</div>
 <ul>
 {% if vz.running %}
-	<li><a href="/restart?veid={{vz.veid}}" onclick="return confirm('Restart {{vz.veid}}?')" title="Restart {{vz.veid}}"><img src="{{static_url('restart.png')}}" / > Restart</a></li>
-	<li><a href="/stop?veid={{vz.veid}}" onclick="return confirm('Stop {{vz.veid}}?')" title="Stop {{vz.veid}}"><img src="{{static_url('poweroff.png')}}" /> Stop</a></li>
+	<li><a href="/restart?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Restart {{vz.veid}}?')" title="Restart {{vz.veid}}"><img src="{{static_url('restart.png')}}" / > Restart</a></li>
+	<li><a href="/stop?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{vz.veid}}?')" title="Stop {{vz.veid}}"><img src="{{static_url('poweroff.png')}}" /> Stop</a></li>
 {% else %}
-	<li><a href="/start?veid={{vz.veid}}" onclick="return confirm('Start {{vz.veid}}?')" title="Start {{vz.veid}}"><img src="{{static_url('start.png')}}" /> Start</a></li>
-	<li><a href="" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="{{static_url('destroy.png')}}" /> Destroy</a></li>
+	<li><a href="/start?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Start {{vz.veid}}?')" title="Start {{vz.veid}}"><img src="{{static_url('start.png')}}" /> Start</a></li>
+	<li><a href="/destroy?veid={{vz.veid}}&_xsrf={{xsrf}}" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="{{static_url('destroy.png')}}" /> Destroy</a></li>
 {% endif %}
 	<li><a href="#" onclick="editweb(); return false" title="Forward HTTP application port to port 80 on specified hostname.">Web forward</a></li>
 	<li><a href="#" onclick="editip(); return false" title="Forward port on an interface">Port forward</a></li>

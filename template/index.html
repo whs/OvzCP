@@ -6,7 +6,7 @@
 <tr><th>VEID</th><th>Hostname</th><th>IP</th><th>OS</th><th>Owner</th><th>Action</th></tr>
 </thead>
 {% for i in container %}
-<tr style="background-color: {% if i.vz.running %}lightgreen{%else%}lightred{% endif %}">
+<tr style="background-color: {% if i.vz.running %}lightgreen{%else%}pink{% endif %}">
 	<td><a href="/vm/{{i.veid}}" title="Click to show more information of {{i.veid}}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a></td><td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td><td>{{i.vz.os|capitalize}}</td>
 	<td>{% if i.owner == current_user %}<b>You</b>{% else %}{{i.owner}}{% endif %}</td>
 <td>

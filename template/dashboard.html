@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block javascript %}
+var VMgraphdata={};
+function updateVMload(){
+	$.post("/dashboard", {data: "vmload"}, function(d){
+		try{
+			d=JSON.parse(d)
+		}catch(e){
+			d=eval(d)
+		}
+		d=d[0]
+		hostlist = [];
+		for (var i in d) {
+			if(!VMgraphdata[i]) VMgraphdata[i] = []
+			VMgraphdata[i].push([new Date().getTime(), d[i]]);
+			if(VMgraphdata[i].length > 25) VMgraphdata[i].shift()
+			hostlist.push({data: VMgraphdata[i], label: i});
+		}
+		$.plot($("#graph-vmload"), hostlist, {
+			xaxis: {mode: "time", minTickSize: [5, "second"]},
+			yaxis: {min: 0},
+			legend: {container: $("#vmload-legend"), noColumns: 5, labelFormatter: function(label, series) {
+				console.log(series)
+				return '<b>'+label+'</b> ('+series.data[series.data.length-1][1]+')';
+			}},
+		});
+		setTimeout(updateVMload, 1000);
+	});
+}
+$(function() {
+	$(".portlet").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+		.find(".portlet-header")
+			.addClass("ui-widget-header ui-corner-all")
+			.prepend('<span class="ui-icon ui-icon-minusthick"></span>')
+			.end()
+		.find(".portlet-content");
+	$(".portlet-header .ui-icon").click(function() {
+		$(this).toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+		$(this).parents(".portlet:first").find(".portlet-content").slideToggle();
+	});
+	$(".column").disableSelection();
+	updateVMload();
+});
+{% endblock %}
+{% block body %}
+<script type="text/javascript" src="{{static_url('flot.js')}}"></script>
+<!--[if IE]><script type="text/javascript" src="{{static_url('excanvas.js')}}"></script><![endif]-->
+<style type="text/css">
+.column { width: 50%; float: left; padding-bottom: 100px; }
+.portlet { margin: 0 1em 1em 0; }
+.portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+.portlet-header .ui-icon { float: right; }
+.portlet-content { padding: 0.4em; }
+.portlet-content table{color: black;}
+#graph-vmload{width: 98%; height: 300px; background: white; padding: 5px;}
+#vmload-legend{background: white;}
+</style>
+<div class="column">
+	<div class="portlet">
+		<div class="portlet-header">VM List</div>
+		<div class="portlet-content">
+			<table>
+				<tr><th>VEID</th><th>Hostname</th><th>IP</th><th>Action</th></tr>
+				{% for i in container %}
+				<tr style="background-color: {% if i.vz.running %}lightgreen{%else%}pink{% endif %}">
+				<td><a href="/vm/{{i.veid}}" title="Click to show more information of {{i.veid}}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a></td>
+				<td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td>
+				<td>
+				{% if i.vz.running %}
+					<a href="/restart?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Restart {{i.veid}}?')" title="Restart {{i.veid}}"><img src="/static/restart.png" /></a> 
+					<a href="/stop?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{i.veid}}?')" title="Stop {{i.veid}}"><img src="/static/poweroff.png" /></a> 
+				{% else %}
+					<a href="/start?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Start {{i.veid}}?')" title="Start {{i.veid}}"><img src="/static/start.png" /></a> 
+					<a href="/destroy?veid={{i.veid}}&_xsrf={{xsrf}}" title="Destroy all data on {{i.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
+				{% endif %}
+				</td></tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+	<div class="portlet">
+		<div class="portlet-header">Billing</div>
+		<div class="portlet-content"><b>Total VM running cost:</b> {{billing}} {{unit}}</div>
+	</div>
+</div>
+<div class="column">
+	<div class="portlet">
+		<div class="portlet-header">VM load (5 minute)</div>
+		<div class="portlet-content"><div id="vmload-legend"></div><div id="graph-vmload"></div></div>
+	</div>
+</div>
+{% endblock %}
