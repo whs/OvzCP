@@ -6,6 +6,9 @@ if(req.http.host {% if i.subdomain %}~ "^((.+?)\.|){{i.hostname}}$"{% else %}== 
 }else {%- endfor -%}
 if(req.http.host == "{{ovzcphost}}"){
 	set req.backend = ovzcp;
+	if(req.url	~ "^/static/"){
+		lookup;
+	}
 }else{
 	set req.backend = {{nomatch}};
 }
