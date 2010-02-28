@@ -1,10 +1,47 @@
+OvzCP is hooked into major system services so it might be little complicated to install.
+Patch for a good command line based installer is apprecated.
+
+OvzCP is developed on Debian lenny and access OpenVZ data from /etc/vz/. RedHat based system
+might be unable to run OvzCP.
+
 1. Install dependencies
 
 - Python 2.6
-- Tornado (included)
-  - python-pycurl
-  - python-simplejson
-  - python-sqlobject
+- python-pycurl
+- python-simplejson
+- python-sqlobject
 - Varnish
+- Of course, OpenVZ
 
-2. python models.py
+2. Extract ovzcp or branch from trunk to /opt/ovzcp
+3. $ cd /opt/ovzcp
+4. $ python models.py
+5. Edit config.ini
+    - [auth] secret: Change it to be anything that's not the default
+    - [varnish] noMatch: Varnish backend name to use when no matching condition are found.
+    - [varnish] ovzcphost: Domain name of OvzCP
+    - [iface] allowed: Interfaces that OvzCP's port forwarding system can use
+6. Edit /etc/default/varnish
+    - Use the alternative 2 configuration by remove all # from front of every lines in that section
+    - Make sure that the first line of the alternative 2 is like this:
+       DAEMON_OPTS="-a :80 \
+       This make Varnish binds on port 80, every interfaces
+7. Edit /etc/varnish/default.vcl:
+   - At top, near the default backend definition remove any backend declaration and type
+     include "/opt/ovzcp/sysconf/varnishbackend.vcl";
+   - Replace sub vcl_recv with:
+
+sub vcl_recv{
+	include "/opt/ovzcp/sysconf/varnishrecv.vcl";
+	pipe;
+}
+
+    - Save
+    - Regenerate varnish configuration with python varnish.py
+8. Edit /etc/rc.local
+    - Add these lines before exit 0:
+
+/opt/ovzcp/sysconf/vmfw.sh
+/opt/ovzcp/main.py > /dev/null 2>/dev/null &
+
+9. Reboot your system with init 6 and have fun with OvzCP!
