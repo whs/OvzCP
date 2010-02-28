@@ -7,6 +7,13 @@ function editweb(){
 		window.location.reload()
 	}});
 }
+function editport(){
+	window.location.hash = "portedit"
+	$("#portedit").dialog({modal: true, title: "Port forward", width: "75%", height: 400, close: function(x,y){
+		window.location.hash = ""
+		window.location.reload()
+	}});
+}
 function restartVarnish(){
 	if(!confirm("Restart reverse proxy")) return;
 	$("#varnishRestartButton").attr("disabled", true);
@@ -35,7 +42,7 @@ $(function(){
 	<li><a href="/destroy?veid={{vz.veid}}&_xsrf={{xsrf}}" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="{{static_url('destroy.png')}}" /> Destroy</a></li>
 {% endif %}
 	<li><a href="#" onclick="editweb(); return false" title="Forward HTTP application port to port 80 on specified hostname.">Web forward</a></li>
-	<li><a href="#" onclick="editip(); return false" title="Forward port on an interface">Port forward</a></li>
+	<li><a href="#" onclick="editport(); return false" title="Forward port on an interface">Port forward</a></li>
 </ul>
 <h1>Billing</h1>
 <p>(All calculations are rounded up)</p>
@@ -93,7 +100,8 @@ Note that you can restart the proxy once only five minutes.
 <tbody>
 {% for i in vm.varnishBackend %}
 {% for i2 in i.cond %}
-	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td>{{i2.subdomain}}</td><td><img src="{{static_url('delete.png')}}" /></td></tr>
+	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td>{{i2.subdomain}}</td>
+	<td><a href="/addweb?delete={{i2.id}}&_xsrf={{xsrf}}" title="Delete" onclick="return confirm('Delete {{i2.hostname}}?')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 {% endfor %}
 </tbody>
@@ -102,6 +110,35 @@ Note that you can restart the proxy once only five minutes.
 		<th><input type="text" name="host" /></th>
 		<th><input type="text" name="port" /></th>
 		<th><input type="checkbox" name="subdomain" checked="checked" /></th>
+		<th><input type="submit" value="Save" /></th>
+	</tr>
+</tfooter>
+</table>
+</form>
+</div>
+<div id="portedit" style="display: none;">
+<form style="margin-top: 10px;" action="/addport" method="post">
+{{ xsrf_form_html() }}
+<input type="hidden" name="veid" value="{{veid}}" />
+<table>
+<thead>
+	<tr><th>Interface</th><th>Port</th><th>External Port</th><th>Action</th></tr>
+</thead>
+<tbody>
+{% for i in vm.portForward %}
+	<tr><td>{{i.iface}} ({{interface[i.iface]}})</td><td>{{i.port}}</td><td>{{i.outport}}</td>
+	<td><a href="/addport?delete={{i.id}}&_xsrf={{xsrf}}" title="Delete this item" onclick="return confirm('Delete {{i.iface}} {{i.port}}-{{i.outport}}?');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+{% endfor %}
+</tbody>
+<tfooter>
+	<tr>
+		<th><select name="iface">
+		{% for i in interface.items() %}
+			<option value="{{i[0]}}">{{i[0]}} ({{i[1]}})</option>
+		{% endfor %}
+		</select></th>
+		<th><input type="text" name="port" /></th>
+		<th><input type="text" name="outport" /></th>
 		<th><input type="submit" value="Save" /></th>
 	</tr>
 </tfooter>

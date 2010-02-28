@@ -20,7 +20,6 @@ function updateVMload(){
 			xaxis: {mode: "time", minTickSize: [5, "second"]},
 			yaxis: {min: 0},
 			legend: {container: $("#vmload-legend"), noColumns: 5, labelFormatter: function(label, series) {
-				console.log(series)
 				return '<b>'+label+'</b> ('+series.data[series.data.length-1][1]+')';
 			}},
 		});
