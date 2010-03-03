@@ -28,6 +28,7 @@ function updateVMload(){
 	});
 }
 function updateTime(){
+	/*/
 	timeCount += 1
 	$('.time').html(function(ind, i){
 		t = $(this).data("time");
@@ -37,6 +38,7 @@ function updateTime(){
 		}
 		return formatTime(t-timeCount);
 	});
+	/**/
 	$("#nextcron").html(formatTime(59-new Date().getSeconds()));
 	setTimeout(updateTime, 1000);
 }

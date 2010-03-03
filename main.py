@@ -89,11 +89,10 @@ class BaseHandler(tornado.web.RequestHandler):
 			else:
 				return models.User(email=userData['email'], credit=0)
 	def render(self, tmpl, *args, **kwargs):
-		vmcost = []
+		totalcost = 0
 		for i in myVM(self.current_user, True):
 			if i.vz.running:
-				vmcost.append((i.veid, vmBilling(i.vz)))
-		totalcost = sum(map(lambda x: x[1],vmcost))
+				totalcost += vmBilling(i.vz)
 		
 		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
 		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, static_url=self.static_url,
@@ -405,9 +404,10 @@ class Dashboard(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		myvm = myVM(self.current_user, True)
-		billing=0
+		billing = 0
 		for i in myvm:
-			billing += vmBilling(i.vz)
+			if i.vz.running:
+				billing += vmBilling(i.vz)
 		self.render("dashboard.html", title="Dashboard", container=myvm, billing=billing)
 	def post(self):
 		data = self.get_argument("data")
@@ -444,11 +444,10 @@ class CronRun(BaseHandler):
 			return
 		proclist = []
 		for u in models.User.select():
-			vmcost = []
+			totalcost = 0
 			for i in myVM(u, True):
 				if i.vz.running:
-					vmcost.append((i.veid, vmBilling(i.vz)))
-			totalcost = sum(map(lambda x: x[1],vmcost))
+					totalcost += vmBilling(i.vz)
 			u.credit -= totalcost
 			if u.credit <= 0:
 				for i in myVM(u, True):
