@@ -12,7 +12,10 @@
 @import url({{static_url("reset.css")}});
 @import url({{static_url("tinyTips.css")}});
 @import url({{static_url("ui-dark.css")}});
-body{font-family: tahoma, sans-serif; min-height: 100%; background: black;}
+body{
+	font-family: tahoma, sans-serif; min-height: 100%; background: black;
+	line-height: 1.4em;
+}
 a{
 	color:inherit; text-decoration: none; text-shadow: #aaa 1px 1px 3px;
 	-webkit-transition: text-shadow .2s ease-out;
@@ -245,6 +248,8 @@ function formatTime(time, sh){
 		else
 			out.push(parseInt(time)+" second"+plural)
 	}
+	if(time == 0)
+		return "now";
 	if(sh)
 		return out.join("")
 	else
@@ -273,7 +278,8 @@ $(function(){
 	<div id="top-bar-in">
 		<div id="logo"><a href="/">OvzCP</a></div>
 		<div id="version">0.1 by whsgroup.ath.cx</div>
-		<div id="user">{{current_user}} <a href="/auth" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /></a></div>
+		<div id="user"><a href="/auth" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
+		({{current_user.credit|int}} {{unit}} | <span class="time" title="Time left until complete depletion">{{((current_user.credit)/totalcost)*60}}</span>)</div>
 	</div>
 </div>
 <div id="left-bar">
@@ -299,6 +305,12 @@ $(function(){
 	{% endif %}
 	{% if message %}
 	<div class="notify"><div class="close"><img src="{{static_url("close.png")}}" /></div>{{message}}</div>
+	{% endif %}
+	{% if current_user.credit < 0 %}
+	<div id="error" class="notify">
+		<div class="close"><img src="{{static_url("close.png")}}" /></div>
+		You have no credit available!
+	</div>
 	{% endif %}
 	{% block body %}
 	{% endblock %}

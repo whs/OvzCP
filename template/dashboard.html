@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block javascript %}
 var VMgraphdata={};
+var timeCount = 0;
 function updateVMload(){
 	$.post("/dashboard", {data: "vmload"}, function(d){
 		try{
@@ -26,6 +27,19 @@ function updateVMload(){
 		setTimeout(updateVMload, 1000);
 	});
 }
+function updateTime(){
+	timeCount += 1
+	$('.time').html(function(ind, i){
+		t = $(this).data("time");
+		if(!t){
+			t=parseFloat(i);
+			$(this).data("time", t);
+		}
+		return formatTime(t-timeCount);
+	});
+	$("#nextcron").html(formatTime(59-new Date().getSeconds()));
+	setTimeout(updateTime, 1000);
+}
 $(function() {
 	$(".portlet").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
 		.find(".portlet-header")
@@ -39,6 +53,7 @@ $(function() {
 	});
 	$(".column").disableSelection();
 	updateVMload();
+	updateTime();
 });
 {% endblock %}
 {% block body %}
@@ -79,7 +94,11 @@ $(function() {
 	</div>
 	<div class="portlet">
 		<div class="portlet-header">Billing</div>
-		<div class="portlet-content"><b>Total VM running cost:</b> {{billing}} {{unit}}</div>
+		<div class="portlet-content">
+			<b>Total VM running cost:</b> {{billing}} {{unit}}<br />
+			<b>Deplete in:</b> <span class="time">{{((current_user.credit)/totalcost)*60}}</span><br />
+			<b>Next cron run in:</b> <span id="nextcron"></span>
+		</div>
 	</div>
 </div>
 <div class="column">

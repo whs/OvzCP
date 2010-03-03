@@ -109,7 +109,7 @@ $(function(){
 <div class="block">
 	<span title="Hostname is the name of your machine. This must be unique but have no impact on your machine.">Hostname: <input type="text" name="hostname" value="" /></span><br />
 	<p>
-		You will be billed <b id="totalmoney"></b> {{unit}} per month. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})
+		This virtual machine will consume <b id="totalmoney"></b> {{unit}} per minute. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})
 	</p>
 	<div id="createp" style="display: none;">
 		<p><input type='checkbox' name="tos" id="tos"> <label for="tos">I accept the terms of services</label></p>

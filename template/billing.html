@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% block body %}
+<div class="notify">
+	{{unit|title}} is required to run a VM. When you run out of {{unit}} every virtual machines will be stopped.<br />
+	If your {{unit}} is under 100 you can't start more VM. {{unit|title}} will decrease every minute.<br />
+	<p>Click each VM's ID to view detailed cost. <u>All calculations are rounded up.</u></p>
+</div>
+<br />
 <table>
 <thead>
-	<tr><th>VEID</th><th>Price ({{unit}})</th></tr>
+	<tr><th>VEID</th><th>Cost ({{unit}})</th></tr>
 </thead>
 <tbody>
 {% for i in vmcost %}
@@ -10,16 +16,8 @@
 {% endfor %}
 </tbody>
 <tfooter>
-	<tr><th>Total</th><td>{{total}}</td></tr>
+	<tr><th>Total</th><td>{{totalcost}}</td></tr>
+	<tr><th>Will deplete in</th><td class="time">{{((current_user.credit)/totalcost)*60}}</td></tr>
 </tfooter>
-</table><br />
-<form method="post" action="http://demo.paysbuy.com/paynow.aspx">
-	<input type="hidden" Name="psb" value="psb"/>
-	<input type="hidden" Name="biz" value="test@example.com"/>
-	<input type="hidden" Name="inv" value="100"/>
-	<input type="hidden" Name="itm" value="VPS hosting"/>
-	<input type="hidden" Name="amt" value="{{total}}"/>
-	<input type="hidden" Name="postURL" value="http://{{request.host}}/payreceive"/>
-	<input type="image" src="https://www.paysbuy.com/imgs/S_click2buy.gif" border="0" alt="Make it easier,PaySbuy - it's fast,free and secure!"/>
-</form >
+</table>
 {% endblock %}

@@ -46,22 +46,23 @@ $(function(){
 	<a href="#" onclick="editport(); return false" title="Forward port on an interface"><button>Port forward</button></a>
 </span>
 <h1>Billing</h1>
-<p>(All calculations are rounded up)</p>
+<div class="notify">To calculate credit depletion time for every VM, see <a href="/billing">billing</a>. <u>All calculations are rounded up.</u></div>
 <table>
 <thead>
-	<tr><th>Kind</th><th>Price ({{unit}})</th></tr>
+	<tr><th>Kind</th><th>Cost ({{unit}})</th></tr>
 </thead>
 <tbody>
 	<tr><td><div title="Every VM created must paid this amount.">Per VM</div></td><td>{{billing['perVM']}}</td></tr>
 	<tr><td><div title="{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB">Memory</div></td><td>{{billing['memory']}}</td></tr>
 	<tr><td><div title="{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} MB">Disk</div></td><td>{{billing['disk']}}</td></tr>
 	<tr><th>Total</th><td>{{billing['total']}}</td></tr>
+	<tr><th>Credit will run out in <small>(when no other VM are running)</small></th><td class="time">{{billing['time']}}</td></tr>
 </tbody>
 </table>
-<h1>Data</h1>
+<h1>Information</h1>
 <table>
 <thead>
-	<tr><th>Data</th><th>Value</th></tr>
+	<tr><th>Key</th><th>Value</th></tr>
 </thead>
 <tbody>
 	<tr><td><div title="Internal IP of this VM. Every other VM running in the same machine can access this IP so you have to keep ports secure.">IP</div></td><td>{{vz.ip}}</td></tr>

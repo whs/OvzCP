@@ -18,6 +18,7 @@ might be unable to run OvzCP.
 4. $ python models.py
 5. Edit config.ini
     - [auth] secret: Change it to be anything that's not the default
+    - [auth] cron_key: Change it to be anything that's not the default. Should match [a-zA-Z0-9]
     - [varnish] noMatch: Varnish backend name to use when no matching condition are found.
     - [varnish] ovzcphost: Domain name of OvzCP
     - [iface] allowed: Interfaces that OvzCP's port forwarding system can use
@@ -43,5 +44,11 @@ sub vcl_recv{
 
 /opt/ovzcp/sysconf/vmfw.sh
 /opt/ovzcp/main.py > /dev/null 2>/dev/null &
+
+9. Edit cron (crontab -e) Add these lines
+
+	* * * * * wget http://OVZCPHOST/_cron?cron_key=CRON_KEY -O - > /dev/null 2>/dev/null
+	
+    (Do not forget to replace YOUROVZCPHOST and CRON_KEY with the value in your configuration
 
 9. Reboot your system with init 6 and have fun with OvzCP!

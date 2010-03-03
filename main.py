@@ -54,11 +54,10 @@ def xsrf_check(func):
 
 def myVM(user, ownerOnly=False):
 	if ownerOnly:
-		cond = models.VM.q.owner == user
+		return user.vm
 	else:
-		cond = models.OR(models.VM.q.owner == user, models.VM.q.owner == None)
-	return models.VM.select(cond)
-def vmBilling(vm, desc=False):
+		return models.VM.select(models.OR(models.VM.q.user == user, models.VM.q.user == None))
+def vmBilling(vm, desc=False, user=False):
 	prices = {}
 	# perVM
 	prices['perVM'] = _config.getint("billing", "perVM")
@@ -68,6 +67,8 @@ def vmBilling(vm, desc=False):
 	prices['disk'] = int(math.ceil((_config.getint("billing", "disk")/_config.getint("billing", "diskPer"))*(vm.diskinfo[0]/1000)))
 	# sum
 	prices['total'] = reduce(lambda x,y: x+y, prices.values())
+	if user:
+		prices['time'] = (user.credit / prices['total'])*60
 	if desc:
 		return prices
 	else:
@@ -77,15 +78,26 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
 		data = self.get_user()
 		if data:
-			return data['email']
+			return data
 	def get_user(self):
 		data = self.get_secure_cookie("auth")
 		if data:
-			return cPickle.loads(data)
+			userData = cPickle.loads(data)
+			query = models.User.select(models.User.q.email == userData['email'])
+			if query.count():
+				return query[0]
+			else:
+				return models.User(email=userData['email'], credit=0)
 	def render(self, tmpl, *args, **kwargs):
+		vmcost = []
+		for i in myVM(self.current_user, True):
+			if i.vz.running:
+				vmcost.append((i.veid, vmBilling(i.vz)))
+		totalcost = sum(map(lambda x: x[1],vmcost))
+		
 		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
 		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, static_url=self.static_url,
-			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), request=self.request, config=_config, *args, **kwargs))
+			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), request=self.request, config=_config, totalcost=totalcost, *args, **kwargs))
 		return
 
 class Containers(BaseHandler):
@@ -105,6 +117,8 @@ class Containers(BaseHandler):
 				errmsg = "VM is not running"
 			elif err == "3":
 				errmsg = "VM is already owned by current user"
+			elif err == "4":
+				errmsg = _config.get("billing", "unit") + " is under 100, please refill."
 		if self.get_argument("msg", None):
 			msg = self.get_argument("msg")
 			if msg == "1":
@@ -157,7 +171,7 @@ class RestartVM(BaseHandler):
 	@xsrf_check
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
-		if sql.owner != self.current_user and sql.owner:
+		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
 			return
 		vm = sql.vz
@@ -173,7 +187,7 @@ class StopVM(BaseHandler):
 	@xsrf_check
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
-		if sql.owner != self.current_user and sql.owner:
+		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
 			return
 		vm = sql.vz
@@ -188,8 +202,11 @@ class StartVM(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
 	def get(self):
+		if self.current_user < 100:
+			self.redirect("/?error=4")
+			return
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
-		if sql.owner != self.current_user and sql.owner:
+		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
 			return
 		vm = sql.vz
@@ -205,22 +222,22 @@ class ClaimVM(BaseHandler):
 	def get(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
 		if not self.get_argument("revert", False):
-			if sql.owner:
+			if sql.user:
 				self.redirect("/?error=1")
 				return
-			if sql.owner == self.current_user:
+			if sql.user == self.current_user:
 				self.redirect("/?error=3")
 				return
-			sql.set(owner=self.current_user)
+			sql.set(user=self.current_user)
 		else:
 			return
-			if not sql.owner:
+			if not sql.user:
 				self.redirect("/?error=1")
 				return
-			if sql.owner != self.current_user:
+			if sql.user != self.current_user:
 				self.redirect("/?error=1")
 				return
-			sql.set(owner=None)
+			sql.set(user=None)
 		self.redirect("/?msg=1")
 
 class VMinfo(BaseHandler):
@@ -231,7 +248,7 @@ class VMinfo(BaseHandler):
 		except IndexError:
 			self.redirect("/?error=1")
 			return
-		if sql.owner != self.current_user and sql.owner:
+		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
 			return
 		errmsg = ""
@@ -261,7 +278,7 @@ class VMinfo(BaseHandler):
 				interface[iface] = netifaces.ifaddresses(iface)[netifaces.AF_INET][0]['addr']
 			except KeyError:
 				pass
-		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=veid+" information", billing=vmBilling(sql.vz, True),
+		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=veid+" information", billing=vmBilling(sql.vz, True, self.current_user),
 			error=errmsg, message=txtmsg, interface=interface)
 
 class Billing(BaseHandler):
@@ -273,9 +290,9 @@ class Billing(BaseHandler):
 				models.VM(veid=i.veid)
 		vmcost = []
 		for i in myVM(self.current_user, True):
-			vmcost.append((i.veid, vmBilling(i.vz)))
-		totalcost = sum(map(lambda x: x[1],vmcost))
-		self.render("billing.html", vmcost=vmcost, total=totalcost)
+			if i.vz.running:
+				vmcost.append((i.veid, vmBilling(i.vz)))
+		self.render("billing.html", vmcost=vmcost)
 
 class PayReceive(BaseHandler):
 	def check_xsrf_cookie(self):
@@ -290,7 +307,7 @@ class AddPort(BaseHandler):
 	@xsrf_check
 	def get(self):
 		d=models.PortForward.select(models.PortForward.q.id == int(self.get_argument("delete")))[0]
-		if d.vm.owner != self.current_user or not d.vm.owner:
+		if d.vm.user != self.current_user or not d.vm.user:
 			self.redirect("/?error=1")
 			return
 		veid=d.vm.veid
@@ -302,7 +319,7 @@ class AddPort(BaseHandler):
 	@tornado.web.authenticated
 	def post(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
-		if sql.owner != self.current_user or not sql.owner:
+		if sql.user != self.current_user or not sql.user:
 			self.redirect("/?error=1")
 			return
 		if not re.match(_config.get("iface", "allowed"), self.get_argument("iface")):
@@ -322,7 +339,7 @@ class AddVarnish(BaseHandler):
 	@xsrf_check
 	def get(self):
 		d=models.VarnishCond.select(models.VarnishCond.q.id == int(self.get_argument("delete")))[0]
-		if d.backend.vm.owner != self.current_user or not d.backend.vm.owner:
+		if d.backend.vm.user != self.current_user or not d.backend.vm.user:
 			self.redirect("/?error=1")
 			return
 		veid = d.backend.vm.veid
@@ -338,7 +355,7 @@ class AddVarnish(BaseHandler):
 	@tornado.web.authenticated
 	def post(self):
 		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
-		if sql.owner != self.current_user or not sql.owner:
+		if sql.user != self.current_user or not sql.user:
 			self.redirect("/?error=1")
 			return
 		if not re.match(r"^[a-zA-Z0-9\.\-_]+$", self.get_argument("host")):
@@ -421,6 +438,26 @@ class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 		self.set_secure_cookie("auth", cPickle.dumps(user))
 		self.redirect(self.next)
 
+class CronRun(BaseHandler):
+	def get(self):
+		if self.get_argument("cron_key") != _config.get("auth", "cron_key"):
+			return
+		proclist = []
+		for u in models.User.select():
+			vmcost = []
+			for i in myVM(u, True):
+				if i.vz.running:
+					vmcost.append((i.veid, vmBilling(i.vz)))
+			totalcost = sum(map(lambda x: x[1],vmcost))
+			u.credit -= totalcost
+			if u.credit <= 0:
+				for i in myVM(u, True):
+					if i.vz.running:
+						proclist.append(i.vz.stop())
+		for i in proclist:
+			i.wait()
+			
+
 settings = {
 	"cookie_secret": _config.get("auth", "secret"),
 	"login_url": "/auth",
@@ -444,6 +481,7 @@ application = tornado.web.Application([
 	(r"/addport", AddPort),
 	(r"/varnishRestart", VarnishRestart),
 	(r"/vm/([0-9]+)", VMinfo),
+	(r"/_cron", CronRun),
 ], **settings)
 
 if __name__ == "__main__":

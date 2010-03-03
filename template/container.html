@@ -8,9 +8,9 @@
 {% for i in container %}
 <tr style="background-color: {% if i.vz.running %}lightgreen{%else%}pink{% endif %}">
 	<td><a href="/vm/{{i.veid}}" title="Click to show more information of {{i.veid}}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a></td><td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td><td>{{i.vz.os|capitalize}}</td>
-	<td>{% if i.owner == current_user %}<b>You</b>{% else %}{{i.owner}}{% endif %}</td>
+	<td>{% if i.user == current_user %}<b>You</b>{% else %}{{i.user.email}}{% endif %}</td>
 <td>
-{% if i.owner == None %}
+{% if i.user == None %}
 	<a href="/claim?veid={{i.veid}}" title="Add {{i.veid}} to your account. No other user can access this VM. You have to pay for this VM. This is <b>IRREVERSIBLE</b>">Claim</a>
 {% else %}
 {% if i.vz.running %}

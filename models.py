@@ -2,9 +2,16 @@ import os, openvz
 from sqlobject import *
 sqlhub.processConnection = connectionForURI("sqlite://"+os.path.join(os.getcwd(), "db.sqlite")+"?debug=true")
 
+class User(SQLObject):
+	email = StringCol()
+	credit = FloatCol()
+	vm = SQLMultipleJoin('VM')
+	def __str__(self):
+		return self.email
+
 class VM(SQLObject):
 	veid = IntCol()
-	owner = StringCol(default=None)
+	user = ForeignKey('User')
 	varnishBackend = SQLMultipleJoin('VarnishBackend')
 	portForward = SQLMultipleJoin('PortForward')
 	@property
@@ -32,6 +39,7 @@ class VarnishCond(SQLObject):
 		return self.varnishBackend
 
 if __name__ == "__main__":
+	User.createTable(True)
 	VM.createTable(True)
 	VarnishBackend.createTable(True)
 	VarnishCond.createTable(True)
