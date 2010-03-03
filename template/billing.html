@@ -2,10 +2,10 @@
 {% block body %}
 <div class="notify">
 	{{unit|title}} is required to run a VM. When you run out of {{unit}} every virtual machines will be stopped.<br />
-	If your {{unit}} is under 100 you can't start more VM. {{unit|title}} will decrease every minute.<br />
-	<p>Click each VM's ID to view detailed cost. <u>All calculations are rounded up.</u></p>
+	If your {{unit}} is under 100 you can't start more VM. {{unit|title}} will decrease every minute.
 </div>
-<br />
+<p>Click each VM's ID to view detailed cost. <u>All calculations are rounded up.</u></p>
+<b>Rate:</b> {{config.get("billing", "credit")}} {{unit}} per {{config.get("billing", "creditPer")}} {{config.get("billing", "currency")}}
 <table>
 <thead>
 	<tr><th>VEID</th><th>Cost ({{unit}})</th></tr>

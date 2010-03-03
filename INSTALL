@@ -43,7 +43,7 @@ sub vcl_recv{
     - Add these lines before exit 0:
 
 /opt/ovzcp/sysconf/vmfw.sh
-/opt/ovzcp/main.py > /dev/null 2>/dev/null &
+/opt/ovzcp/main.py > /dev/null 2>&1 &
 
 9. Edit cron (crontab -e) Add these lines
 
