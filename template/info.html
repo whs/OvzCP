@@ -40,7 +40,7 @@ $(function(){
 	<a href="/stop?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{vz.veid}}?')" title="Stop {{vz.veid}}"><button><img src="{{static_url('poweroff.png')}}" /> Stop</button></a>
 {% else %}
 	<a href="/start?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Start {{vz.veid}}?')" title="Start {{vz.veid}}"><button><img src="{{static_url('start.png')}}" /> Start</button></a>
-	<a href="/destroy?veid={{vz.veid}}&_xsrf={{xsrf}}" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><button><img src="{{static_url('destroy.png')}}" /> Destroy</button></a>
+	<a href="/destroy?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Destroy {{i.veid}}?')" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><button><img src="{{static_url('destroy.png')}}" /> Destroy</button></a>
 {% endif %}
 	<a href="#" onclick="editweb(); return false" title="Forward HTTP application port to port 80 on specified hostname."><button>Web forward</button></a>
 	<a href="#" onclick="editport(); return false" title="Forward port on an interface"><button>Port forward</button></a>
@@ -102,7 +102,7 @@ Note that you can restart the proxy once only five minutes.
 <tbody>
 {% for i in vm.varnishBackend %}
 {% for i2 in i.cond %}
-	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td>{{i2.subdomain}}</td>
+	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td><img src='{{static_url((i2.subdomain|lower)+".png")}}' /></td>
 	<td><a href="/addweb?delete={{i2.id}}&_xsrf={{xsrf}}" title="Delete" onclick="return confirm('Delete {{i2.hostname}}?')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 {% endfor %}

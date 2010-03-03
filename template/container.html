@@ -18,7 +18,7 @@
 	<a href="/stop?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{i.veid}}?')" title="Stop {{i.veid}}"><img src="/static/poweroff.png" /></a> 
 {% else %}
 	<a href="/start?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Start {{i.veid}}?')" title="Start {{i.veid}}"><img src="/static/start.png" /></a> 
-	<a href="/destroy?veid={{i.veid}}&_xsrf={{xsrf}}" title="Destroy all data on {{i.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
+	<a href="/destroy?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Destroy {{i.veid}}?')"  title="Destroy all data on {{i.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
 {% endif %}
 {% endif %}
 </td></tr>
