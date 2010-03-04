@@ -179,7 +179,7 @@ class RestartVM(BaseHandler):
 			return
 		proc = vm.restart()
 		proc.wait()
-		self.render("container.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+		self.redirect(self.get_argument("return", "/"))
 
 class StopVM(BaseHandler):
 	@tornado.web.authenticated
@@ -195,7 +195,7 @@ class StopVM(BaseHandler):
 			return
 		proc = vm.stop()
 		proc.wait()
-		self.render("container.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+		self.redirect(self.get_argument("return", "/"))
 
 class StartVM(BaseHandler):
 	@tornado.web.authenticated
@@ -214,7 +214,7 @@ class StartVM(BaseHandler):
 			return
 		proc = vm.start()
 		proc.wait()
-		self.render("container.html", container=myVM(self.current_user), title="Containers", message="<pre>"+proc.stdout.read()+"</pre>")
+		self.redirect(self.get_argument("return", "/"))
 
 class ClaimVM(BaseHandler):
 	@tornado.web.authenticated
@@ -263,12 +263,12 @@ class VMinfo(BaseHandler):
 				errmsg = "Invalid hostname"
 			elif err == "4":
 				errmsg = "Invalid interface"
-		#if self.get_argument("msg", None):
-		#	msg = self.get_argument("msg")
-		#	if msg == "1":
-		#		txtmsg = "VM now belongs to you"
-		#	elif msg == "2":
-		#		txtmsg = "VM ownership removed. Other can now claim this VM"
+		if self.get_argument("message", None):
+			msg = self.get_argument("message")
+			if msg == "1":
+				txtmsg = "Settings commited. Please restart your VM if you edit its hostname."
+			elif msg == "2":
+				txtmsg = "No changes."
 		interface={}
 		for iface in netifaces.interfaces():
 			if not re.match(_config.get("iface", "allowed"), iface):
@@ -279,6 +279,54 @@ class VMinfo(BaseHandler):
 				pass
 		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=veid+" information", billing=vmBilling(sql.vz, True, self.current_user),
 			error=errmsg, message=txtmsg, interface=interface)
+
+class VMedit(BaseHandler):
+	@tornado.web.authenticated
+	def get(self, veid):
+		try:
+			sql = models.VM.select(models.VM.q.veid == int(veid))[0]
+		except IndexError:
+			self.redirect("/?error=1")
+			return
+		if sql.user != self.current_user and sql.user:
+			self.redirect("/?error=1")
+			return
+		errmsg = ""
+		txtmsg = ""
+		if self.get_argument("error", None):
+			pass
+		hostnames = map(lambda x: x.hostname, filter(lambda x: x.veid != int(veid),openvz.listVM()))
+		self.render("edit.html", veid=veid, vz=sql.vz, title="Edit "+veid, error=errmsg, message=txtmsg, hostnames=hostnames)
+	@tornado.web.authenticated
+	def post(self, veid):
+		try:
+			sql = models.VM.select(models.VM.q.veid == int(veid))[0]
+		except IndexError:
+			self.redirect("/?error=1")
+			return
+		if sql.user != self.current_user and sql.user:
+			self.redirect("/?error=1")
+			return
+		change = []
+		# Hostname change
+		if self.get_argument("hostname") != sql.vz.hostname:
+			sql.vz.hostname = self.get_argument("hostname")
+			change.append("hostname")
+		# Disk space change
+		if int(float(self.get_argument("disk"))) != sql.vz.diskinfo[0]:
+			sql.vz.diskinfo = float(self.get_argument("disk"))
+			change.append("disk")
+		# Memory change
+		if int(float(self.get_argument("ram"))) != sql.vz.memlimit[0]:
+			ram = float(self.get_argument("ram"))
+			burst = math.floor(ram+(ram*int(_config.get("billing", "memoryBurst"))/100))
+			memlimit = [ram, burst, burst+10240]
+			sql.vz.memlimit = memlimit
+			change.append("memlimit")
+		if change:
+			self.redirect("/vm/"+str(veid)+"?message=1")
+		else:
+			self.redirect("/vm/"+str(veid)+"?message=2")
 
 class Billing(BaseHandler):
 	@tornado.web.authenticated
@@ -480,6 +528,7 @@ application = tornado.web.Application([
 	(r"/addport", AddPort),
 	(r"/varnishRestart", VarnishRestart),
 	(r"/vm/([0-9]+)", VMinfo),
+	(r"/vm/([0-9]+)/edit", VMedit),
 	(r"/_cron", CronRun),
 ], **settings)
 

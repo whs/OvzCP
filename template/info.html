@@ -36,12 +36,13 @@ $(function(){
 <div id="subhead">{% if vz.running %}Running{% else %}Stopped{% endif %}</div>
 <span id="toolbar">
 {% if vz.running %}
-	<a href="/restart?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Restart {{vz.veid}}?')" title="Restart {{vz.veid}}"><button><img src="{{static_url('restart.png')}}" / > Restart</button></a>
-	<a href="/stop?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{vz.veid}}?')" title="Stop {{vz.veid}}"><button><img src="{{static_url('poweroff.png')}}" /> Stop</button></a>
+	<a href="/restart?veid={{veid}}&_xsrf={{xsrf}}" onclick="return confirm('Restart {{vz.veid}}?')"><button><img src="{{static_url('restart.png')}}" / > Restart</button></a>
+	<a href="/stop?veid={{veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{vz.veid}}?')"><button><img src="{{static_url('poweroff.png')}}" /> Stop</button></a>
 {% else %}
-	<a href="/start?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Start {{vz.veid}}?')" title="Start {{vz.veid}}"><button><img src="{{static_url('start.png')}}" /> Start</button></a>
-	<a href="/destroy?veid={{vz.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Destroy {{i.veid}}?')" title="Destroy all data on {{vz.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><button><img src="{{static_url('destroy.png')}}" /> Destroy</button></a>
+	<a href="/start?veid={{veid}}&_xsrf={{xsrf}}" onclick="return confirm('Start {{vz.veid}}?')"><button><img src="{{static_url('start.png')}}" /> Start</button></a>
+	<a href="/destroy?veid={{veid}}&_xsrf={{xsrf}}" onclick="return confirm('Destroy {{veid}}?')" title="Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><button><img src="{{static_url('destroy.png')}}" /> Destroy</button></a>
 {% endif %}
+	<a href="/vm/{{veid}}/edit"><button><img src="{{static_url('edit.png')}}" /> Edit</button></a>
 	<a href="#" onclick="editweb(); return false" title="Forward HTTP application port to port 80 on specified hostname."><button>Web forward</button></a>
 	<a href="#" onclick="editport(); return false" title="Forward port on an interface"><button>Port forward</button></a>
 </span>

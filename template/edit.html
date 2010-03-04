@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block javascript %}
+burst = {{config.get("billing", "memoryBurst")}}
+memPrice = [{{config.get("billing", "memory")}}, {{config.get("billing", "memoryPer")}}]
+diskPrice = [{{config.get("billing", "disk")}}, {{config.get("billing", "diskPer")}}]
+hostnames = {{hostnames}}
+function calcTotal(){
+	mem = parseInt($("input[name=ram]").val())/1000000
+	mem = Math.ceil(mem * (memPrice[0]/memPrice[1]))
+	disk = parseInt($("input[name=disk]").val())/1000
+	disk = Math.ceil(disk * (diskPrice[0]/diskPrice[1]))
+	$("#totalmoney").html(disk + mem + {{config.get("billing", "perVM")}})
+}
+$(function(){
+	$("#accordion").accordion();
+	$("#disk-slider").slider({animate: true, max: 50000, min: 1000, step: 500, value: {{vz.diskinfo[0]/1000}}, slide: function(event, ui){
+		price = Math.ceil(ui.value * (diskPrice[0]/diskPrice[1])) + " {{unit}}"
+		$("#disk-amount").html((ui.value/1000)+" GB<br />"+price);
+		$("input[name=disk]").val(ui.value*1000);
+		$("#disk").html("Disk: "+(ui.value/1000)+" GB");
+		calcTotal()
+	}});
+	price = Math.ceil({{vz.diskinfo[0]/1000}} * (diskPrice[0]/diskPrice[1])) + " {{unit}}"
+	$("#disk-amount").html({{vz.diskinfo[0]/1000000}}+" GB<br />"+price);
+	$("#disk").html("Disk: "+{{vz.diskinfo[0]/1000000}}+" GB");
+	
+	$("#ram-slider").slider({animate: true, max: 1000, min: 150, step: 25, value: {{vz.memlimit[0]/1000000}}, slide: function(event, ui){
+		price = Math.ceil(ui.value * (memPrice[0]/memPrice[1])) + " {{unit}}"
+		$("#ram-amount").html(ui.value+" MB (burstable up to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
+		$("input[name=ram]").val(ui.value*1000000);
+		$("#ram").html("Memory: "+ui.value+" MB");
+		calcTotal()
+	}});
+	price = Math.ceil({{vz.memlimit[0]/1000000}} * (memPrice[0]/memPrice[1])) + " {{unit}}"
+	$("#ram-amount").html({{vz.memlimit[0]/1000000}}+" MB (burstable up to "+Math.floor({{vz.memlimit[0]/1000000}}+({{vz.memlimit[0]/1000000}}*burst/100))+" MB)<br />"+price);
+	$("#ram").html("Memory: "+{{vz.memlimit[0]/1000000}}+" MB");
+	
+	$("input[name=hostname]").keyup(function(){
+		if(this.value == "" || hostnames.indexOf(this.value) != -1){
+			$(this).css("backgroundColor", "red");
+			$(this).css("color", "white");
+			$("#submit").hide()
+			$("#hostname").html("<img src='{{static_url("false.png")}}' /> Hostname")
+		}else{
+			$(this).css("backgroundColor", "white");
+			$(this).css("color", "black");
+			$("#submit").show()
+			$("#hostname").html("Hostname: "+this.value)
+		}
+	});
+	
+	calcTotal()
+	$("input[type=submit]").button();
+});
+{% endblock %}
+{% block body %}
+<h1>Editing {{veid}}</h1>
+<form action="/vm/{{veid}}/edit" method="post">
+{{ xsrf_form_html() }}
+<div id="accordion">
+<h2><a href="#" id="disk">Disk</a></h2>
+<div class="block">
+	<div id="disk-slider" style="margin: 10px;"></div>
+	<div class="tipbox" style="float: right;">
+		<b>TIP:</b> Optimum disk space
+		<table>
+		<thead>
+		<tr><th>Kind</th><th>Space</th></tr>
+		</thead>
+		<tbody>
+		<tr><td>Static website (Plain HTML)</td><td>1 GB</td></tr>
+		<tr><td>Weblog</td><td>5 GB</td></tr>
+		<tr><td>Crowded forum</td><td>10 GB</td></tr>
+		</tbody>
+		</table>
+	</div>
+	<b id="disk-amount"></b><br />
+	{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} GB
+	<input type="hidden" name="disk" value="{{vz.diskinfo[0]}}" />
+</div>
+<h2><a href="#" id="ram">Memory</a></h2>
+<div class="block">
+	<div id="ram-slider" style="margin: 10px;"></div>
+	<div class="tipbox" style="float: right;">
+		<b>TIP:</b> Optimum memory
+		<table>
+		<thead>
+		<tr><th>Kind</th><th>Memory</th></tr>
+		</thead>
+		<tbody>
+		<tr><td>Static website (Plain HTML)</td><td>150 MB</td></tr>
+		<tr><td>Weblog</td><td>600 MB</td></tr>
+		<tr><td>Crowded forum</td><td>1000 MB</td></tr>
+		</tbody>
+		</table>
+	</div>
+	<b id="ram-amount"></b><br />
+	{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB
+	<input type="hidden" name="ram" value="{{vz.memlimit[0]}}" />
+</div>
+<h2><a href="#" id="hostname">Hostname: {{vz.hostname}}</a></h2>
+<div class="block">
+	<b>Hostname:</b> <input type="text" name="hostname" value="{{vz.hostname}}" /><br />
+	<b>Note:</b> After hostname have been changed, please restart the VM.
+</div>
+<h2><a href="#">Save</a></h2>
+<div class="block">
+	<p>This virtual machine will consume <b id="totalmoney"></b> {{unit}} per minute. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})</p>
+	<p id="submit"><input type="submit" value="Save" /></p>
+</div>
+</div>
+</form>
+{% endblock %}

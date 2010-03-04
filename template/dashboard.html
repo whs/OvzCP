@@ -82,6 +82,7 @@ $(function() {
 				<td><a href="/vm/{{i.veid}}" title="Click to show more information of {{i.veid}}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a></td>
 				<td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td>
 				<td>
+					<a href="/vm/{{i.veid}}/edit" title="Edit {{i.veid}}"><img src="{{static_url('edit.png')}}" /></a>
 				{% if i.vz.running %}
 					<a href="/restart?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Restart {{i.veid}}?')" title="Restart {{i.veid}}"><img src="/static/restart.png" /></a> 
 					<a href="/stop?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{i.veid}}?')" title="Stop {{i.veid}}"><img src="/static/poweroff.png" /></a> 

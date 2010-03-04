@@ -53,23 +53,22 @@ class VM(object):
 	def get_memlimit(self):
 		""" soft cap of [guaranteed, burstable, max] (vmguar, privvm, oomguar) """
 		return [self.conf['VMGUARPAGES'][0]*ARCH_PAGE, self.conf['PRIVVMPAGES'][0]*ARCH_PAGE, self.conf['OOMGUARPAGES'][0]*ARCH_PAGE]
-	def set_memlimit(self, min=0, burst=0, max=0):
+	def set_memlimit(self, memlimit):
 		""" units are in kilobyte """
-		if min > burst or burst > max:
-			raise Exception, "VMGUAR > PRIVVM or PRIVVM > OOMGUAR"
+		min, burst, max = memlimit
 		old = self.get_memlimit()
 		changed = False
-		if old[0] != min and min != 0:
-			self.set_conf("vmguarpages", "%s:%s"%(min/ARCH_PAGE, (min+(min*20//100))/ARCH_PAGE))
+		if old[0] != min:
+			self.set_conf("vmguarpages", "%s:%s"%(int(min/ARCH_PAGE), int(min/ARCH_PAGE)))
 			changed = True
-		if old[1] != burst and burst != 0:
-			self.set_conf("privvmpages", "%s:%s"%(burst/ARCH_PAGE, (burst+(burst*20//100))/ARCH_PAGE))
+		if old[1] != burst:
+			self.set_conf("privvmpages", "%s:%s"%(int(burst/ARCH_PAGE), int(burst/ARCH_PAGE)))
 			changed = True
-		if old[2] != max and burst != 0:
-			self.set_conf("oomguarpages", "%s:%s"%(max/ARCH_PAGE, (max+(max*20//100))/ARCH_PAGE))
+		if old[2] != max:
+			self.set_conf("oomguarpages", "%s:%s"%(int(max/ARCH_PAGE), int(max/ARCH_PAGE)))
 			changed = True
 		return changed
-	memlimit = property(get_memlimit)
+	memlimit = property(get_memlimit, set_memlimit)
 	
 	@property
 	@online_only
@@ -94,7 +93,7 @@ class VM(object):
 			return [data[0], 0, 0]
 	def set_diskinfo(self, space):
 		""" Space's unit is in kilobyte """
-		return self.set_conf("diskspace", "%s:%s"%(space, space+(space*20//100)))
+		return self.set_conf("diskspace", "%s:%s"%(int(space), int(space+(space*20//100))))
 	diskinfo = property(get_diskinfo, set_diskinfo)
 	
 	@property
@@ -128,8 +127,12 @@ class VM(object):
 				pass
 			out[i[0]] = i[1]
 		return out
-	def set_conf(self, key, value):
-		return commands.getoutput("vzctl set %s --%s %s --save"%(self.veid, key.lower(), value))
+	def set_conf(self, key, value=""):
+		if value:
+			return commands.getoutput("vzctl set %s --%s %s --save"%(self.veid, key.lower(), value))
+		else:
+			for i in key.iteritems():
+				self.set_conf(i[0], i[1])
 	conf = property(get_conf, set_conf)
 	
 	def start(self):

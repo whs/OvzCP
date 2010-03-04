@@ -5,9 +5,9 @@ memPrice = [{{config.get("billing", "memory")}}, {{config.get("billing", "memory
 diskPrice = [{{config.get("billing", "disk")}}, {{config.get("billing", "diskPer")}}]
 hostnames = {{hostnames}}
 function calcTotal(){
-	mem = parseInt($("input[name=ram]").val())
+	mem = parseInt($("input[name=ram]").val())/1000000
 	mem = Math.ceil(mem * (memPrice[0]/memPrice[1]))
-	disk = parseInt($("input[name=disk]").val())
+	disk = parseInt($("input[name=disk]").val())/1000
 	disk = Math.ceil(disk * (diskPrice[0]/diskPrice[1]))
 	$("#totalmoney").html(disk + mem + {{config.get("billing", "perVM")}})
 }
@@ -20,7 +20,7 @@ $(function(){
 	$("#ram-slider").slider({animate: true, max: 1000, min: 150, step: 25, slide: function(event, ui){
 		price = Math.ceil(ui.value * (memPrice[0]/memPrice[1])) + " {{unit}}"
 		$("#ram-amount").html(ui.value+" MB (burstable up to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
-		$("input[name=ram]").val(ui.value);
+		$("input[name=ram]").val(ui.value*1000000);
 		$("#ram").html("2: "+ui.value+" MB memory");
 		$("h2 #disk").parent().show();
 		calcTotal()
@@ -28,7 +28,7 @@ $(function(){
 	$("#disk-slider").slider({animate: true, max: 50000, min: 1000, step: 500, slide: function(event, ui){
 		price = Math.ceil(ui.value * (diskPrice[0]/diskPrice[1])) + " {{unit}}"
 		$("#disk-amount").html((ui.value/1000)+" GB<br />"+price);
-		$("input[name=disk]").val(ui.value);
+		$("input[name=disk]").val(ui.value*1000);
 		$("#disk").html("3: "+(ui.value/1000)+" GB disk");
 		$("h2 #final").parent().show();
 		calcTotal()
@@ -47,6 +47,7 @@ $(function(){
 	$("#tos").change(function(){
 		$("input[type=submit]").attr("disabled", !this.value)
 	})
+	$("input[type=submit]").button();
 });
 {% endblock %}
 {% block body %}

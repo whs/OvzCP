@@ -1,6 +1,6 @@
 import os, openvz
 from sqlobject import *
-sqlhub.processConnection = connectionForURI("sqlite://"+os.path.join(os.getcwd(), "db.sqlite")+"?debug=true")
+sqlhub.processConnection = connectionForURI("sqlite://"+os.path.join(os.getcwd(), "db.sqlite"))
 
 class User(SQLObject):
 	email = StringCol()
