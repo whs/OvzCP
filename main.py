@@ -214,6 +214,9 @@ class StartVM(BaseHandler):
 			return
 		proc = vm.start()
 		proc.wait()
+		# Sometimes OvzCP return internal server error
+		# this should remedy the bug
+		time.sleep(2)
 		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
 
 class ClaimVM(BaseHandler):
@@ -339,7 +342,7 @@ class Billing(BaseHandler):
 		for i in myVM(self.current_user, True):
 			if i.vz.running:
 				vmcost.append((i.veid, vmBilling(i.vz)))
-		self.render("billing.html", vmcost=vmcost)
+		self.render("billing.html", vmcost=vmcost, title="Billing")
 
 class PayReceive(BaseHandler):
 	def check_xsrf_cookie(self):
