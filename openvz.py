@@ -29,22 +29,48 @@ class VM(object):
 	def running(self):
 		d = commands.getoutput("vzlist -a -H -o status %s"%self.veid)
 		return d.strip() == "running"
-	@property
-	def ip(self):
+	
+	def get_ip(self):
 		d = commands.getoutput("vzlist -a -H -o ip %s"%self.veid)
 		return d.strip()
-	@property
-	def hostname(self):
+	def set_ip(self, ip, remove_ip="all"):
+		self.set_conf("ipdel", remove_ip)
+		return self.set_conf("ipadd", ip)
+	ip = property(get_ip, set_ip)
+	
+	def get_hostname(self):
 		d = commands.getoutput("vzlist -a -H -o hostname %s"%self.veid)
 		if d.strip() == "-": d=""
 		return d.strip()
+	def set_hostname(self, hostname):
+		return self.set_conf("hostname", hostname)
+	hostname = property(get_hostname, set_hostname)
+	
 	@property
 	def os(self):
 		return self.conf['OSTEMPLATE']
-	@property
-	def memlimit(self):
+	
+	def get_memlimit(self):
 		""" soft cap of [guaranteed, burstable, max] (vmguar, privvm, oomguar) """
 		return [self.conf['VMGUARPAGES'][0]*ARCH_PAGE, self.conf['PRIVVMPAGES'][0]*ARCH_PAGE, self.conf['OOMGUARPAGES'][0]*ARCH_PAGE]
+	def set_memlimit(self, min=0, burst=0, max=0):
+		""" units are in kilobyte """
+		if min > burst or burst > max:
+			raise Exception, "VMGUAR > PRIVVM or PRIVVM > OOMGUAR"
+		old = self.get_memlimit()
+		changed = False
+		if old[0] != min and min != 0:
+			self.set_conf("vmguarpages", "%s:%s"%(min/ARCH_PAGE, (min+(min*20//100))/ARCH_PAGE))
+			changed = True
+		if old[1] != burst and burst != 0:
+			self.set_conf("privvmpages", "%s:%s"%(burst/ARCH_PAGE, (burst+(burst*20//100))/ARCH_PAGE))
+			changed = True
+		if old[2] != max and burst != 0:
+			self.set_conf("oomguarpages", "%s:%s"%(max/ARCH_PAGE, (max+(max*20//100))/ARCH_PAGE))
+			changed = True
+		return changed
+	memlimit = property(get_memlimit)
+	
 	@property
 	@online_only
 	def meminfo(self):
@@ -56,8 +82,8 @@ class VM(object):
 				i[1] = int(i[1].split(" ")[0])*1024
 			out[i[0]] = i[1]
 		return out
-	@property
-	def diskinfo(self):
+	
+	def get_diskinfo(self):
 		""" [total, used, free] """
 		if self.running:
 			d = commands.getoutput("vzctl exec %s df"%self.veid)
@@ -66,6 +92,11 @@ class VM(object):
 		else:
 			data = self.conf['DISKSPACE']
 			return [data[0], 0, 0]
+	def set_diskinfo(self, space):
+		""" Space's unit is in kilobyte """
+		return self.set_conf("diskspace", "%s:%s"%(space, space+(space*20//100)))
+	diskinfo = property(get_diskinfo, set_diskinfo)
+	
 	@property
 	def uptime(self):
 		if not self.running:
@@ -79,8 +110,8 @@ class VM(object):
 		else:
 			d = commands.getoutput("vzctl exec %s cat /proc/loadavg"%self.veid)
 			return map(lambda x:float(x), d.split(" ")[:3])
-	@property
-	def conf(self):
+	
+	def get_conf(self):
 		conf = open("/etc/vz/conf/"+str(self.veid)+".conf").read()
 		out = {}
 		for i in re.findall('(.*?)=(?:"|)(.*?)(?:"|\n)', conf):
@@ -97,6 +128,10 @@ class VM(object):
 				pass
 			out[i[0]] = i[1]
 		return out
+	def set_conf(self, key, value):
+		return commands.getoutput("vzctl set %s --%s %s --save"%(self.veid, key.lower(), value))
+	conf = property(get_conf, set_conf)
+	
 	def start(self):
 		if self.running:
 			return False
