@@ -84,11 +84,11 @@ $(function() {
 				<td>
 					<a href="/vm/{{i.veid}}/edit" title="Edit {{i.veid}}"><img src="{{static_url('edit.png')}}" /></a>
 				{% if i.vz.running %}
-					<a href="/restart?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Restart {{i.veid}}?')" title="Restart {{i.veid}}"><img src="/static/restart.png" /></a> 
-					<a href="/stop?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{i.veid}}?')" title="Stop {{i.veid}}"><img src="/static/poweroff.png" /></a> 
+					<a href="/vm/{{i.veid}}/restart?return=/dashboard&_xsrf={{xsrf}}" onclick="return confirm('Restart {{i.veid}}?')" title="Restart {{i.veid}}"><img src="/static/restart.png" /></a> 
+					<a href="/vm/{{i.veid}}/stop?return=/dashboard&_xsrf={{xsrf}}" onclick="return confirm('Stop {{i.veid}}?')" title="Stop {{i.veid}}"><img src="/static/poweroff.png" /></a> 
 				{% else %}
-					<a href="/start?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Start {{i.veid}}?')" title="Start {{i.veid}}"><img src="/static/start.png" /></a> 
-					<a href="/destroy?veid={{i.veid}}&_xsrf={{xsrf}}" onclick="return confirm('Destroy {{i.veid}}?')" title="Destroy all data on {{i.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
+					<a href="/vm/{{i.veid}}/start?return=/dashboard&_xsrf={{xsrf}}" onclick="return confirm('Start {{i.veid}}?')" title="Start {{i.veid}}"><img src="/static/start.png" /></a> 
+					<a href="/vm/{{i.veid}}/destroy?return=/dashboard&_xsrf={{xsrf}}" onclick="return confirm('Destroy {{i.veid}}?')" title="Destroy all data on {{i.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
 				{% endif %}
 				</td></tr>
 				{% endfor %}
@@ -99,7 +99,7 @@ $(function() {
 		<div class="portlet-header">Billing</div>
 		<div class="portlet-content">
 			<b>Total VM running cost:</b> {{billing}} {{unit}}<br />
-			<b>Deplete in:</b> <span class="time">{{((current_user.credit)/totalcost)*60}}</span><br />
+			{% if totalcost %}<b>Deplete in:</b> <span class="time">{{((current_user.credit)/totalcost)*60}}</span><br />{% endif %}
 			<b>Next cron run in:</b> <span id="nextcron"></span>
 		</div>
 	</div>

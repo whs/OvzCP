@@ -17,7 +17,7 @@
 </tbody>
 <tfooter>
 	<tr><th>Total</th><td>{{totalcost}}</td></tr>
-	<tr><th>Will deplete in</th><td class="time">{{((current_user.credit)/totalcost)*60}}</td></tr>
+	{% if totalcost %}<tr><th>Will deplete in</th><td class="time">{{((current_user.credit)/totalcost)*60}}</td></tr>{% endif %}
 </tfooter>
 </table>
 {% endblock %}

@@ -117,7 +117,7 @@ class Containers(BaseHandler):
 			elif err == "3":
 				errmsg = "VM is already owned by current user"
 			elif err == "4":
-				errmsg = _config.get("billing", "unit") + " is under 100, please refill."
+				errmsg = _config.get("billing", "unit") + " is under 1,000, please refill."
 		if self.get_argument("msg", None):
 			msg = self.get_argument("msg")
 			if msg == "1":
@@ -168,8 +168,8 @@ class CreateVM(BaseHandler):
 class RestartVM(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
-	def get(self):
-		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
+	def get(self, veid):
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
 			return
@@ -179,13 +179,13 @@ class RestartVM(BaseHandler):
 			return
 		proc = vm.restart()
 		proc.wait()
-		self.redirect(self.get_argument("return", "/"))
+		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
 
 class StopVM(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
-	def get(self):
-		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
+	def get(self, veid):
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
 			return
@@ -195,16 +195,16 @@ class StopVM(BaseHandler):
 			return
 		proc = vm.stop()
 		proc.wait()
-		self.redirect(self.get_argument("return", "/"))
+		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
 
 class StartVM(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
-	def get(self):
-		if self.current_user < 100:
+	def get(self, veid):
+		if self.current_user.credit < 1000:
 			self.redirect("/?error=4")
 			return
-		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
 			return
@@ -214,12 +214,12 @@ class StartVM(BaseHandler):
 			return
 		proc = vm.start()
 		proc.wait()
-		self.redirect(self.get_argument("return", "/"))
+		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
 
 class ClaimVM(BaseHandler):
 	@tornado.web.authenticated
-	def get(self):
-		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
+	def get(self, veid):
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if not self.get_argument("revert", False):
 			if sql.user:
 				self.redirect("/?error=1")
@@ -237,7 +237,7 @@ class ClaimVM(BaseHandler):
 				self.redirect("/?error=1")
 				return
 			sql.set(user=None)
-		self.redirect("/?msg=1")
+		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
 
 class VMinfo(BaseHandler):
 	@tornado.web.authenticated
@@ -352,44 +352,43 @@ class PayReceive(BaseHandler):
 class AddPort(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
-	def get(self):
+	def get(self, veid):
 		d=models.PortForward.select(models.PortForward.q.id == int(self.get_argument("delete")))[0]
 		if d.vm.user != self.current_user or not d.vm.user:
 			self.redirect("/?error=1")
 			return
-		veid=d.vm.veid
 		d.destroySelf()
 		import vmfw
 		vmfw.update(models.PortForward.select())
 		vmfw.restart()
 		self.redirect("/vm/%s#portedit"%veid)
 	@tornado.web.authenticated
-	def post(self):
-		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
+	def post(self, veid):
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
 			self.redirect("/?error=1")
 			return
 		if not re.match(_config.get("iface", "allowed"), self.get_argument("iface")):
-			self.redirect("/vm/%s?error=4"%sql.veid)
+			self.redirect("/vm/%s?error=4"%veid)
 			return
-		if models.PortForward.select(models.AND(models.PortForward.q.iface==self.get_argument("iface"), models.PortForward.q.outport==int(self.get_argument("outport")))).count():
-			self.redirect("/vm/%s?error=1"%sql.veid)
+		if models.PortForward.select(models.AND(models.PortForward.q.iface==self.get_argument("iface"), 
+				models.PortForward.q.outport==int(self.get_argument("outport")))).count():
+			self.redirect("/vm/%s?error=1"%veid)
 			return
 		models.PortForward(vm=sql, iface=self.get_argument("iface"), port=int(self.get_argument("port")), outport=int(self.get_argument("outport")))
 		import vmfw
 		vmfw.update(models.PortForward.select())
 		vmfw.restart()
-		self.redirect("/vm/%s#portedit"%sql.veid)
+		self.redirect("/vm/%s#portedit"%veid)
 
 class AddVarnish(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
-	def get(self):
+	def get(self, veid):
 		d=models.VarnishCond.select(models.VarnishCond.q.id == int(self.get_argument("delete")))[0]
 		if d.backend.vm.user != self.current_user or not d.backend.vm.user:
 			self.redirect("/?error=1")
 			return
-		veid = d.backend.vm.veid
 		# check for orphaned backend
 		backend = d.backend
 		d.destroySelf()
@@ -400,16 +399,16 @@ class AddVarnish(BaseHandler):
 			varnish.updateBackend(models.VarnishBackend.select())
 		self.redirect("/vm/%s#webedit"%veid)
 	@tornado.web.authenticated
-	def post(self):
-		sql = models.VM.select(models.VM.q.veid == int(self.get_argument("veid")))[0]
+	def post(self, veid):
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
 			self.redirect("/?error=1")
 			return
 		if not re.match(r"^[a-zA-Z0-9\.\-_]+$", self.get_argument("host")):
-			self.redirect("/vm/%s?error=3"%sql.veid)
+			self.redirect("/vm/%s?error=3"%veid)
 			return
 		if models.VarnishCond.select(models.VarnishCond.q.hostname==self.get_argument("host")).count():
-			self.redirect("/vm/%s?error=1"%sql.veid)
+			self.redirect("/vm/%s?error=1"%veid)
 			return
 		backend = models.VarnishBackend.select(models.AND(models.VarnishBackend.q.port == int(self.get_argument("port")), models.VarnishBackend.q.vm==sql))
 		if backend.count():
@@ -422,7 +421,7 @@ class AddVarnish(BaseHandler):
 		if backendUpdate:
 			varnish.updateBackend(models.VarnishBackend.select())
 		varnish.updateRecv(models.VarnishCond.select())
-		self.redirect("/vm/%s#webedit"%sql.veid)
+		self.redirect("/vm/%s#webedit"%veid)
 
 class VarnishRestart(BaseHandler):
 	@tornado.web.authenticated
@@ -516,19 +515,19 @@ application = tornado.web.Application([
 	(r"/auth", GoogleHandler),
 	(r"/", Containers),
 	(r"/dashboard", Dashboard),
-	(r"/restart", RestartVM),
-	(r"/stop", StopVM),
-	(r"/start", StartVM),
-	(r"/claim", ClaimVM),
 	(r"/create", CreateVM),
 	(r"/billing", Billing),
 	(r"/payreceive", PayReceive),
 	(r"/spec", HostSpec),
-	(r"/addweb", AddVarnish),
-	(r"/addport", AddPort),
 	(r"/varnishRestart", VarnishRestart),
 	(r"/vm/([0-9]+)", VMinfo),
 	(r"/vm/([0-9]+)/edit", VMedit),
+	(r"/vm/([0-9]+)/restart", RestartVM),
+	(r"/vm/([0-9]+)/stop", StopVM),
+	(r"/vm/([0-9]+)/start", StartVM),
+	(r"/vm/([0-9]+)/claim", ClaimVM),
+	(r"/vm/([0-9]+)/addweb", AddVarnish),
+	(r"/vm/([0-9]+)/addport", AddPort),
 	(r"/_cron", CronRun),
 ], **settings)
 

@@ -12,7 +12,7 @@ except ImportError:
 	sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 	import netifaces
 
-# Varnish configuration generator
+# iptables forwarding configuration generator
 def update(data):
 	jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
 	ip={}

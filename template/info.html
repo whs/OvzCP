@@ -36,11 +36,11 @@ $(function(){
 <div id="subhead">{% if vz.running %}Running{% else %}Stopped{% endif %}</div>
 <span id="toolbar">
 {% if vz.running %}
-	<a href="/restart?veid={{veid}}&_xsrf={{xsrf}}" onclick="return confirm('Restart {{vz.veid}}?')"><button><img src="{{static_url('restart.png')}}" / > Restart</button></a>
-	<a href="/stop?veid={{veid}}&_xsrf={{xsrf}}" onclick="return confirm('Stop {{vz.veid}}?')"><button><img src="{{static_url('poweroff.png')}}" /> Stop</button></a>
+	<a href="/vm/{{veid}}/restart?_xsrf={{xsrf}}" onclick="return confirm('Restart {{vz.veid}}?')"><button><img src="{{static_url('restart.png')}}" / > Restart</button></a>
+	<a href="/vm/{{veid}}/stop?_xsrf={{xsrf}}" onclick="return confirm('Stop {{vz.veid}}?')"><button><img src="{{static_url('poweroff.png')}}" /> Stop</button></a>
 {% else %}
-	<a href="/start?veid={{veid}}&_xsrf={{xsrf}}" onclick="return confirm('Start {{vz.veid}}?')"><button><img src="{{static_url('start.png')}}" /> Start</button></a>
-	<a href="/destroy?veid={{veid}}&_xsrf={{xsrf}}" onclick="return confirm('Destroy {{veid}}?')" title="Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><button><img src="{{static_url('destroy.png')}}" /> Destroy</button></a>
+	<a href="/vm/{{veid}}/start?_xsrf={{xsrf}}" onclick="return confirm('Start {{vz.veid}}?')"><button><img src="{{static_url('start.png')}}" /> Start</button></a>
+	<a href="/vm/{{veid}}/destroy?_xsrf={{xsrf}}" onclick="return confirm('Destroy {{veid}}?')" title="Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><button><img src="{{static_url('destroy.png')}}" /> Destroy</button></a>
 {% endif %}
 	<a href="/vm/{{veid}}/edit"><button><img src="{{static_url('edit.png')}}" /> Edit</button></a>
 	<a href="#" onclick="editweb(); return false" title="Forward HTTP application port to port 80 on specified hostname."><button>Web forward</button></a>
@@ -93,9 +93,8 @@ $(function(){
 Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
 After edit changes will <b>NOT</b> be visible until you click <button onclick="restartVarnish()" id="varnishRestartButton">restart proxy</button>. (Every site, including this may not be accessible for few seconds)
 Note that you can restart the proxy once only five minutes.
-<form style="margin-top: 10px;" action="/addweb" method="post">
+<form style="margin-top: 10px;" action="/vm/{{veid}}/addweb" method="post">
 {{ xsrf_form_html() }}
-<input type="hidden" name="veid" value="{{veid}}" />
 <table>
 <thead>
 	<tr><th>Domain</th><th>Port</th><th>Wildcard</th><th>Action</th></tr>
@@ -120,9 +119,8 @@ Note that you can restart the proxy once only five minutes.
 </form>
 </div>
 <div id="portedit" style="display: none;">
-<form style="margin-top: 10px;" action="/addport" method="post">
+<form style="margin-top: 10px;" action="/vm/{{veid}}/addport" method="post">
 {{ xsrf_form_html() }}
-<input type="hidden" name="veid" value="{{veid}}" />
 <table>
 <thead>
 	<tr><th>Interface</th><th>Port</th><th>External Port</th><th>Action</th></tr>
