@@ -10,27 +10,15 @@ try:
 	os.chdir(os.path.dirname(__file__))
 except OSError:
 	pass
-# looking up tornado, the webserver
-# otherwise put our egg into sys.path
-try:
-	import tornado #not really used
-except ImportError:
-	import sys
-	sys.path.append(os.path.join(os.getcwd(), "tornado-0.2-py2.5-linux-i686.egg"))
-try:
-	import jinja2
-except ImportError:
-	import sys
-	sys.path.append(os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
-	import jinja2
-try:
-	import netifaces
-except ImportError:
-	import sys
-	sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
-	import netifaces
+
+import sys
+sys.path.insert(0, os.path.join(os.getcwd(), "tornado-0.2-py2.5-linux-i686.egg"))
+# Debian lenny's Jinja2 is older than 2.2 thus cannot be used
+sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
+sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
+
 import models
-import ConfigParser, cPickle, openvz, math, time, re
+import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web

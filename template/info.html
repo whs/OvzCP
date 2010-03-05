@@ -75,8 +75,8 @@ $(function(){
 	<tr><td><div title="The more process, the slower your machine">Process count</div></td><td>{{vz.nproc}}</td></tr>
 {% endif %}
 	<tr><th colspan="2">Memory</th></tr>
-	<tr><td><div title="Guaranteed memory limit how much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vz.memlimit[0]|filesizeformat}}</td></tr>
-	<tr><td><div title="Burstable memory is maximum limit. You application may use these memory but if other VM that haven't reach its guaranteed memory need to use memory, your application will be terminated.">Burstable</div></td><td>{{vz.memlimit[1]|filesizeformat}}</td></tr>
+	<tr><td><div title="How much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vz.memlimit[0]|filesizeformat}}</td></tr>
+	<tr><td><div title="Maximum limit. You application may use these memory but if other VM that haven't reach its guaranteed memory need more memory, your application will be terminated.">Burstable</div></td><td>{{vz.memlimit[1]|filesizeformat}}</td></tr>
 </tbody>
 </table>
 {% if vz.running %}

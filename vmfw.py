@@ -1,16 +1,7 @@
-import os
-try:
-	import jinja2
-except ImportError:
-	import sys
-	sys.path.append(os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
-	import jinja2
-try:
-	import netifaces
-except ImportError:
-	import sys
-	sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
-	import netifaces
+import os, sys
+sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
+sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
+import jinja2, netifaces
 
 # iptables forwarding configuration generator
 def update(data):

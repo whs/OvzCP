@@ -1,10 +1,6 @@
-import os, ConfigParser, time
-try:
-	import jinja2
-except ImportError:
-	import sys
-	sys.path.append(os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
-	import jinja2
+import os, ConfigParser, time, sys
+sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
+import jinja2
 
 _config = ConfigParser.SafeConfigParser()
 _config.read("config.ini")

@@ -193,8 +193,18 @@ li.os label{
 	color: black;
 	background: white;
 }
-.ui-dialog table a{
-	color: black;
+.ui-dialog table a, .portlet-content table a{
+	color: black !important;
+}
+#tooltip {
+	display: none;
+	background: transparent url({{static_url('tips.png')}});
+	font-size: 13px;
+	line-height: 1.1em;
+	width:179px;
+	height: 79px;
+	padding: 15px;
+	color: white;
 }
 	/* ]]> */
 	</style>
@@ -262,7 +272,7 @@ $(function(){
 	$("#error .loghead").click(function(){
 		$("pre", $(this).parent()).slideToggle(250);
 	})
-	$('div[title], span[title], a[title]').tinyTips('title');
+	$('div[title], span[title], a[title]').tooltip({effect: 'slide', tip: '#tooltip', lazy: false, predelay: 100}).dynamic({bottom: {direction: 'down', bounce: true}});
 	$('.time').html(function(ind, i){
 		return formatTime(parseFloat(i));
 	});
@@ -273,6 +283,7 @@ $(function(){
 </script>
 </head>
 <body>
+<div id="tooltip"></div>
 <div id="container">
 <div id="top-bar">
 	<div id="top-bar-in">
