@@ -43,8 +43,12 @@ $(function(){
 	<a href="/vm/{{veid}}/destroy?_xsrf={{xsrf}}" onclick="return confirm('Destroy {{veid}}?')" title="Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><button><img src="{{static_url('destroy.png')}}" /> Destroy</button></a>
 {% endif %}
 	<a href="/vm/{{veid}}/edit"><button><img src="{{static_url('edit.png')}}" /> Edit</button></a>
+{% if config.getboolean("varnish", "enabled") %}
 	<a href="#" onclick="editweb(); return false" title="Forward HTTP application port to port 80 on specified hostname."><button>Web forward</button></a>
+{% endif %}
+{% if config.getboolean("iface", "enabled") %}
 	<a href="#" onclick="editport(); return false" title="Forward port on an interface"><button>Port forward</button></a>
+{% endif %}
 </span>
 <h1>Billing</h1>
 <div class="notify">To calculate credit depletion time for every VM, see <a href="/billing">billing</a>. <u>All calculations are rounded up.</u></div>
@@ -89,6 +93,7 @@ $(function(){
 {% endif %}
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vz.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vz.diskinfo[1]*1000)|filesizeformat}}|Free {{(vz.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vz.diskinfo[1]}},{{vz.diskinfo[2]}}&amp;chds=0,{{vz.diskinfo[0]}}" />
 {% endif %}
+{% if config.getboolean("varnish", "enabled") %}
 <div id="webedit" style="display: none;">
 Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
 After edit changes will <b>NOT</b> be visible until you click <button onclick="restartVarnish()" id="varnishRestartButton">restart proxy</button>. (Every site, including this may not be accessible for few seconds)
@@ -118,6 +123,8 @@ Note that you can restart the proxy once only five minutes.
 </table>
 </form>
 </div>
+{% endif %}
+{% if config.getboolean("iface", "enabled") %}
 <div id="portedit" style="display: none;">
 <form style="margin-top: 10px;" action="/vm/{{veid}}/addport" method="post">
 {{ xsrf_form_html() }}
@@ -146,4 +153,5 @@ Note that you can restart the proxy once only five minutes.
 </table>
 </form>
 </div>
+{% endif %}
 {% endblock %}

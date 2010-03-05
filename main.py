@@ -344,6 +344,7 @@ class AddPort(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
 	def get(self, veid):
+		if not _config.getboolean("iface", "enabled"): return
 		d=models.PortForward.select(models.PortForward.q.id == int(self.get_argument("delete")))[0]
 		if d.vm.user != self.current_user or not d.vm.user:
 			self.redirect("/?error=1")
@@ -355,6 +356,7 @@ class AddPort(BaseHandler):
 		self.redirect("/vm/%s#portedit"%veid)
 	@tornado.web.authenticated
 	def post(self, veid):
+		if not _config.getboolean("iface", "enabled"): return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
 			self.redirect("/?error=1")
@@ -376,6 +378,7 @@ class AddVarnish(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
 	def get(self, veid):
+		if not _config.getboolean("varnish", "enabled"): return
 		d=models.VarnishCond.select(models.VarnishCond.q.id == int(self.get_argument("delete")))[0]
 		if d.backend.vm.user != self.current_user or not d.backend.vm.user:
 			self.redirect("/?error=1")
@@ -391,6 +394,7 @@ class AddVarnish(BaseHandler):
 		self.redirect("/vm/%s#webedit"%veid)
 	@tornado.web.authenticated
 	def post(self, veid):
+		if not _config.getboolean("varnish", "enabled"): return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
 			self.redirect("/?error=1")
@@ -418,6 +422,7 @@ class VarnishRestart(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
 	def get(self):
+		if not _config.getboolean("varnish", "enabled"): return
 		if self.get_argument("state") == "0":
 			cookie = self.get_secure_cookie("varnishrestart")
 			if not cookie:
