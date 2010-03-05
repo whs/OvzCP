@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 {% block javascript %}
+function editroot(){
+	window.location.hash = "rootedit"
+	$("#rootedit").dialog({modal: true, title: "Root password", width: "50%", height: 200, close: function(x,y){
+		window.location.hash = ""
+		window.location.reload()
+	}});
+}
+{% if config.getboolean("varnish", "enabled") %}
 function editweb(){
 	window.location.hash = "webedit"
 	$("#webedit").dialog({modal: true, title: "Web forward", width: "75%", height: 400, close: function(x,y){
@@ -7,6 +15,8 @@ function editweb(){
 		window.location.reload()
 	}});
 }
+{% endif %}
+{% if config.getboolean("iface", "enabled") %}
 function editport(){
 	window.location.hash = "portedit"
 	$("#portedit").dialog({modal: true, title: "Port forward", width: "75%", height: 400, close: function(x,y){
@@ -24,10 +34,28 @@ function restartVarnish(){
 		})
 	});
 }
+{% endif %}
 $(function(){
+	{% if config.getboolean("varnish", "enabled") %}
 	if(window.location.hash == "#webedit"){
 		editweb();
 	}
+	{% endif %}
+	{% if config.getboolean("iface", "enabled") %}
+	if(window.location.hash == "#portedit"){
+		editport();
+	}
+	{% endif %}
+	if(window.location.hash == "#rootedit"){
+		editroot();
+	}
+	$("#rootedit input[name=root], #rootedit input[name=root2]").keyup(function(){
+		if($("#rootedit input[name=root]").val() != $("#rootedit input[name=root2]").val()){
+			$("#rootedit input[type=submit]").attr("disabled", true)
+		}else{
+			$("#rootedit input[type=submit]").attr("disabled", false)
+		}
+	})
 	$("#toolbar button").button()
 });
 {% endblock %}
@@ -49,6 +77,7 @@ $(function(){
 {% if config.getboolean("iface", "enabled") %}
 	<a href="#" onclick="editport(); return false" title="Forward port on an interface"><button>Port forward</button></a>
 {% endif %}
+	<a href="#" onclick="editroot(); return false" title="Change root password"><button>Root password</button></a>
 </span>
 <h1>Billing</h1>
 <div class="notify">To calculate credit depletion time for every VM, see <a href="/billing">billing</a>. <u>All calculations are rounded up.</u></div>
@@ -151,6 +180,14 @@ Note that you can restart the proxy once only five minutes.
 	</tr>
 </tfooter>
 </table>
+</form>
+</div>
+<div id="rootedit" style="display: none;">
+<form style="margin-top: 10px;" action="/vm/{{veid}}/root" method="post">
+{{ xsrf_form_html() }}
+<b>New Root password:</b> <input type="password" name="root" /><br />
+<b>Confirm Root password:</b> <input type="password" name="root2" />
+<p><input type="submit" value="Save" /></p>
 </form>
 </div>
 {% endif %}

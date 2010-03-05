@@ -254,12 +254,16 @@ class VMinfo(BaseHandler):
 				errmsg = "Invalid hostname"
 			elif err == "4":
 				errmsg = "Invalid interface"
+			elif err == "5":
+				errmsg = "Passwords do not match"
 		if self.get_argument("message", None):
 			msg = self.get_argument("message")
 			if msg == "1":
 				txtmsg = "Settings commited. Please restart your VM if you edit its hostname."
 			elif msg == "2":
 				txtmsg = "No changes."
+			elif msg == "3":
+				txtmsg = "Root password successfully changed"
 		interface={}
 		for iface in netifaces.interfaces():
 			if not re.match(_config.get("iface", "allowed"), iface):
@@ -339,6 +343,19 @@ class PayReceive(BaseHandler):
 	@tornado.web.authenticated
 	def post(self):
 		self.write(self.request.arguments)
+
+class RootPW(BaseHandler):
+	@tornado.web.authenticated
+	def post(self, veid):
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
+		if sql.user != self.current_user or not sql.user:
+			self.redirect("/?error=1")
+			return
+		if self.get_argument("root") != self.get_argument("root2"):
+			self.redirect("/vm/"+str(veid)+"?error=5")
+			return
+		sql.vz.root_password(self.get_argument("root"))
+		self.redirect("/vm/"+str(veid)+"?message=3")
 
 class AddPort(BaseHandler):
 	@tornado.web.authenticated
@@ -524,6 +541,7 @@ application = tornado.web.Application([
 	(r"/vm/([0-9]+)/claim", ClaimVM),
 	(r"/vm/([0-9]+)/addweb", AddVarnish),
 	(r"/vm/([0-9]+)/addport", AddPort),
+	(r"/vm/([0-9]+)/root", RootPW),
 	(r"/_cron", CronRun),
 ], **settings)
 
