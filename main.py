@@ -173,7 +173,8 @@ class CreateVM(BaseHandler):
 		if self.get_argument("root") != self.get_argument("root2"):
 			self.redirect("/create?error=3")
 			return
-		if not re.match("^([0-9A-Za-z_\-]+)$", self.get_argument("hostname")):
+		hostnames = map(lambda x: x.hostname,openvz.listVM())
+		if not re.match("^([0-9A-Za-z_\-]+)$", self.get_argument("hostname")) or self.get_argument("hostname") in hostnames:
 			self.redirect("/create?error=4")
 			return
 		vm=openvz.createVM(self.get_argument("os"), None, _config.get("iface", "nameserver"), self.get_argument("root"))
