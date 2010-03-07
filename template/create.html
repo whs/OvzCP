@@ -44,10 +44,20 @@ $(function(){
 			$("#createp").show()
 		}
 	});
+	$("input[name=root], input[name=root2]").keyup(function(){
+		if($("input[name=root]").val() != $("input[name=root2]").val()){
+			$("input[name=root], input[name=root2]").css({backgroundColor: "red", color: "white"})
+		}else{
+			$("input[name=root], input[name=root2]").css({backgroundColor: "white", color: "black"})
+		}
+	})
 	$("#tos").change(function(){
 		$("input[type=submit]").attr("disabled", !this.value)
 	})
 	$("input[type=submit]").button();
+	$("form").submit(function(){
+		$("input[type=submit]").attr("disabled", true)
+	})
 });
 {% endblock %}
 {% block body %}
@@ -108,13 +118,22 @@ $(function(){
 </div>
 <h2 style="display: none"><a href="#" id="final">4: Final steps</a></h2>
 <div class="block">
-	<span title="Hostname is the name of your machine. This must be unique but have no impact on your machine.">Hostname: <input type="text" name="hostname" value="" /></span><br />
+	<div class="notify" style="color: black;">Hostname is the name of your machine. This must be unique but have no impact on your machine.</div>
+	<div>Hostname: <input type="text" name="hostname" /></div>
+	<div class="notify" style="color: black;">Root is the adminstrator of the system. Root's password is key to the entire system so please use a secure password.<br />
+	Note that to ssh into the machine, you need to add port forwarding afterward
+	</div>
+	<div>
+		Root password: <input type="password" name="root" /><br />
+		Confirm: <input type="password" name="root2" />
+	</div>
 	<p>
 		This virtual machine will consume <b id="totalmoney"></b> {{unit}} per minute. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})
 	</p>
 	<div id="createp" style="display: none;">
 		<p><input type='checkbox' name="tos" id="tos"> <label for="tos">I accept the terms of services</label></p>
 		<p><b>Check every setting before click on </b><input type="submit" value="Create" disabled /></p>
+		<p>After click "Create", it takes while to create the VM.</p>
 	</div>
 </div>
 </form>

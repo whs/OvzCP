@@ -129,10 +129,14 @@ class VM(object):
 		return out
 	def set_conf(self, key, value=""):
 		if value:
+			if value == True:
+				value = "yes"
+			elif value == False:
+				value = "no"
 			return commands.getoutput("vzctl set %s --%s %s --save"%(self.veid, key.lower(), value))
 		else:
 			for i in key.iteritems():
-				self.set_conf(i[0], i[1])
+				self.set_conf(*i)
 	conf = property(get_conf, set_conf)
 	
 	def start(self):
@@ -166,3 +170,17 @@ def listTemplates():
 	for i in os.listdir("/var/lib/vz/template/cache/"):
 		out.append(i.replace(".tar.gz", ""))
 	return out
+def createVM(template, veid=None, nameserver=None, root=None):
+	if not veid:
+		try:
+			veid = listVM()[-1].veid+1
+		except IndexError:
+			veid = 101
+	status = os.system("vzctl create %s --ostemplate %s"%(veid, template))
+	if status != 0:
+		raise Exception, "vzctl create exited with status "+str(status)
+	vm=VM(veid)
+	vm.conf = {"onboot": True, "nameserver": nameserver}
+	if root:
+		vm.root_password(root)
+	return vm

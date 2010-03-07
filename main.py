@@ -150,8 +150,46 @@ class CreateVM(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		hostnames = map(lambda x: x.hostname,openvz.listVM())
+		err=""
+		if self.get_argument("error", None):
+			e = self.get_argument("error")
+			if e == "1":
+				err="Terms of Service not accepted"
+			elif e == "2":
+				err="Invalid template name"
+			elif e == "3":
+				err="Password do not match"
+			elif e == "4":
+				err="Invalid hostname"
 		self.render("create.html", templates=openvz.listTemplates(), hostnames = hostnames,
-			title="Creating VM")
+			title="Creating VM", error=err)
+	def post(self):
+		if not self.get_argument("tos"):
+			self.redirect("/create?error=1")
+			return
+		if self.get_argument("os") not in openvz.listTemplates():
+			self.redirect("/create?error=2")
+			return
+		if self.get_argument("root") != self.get_argument("root2"):
+			self.redirect("/create?error=3")
+			return
+		if not re.match("^([0-9A-Za-z_\-]+)$", self.get_argument("hostname")):
+			self.redirect("/create?error=4")
+			return
+		vm=openvz.createVM(self.get_argument("os"), None, _config.get("iface", "nameserver"), self.get_argument("root"))
+		models.VM(veid=vm.veid, user=self.current_user)
+		# hostname
+		vm.hostname = self.get_argument("hostname")
+		# ram
+		ram = float(self.get_argument("ram"))
+		burst = math.floor(ram+(ram*int(_config.get("billing", "memoryBurst"))/100))
+		memlimit = [ram, burst, burst+10240]
+		vm.memlimit = memlimit
+		# disk
+		vm.diskinfo = float(self.get_argument("disk"))
+		# add IP
+		vm.ip = _config.get("iface", "vmIP")+str(vm.veid)
+		self.redirect("/vm/"+str(vm.veid))
 
 class RestartVM(BaseHandler):
 	@tornado.web.authenticated
