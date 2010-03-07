@@ -106,6 +106,8 @@ class Containers(BaseHandler):
 				errmsg = "VM is already owned by current user"
 			elif err == "4":
 				errmsg = _config.get("billing", "unit") + " is under 1,000, please refill."
+			elif err == "5":
+				errmsg = "VM is running"
 		if self.get_argument("msg", None):
 			msg = self.get_argument("msg")
 			if msg == "1":
@@ -191,6 +193,24 @@ class CreateVM(BaseHandler):
 		# add IP
 		vm.ip = _config.get("iface", "vmIP")+str(vm.veid)
 		self.redirect("/vm/"+str(vm.veid))
+
+class DestroyVM(BaseHandler):
+	@tornado.web.authenticated
+	@xsrf_check
+	def get(self, veid):
+		# TODO: Confirmation page
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
+		if sql.user != self.current_user and sql.user:
+			self.redirect("/?error=1")
+			return
+		vm = sql.vz
+		if vm.running:
+			self.redirect("/?error=5")
+			return
+		proc = vm.destroy()
+		proc.wait()
+		sql.destroySelf()
+		self.redirect(self.get_argument("return", "/"))
 
 class RestartVM(BaseHandler):
 	@tornado.web.authenticated
@@ -574,6 +594,7 @@ application = tornado.web.Application([
 	(r"/varnishRestart", VarnishRestart),
 	(r"/vm/([0-9]+)", VMinfo),
 	(r"/vm/([0-9]+)/edit", VMedit),
+	(r"/vm/([0-9]+)/destroy", DestroyVM),
 	(r"/vm/([0-9]+)/restart", RestartVM),
 	(r"/vm/([0-9]+)/stop", StopVM),
 	(r"/vm/([0-9]+)/start", StartVM),
