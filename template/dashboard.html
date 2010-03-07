@@ -18,13 +18,13 @@ function updateVMload(){
 			hostlist.push({data: VMgraphdata[i], label: i});
 		}
 		$.plot($("#graph-vmload"), hostlist, {
-			xaxis: {mode: "time", minTickSize: [5, "second"]},
+			xaxis: {mode: "time", minTickSize: [20, "second"]},
 			yaxis: {min: 0},
 			legend: {container: $("#vmload-legend"), noColumns: 5, labelFormatter: function(label, series) {
 				return '<b>'+label+'</b> ('+series.data[series.data.length-1][1]+')';
 			}},
 		});
-		setTimeout(updateVMload, 1000);
+		setTimeout(updateVMload, 5000);
 	});
 }
 function updateTime(){

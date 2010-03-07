@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block javascript %}
+{% if vm.user == current_user %}
 function editroot(){
 	window.location.hash = "rootedit"
 	$("#rootedit").dialog({modal: true, title: "Root password", width: "50%", height: 200, close: function(x,y){
@@ -58,10 +59,12 @@ $(function(){
 	})
 	$("#toolbar button").button()
 });
+{% endif %}
 {% endblock %}
 {% block body %}
 <div id="bighead">{{vz.hostname}} ({{veid}})</div>
 <div id="subhead">{% if vz.running %}Running{% else %}Stopped{% endif %}</div>
+{% if vm.user == current_user %}
 <span id="toolbar">
 {% if vz.running %}
 	<a href="/vm/{{veid}}/restart?_xsrf={{xsrf}}" onclick="return confirm('Restart {{vz.veid}}?')"><button><img src="{{static_url('restart.png')}}" / > Restart</button></a>
@@ -79,6 +82,7 @@ $(function(){
 {% endif %}
 	<a href="#" onclick="editroot(); return false" title="Change root password"><button>Root password</button></a>
 </span>
+{% endif %}
 <h1>Billing</h1>
 <div class="notify">To calculate credit depletion time for every VM, see <a href="/billing">billing</a>. <u>All calculations are rounded up.</u></div>
 <table>
