@@ -318,7 +318,7 @@ class VMinfo(BaseHandler):
 		if self.get_argument("message", None):
 			msg = self.get_argument("message")
 			if msg == "1":
-				txtmsg = "Settings commited. Please restart your VM if you edit its hostname."
+				txtmsg = "Settings commited."
 			elif msg == "2":
 				txtmsg = "No changes."
 			elif msg == "3":
@@ -378,6 +378,7 @@ class VMedit(BaseHandler):
 			sql.vz.memlimit = memlimit
 			change.append("memlimit")
 		if change:
+			vm.restart().wait()
 			self.redirect("/vm/"+str(veid)+"?message=1")
 		else:
 			self.redirect("/vm/"+str(veid)+"?message=2")

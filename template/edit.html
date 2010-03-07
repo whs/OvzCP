@@ -55,6 +55,7 @@ $(function(){
 {% endblock %}
 {% block body %}
 <h1>Editing {{veid}}</h1>
+<div class="notify">Saving this page will result in VM being restarted</div>
 <form action="/vm/{{veid}}/edit" method="post">
 {{ xsrf_form_html() }}
 <div id="accordion">
@@ -100,8 +101,7 @@ $(function(){
 </div>
 <h2><a href="#" id="hostname">Hostname: {{vz.hostname}}</a></h2>
 <div class="block">
-	<b>Hostname:</b> <input type="text" name="hostname" value="{{vz.hostname}}" /><br />
-	<b>Note:</b> After hostname have been changed, please restart the VM.
+	<b>Hostname:</b> <input type="text" name="hostname" value="{{vz.hostname}}" />
 </div>
 <h2><a href="#">Save</a></h2>
 <div class="block">
