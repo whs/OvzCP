@@ -14,6 +14,8 @@ class VM(SQLObject):
 	user = ForeignKey('User')
 	varnishBackend = SQLMultipleJoin('VarnishBackend')
 	portForward = SQLMultipleJoin('PortForward')
+	munin = SingleJoin('Munin')
+	muninID = IntCol(default=0)
 	@property
 	def vz(self):
 		return openvz.VM(self.veid)
@@ -38,9 +40,13 @@ class VarnishCond(SQLObject):
 	def backend(self):
 		return self.varnishBackend
 
+class Munin(SQLObject):
+	vm = ForeignKey('VM')
+
 if __name__ == "__main__":
 	User.createTable(True)
 	VM.createTable(True)
 	VarnishBackend.createTable(True)
 	VarnishCond.createTable(True)
 	PortForward.createTable(True)
+	Munin.createTable(True)

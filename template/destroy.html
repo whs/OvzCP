@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block javascript %}
+$(function(){
+	$("button").button();
+});
+{% endblock %}
+{% block body %}
+<h1>Final warning before destroying <u>{{hostname}}</u> ({{veid}})</h1>
+<p>	Destroying a virtual machine means that <b>ALL DATA</b> and <b>CONFIGURATION</b> will be removed and cannot be recovered.</p>
+<p>Make sure to backup ALL data on the {{veid}} before continue</p>
+<div class="notify">If you changed your mind, click <a href="/vm/{{veid}}">back</a></div>
+<p>
+	<form action="destroy" method="post">
+	{{xsrf_form_html()}}
+	<input type="submit" value="I understand that this is irreversible, proceed to deletion" />
+	</form>
+	<noscript>Please enable JavaScript</noscript>
+</p>
+{% endblock %}

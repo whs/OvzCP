@@ -36,6 +36,23 @@ function restartVarnish(){
 	});
 }
 {% endif %}
+{% if config.getboolean("munin", "enabled") %}
+function toggleMunin(){
+	$("#munin button").attr("disabled", true);
+	$.post("/vm/{{veid}}/munin", {"_xsrf": "{{xsrf}}", status: "toggle"}, function(d){
+		$("#munin button").attr("disabled", false);
+		d=JSON.parse(d)
+		if(d.error) alert(d)
+		else if(d.status){
+			$("#munin").attr("title", "Disable munin monitoring")
+			alert("Munin monitoring enabled");
+		}else{
+			$("#munin").attr("title", "Enable munin monitoring")
+			alert("Munin monitoring disabled");
+		}
+	})
+}
+{% endif %}
 $(function(){
 	{% if config.getboolean("varnish", "enabled") %}
 	if(window.location.hash == "#webedit"){
@@ -80,6 +97,9 @@ $(function(){
 {% if config.getboolean("iface", "enabled") %}
 	<a href="#" onclick="editport(); return false" title="Forward port on an interface"><button>Port forward</button></a>
 {% endif %}
+{% if config.getboolean("munin", "enabled") %}
+	<a href="#" onclick="toggleMunin(); return false" id="munin" title="{% if not vm.munin %}Enable{% else %}Disable{% endif %} munin monitoring"><button>Toggle Munin</button></a>
+{% endif %}
 	<a href="#" onclick="editroot(); return false" title="Change root password"><button>Root password</button></a>
 </span>
 {% endif %}
@@ -110,6 +130,9 @@ $(function(){
 	<tr><td><div title="How long does this VM have been started">Uptime</div></td><td><div class="time">{{vz.uptime}}</div></td></tr>
 	<tr><td>Load average</td><td><span title="5 minute">{{vz.loadAvg[0]}}</span> <span title="10 minute">{{vz.loadAvg[1]}}</span> <span title="15 minute">{{vz.loadAvg[2]}}</span></td></tr>
 	<tr><td><div title="The more process, the slower your machine">Process count</div></td><td>{{vz.nproc}}</td></tr>
+{% endif %}
+{% if vm.munin %}
+	<tr><td><div title="Monitoring & Graphing">Munin</div></td><td><a href="{{static_url('munin/hostOS/'+str(current_user.id)+'/'+vz.hostname+'.html')}}">View</a></td></tr>
 {% endif %}
 	<tr><th colspan="2">Memory</th></tr>
 	<tr><td><div title="How much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vz.memlimit[0]|filesizeformat}}</td></tr>

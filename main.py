@@ -88,7 +88,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		
 		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
 		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, static_url=self.static_url,
-			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), request=self.request, config=_config, totalcost=totalcost, *args, **kwargs))
+			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), request=self.request, config=_config, totalcost=totalcost, 
+			str=str, *args, **kwargs))
 		return
 
 class Containers(BaseHandler):
@@ -527,6 +528,27 @@ class AddVarnish(BaseHandler):
 		varnish.updateRecv(models.VarnishCond.select())
 		self.redirect("/vm/%s#webedit"%veid)
 
+class Munin(BaseHandler):
+	def post(self, veid):
+		if not _config.getboolean("munin", "enabled"): return
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
+		if sql.user != self.current_user or not sql.user:
+			self.write(`{"error": "VM not owned by current user"}`.replace("'", '"'))
+			return
+		if self.get_argument("status") == "toggle":
+			e = not sql.munin
+		else:
+			e = self.get_argument("status") == "true"
+		import munin
+		if e:
+			if not munin.check_ip(sql.vz.ip):
+				self.write(`{"error": "Cannot connect to Munin on the VM"}`.replace("'", '"'))
+				return
+			models.Munin(vm=sql)
+		else:
+			sql.munin.destroySelf()
+		self.write((`{"status": bool(sql.munin)}`).lower().replace("'", '"'))
+
 class VarnishRestart(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
@@ -634,6 +656,7 @@ application = tornado.web.Application([
 	(r"/vm/([0-9]+)/claim", ClaimVM),
 	(r"/vm/([0-9]+)/addweb", AddVarnish),
 	(r"/vm/([0-9]+)/addport", AddPort),
+	(r"/vm/([0-9]+)/munin", Munin),
 	(r"/vm/([0-9]+)/root", RootPW),
 	(r"/_cron", CronRun),
 ], **settings)

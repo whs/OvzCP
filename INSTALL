@@ -50,5 +50,10 @@ sub vcl_recv{
 	* * * * * wget http://OVZCPHOST/_cron?cron_key=CRON_KEY -O - > /dev/null 2>/dev/null
 	
     (Do not forget to replace YOUROVZCPHOST and CRON_KEY with the value in your configuration
+    
+10. $ python munin.py
+11. Remove /etc/munin/munin.conf and replaces with symlink to /opt/ovzcp/sysconf/munin.conf 
 
-9. Reboot your system with init 6 and have fun with OvzCP!
+	$ ln -s /opt/ovzcp/sysconf/munin.conf /etc/munin/munin.conf
+	
+12. Reboot your system with init 6 and have fun with OvzCP!
