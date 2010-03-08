@@ -85,12 +85,16 @@ class VM(object):
 	def get_diskinfo(self):
 		""" [total, used, free] """
 		if self.running:
-			d = commands.getoutput("vzctl exec %s df"%self.veid)
-			d = re.split(" [ ]+", d.split("\n")[1])
-			return [int(d[1]), int(d[2]), int(d[3])]
+			cmd = "stat"
 		else:
-			data = self.conf['DISKSPACE']
-			return [data[0], 0, 0]
+			cmd = "show"
+		d = commands.getoutput("vzquota %s %s"%(cmd, self.veid))
+		d = re.split("[ ]+", d.split("\n")[1].strip())
+		usage = d[1]
+		if usage.endswith("*"): usage = usage[:-1]
+		usage = int(usage)
+		total = int(d[2]) # soft limit
+		return [total, usage, total-usage]
 	def set_diskinfo(self, space):
 		""" Space's unit is in kilobyte """
 		return self.set_conf("diskspace", "%s:%s"%(int(space), int(space+(space*20//100))))

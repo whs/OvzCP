@@ -52,7 +52,11 @@ def vmBilling(vm, desc=False, user=False):
 	# memory
 	prices['memory'] = int(math.ceil((_config.getint("billing", "memory")/_config.getint("billing", "memoryPer"))*(vm.memlimit[0]/1000000)))
 	# disk
-	prices['disk'] = int(math.ceil((_config.getint("billing", "disk")/_config.getint("billing", "diskPer"))*(vm.diskinfo[0]/1000)))
+	diskusage = (vm.diskinfo[0]/1000)
+	if vm.running:
+		if vm.diskinfo[1] > vm.diskinfo[0]:
+			diskusage = (vm.diskinfo[1]/1000)
+	prices['disk'] = int(math.ceil((_config.getint("billing", "disk")/_config.getint("billing", "diskPer"))*diskusage))
 	# sum
 	prices['total'] = reduce(lambda x,y: x+y, prices.values())
 	if user:
@@ -302,6 +306,8 @@ class VMinfo(BaseHandler):
 			return
 		errmsg = ""
 		txtmsg = ""
+		if sql.vz.diskinfo[1] > sql.vz.diskinfo[0]:
+			errmsg="VM disk usage exceed allocated amount. You will be billed by amount used instead"
 		if self.get_argument("error", None):
 			err = self.get_argument("error")
 			if err == "1":
@@ -315,6 +321,8 @@ class VMinfo(BaseHandler):
 				errmsg = "Invalid interface"
 			elif err == "5":
 				errmsg = "Passwords do not match"
+			elif err == "6":
+				errmsg = "VM disk usage is lower than used amount"
 		if self.get_argument("message", None):
 			msg = self.get_argument("message")
 			if msg == "1":
@@ -378,7 +386,7 @@ class VMedit(BaseHandler):
 			sql.vz.memlimit = memlimit
 			change.append("memlimit")
 		if change:
-			vm.restart().wait()
+			sql.vz.restart().wait()
 			self.redirect("/vm/"+str(veid)+"?message=1")
 		else:
 			self.redirect("/vm/"+str(veid)+"?message=2")
