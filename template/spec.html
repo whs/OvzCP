@@ -13,6 +13,9 @@
 	<tr><td><div title="How many VM is running currently">VM online</div></td><td>{{runningVM}}</td></tr>
 	<tr><td><div title="How long does this machine have been started">Uptime</div></td><td><div class="time">{{uptime}}</div></td></tr>
 	<tr><td>Load average</td><td><span title="5 minute">{{loadAvg[0]}}</span> <span title="10 minute">{{loadAvg[1]}}</span> <span title="15 minute">{{loadAvg[2]}}</span></td></tr>
+{% if config.getboolean("munin", "enabled") %}
+	<tr><td><div title="Monitoring & Graphing">Munin</div></td><td><a href="/static/munin/hostOS/hostOS.html">Visit</a></td></tr>
+{% endif %}
 </tbody>
 </table>
 <h1>Graph</h1>

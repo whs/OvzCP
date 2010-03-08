@@ -98,7 +98,7 @@ $(function(){
 	<a href="#" onclick="editport(); return false" title="Forward port on an interface"><button>Port forward</button></a>
 {% endif %}
 {% if config.getboolean("munin", "enabled") %}
-	<a href="#" onclick="toggleMunin(); return false" id="munin" title="{% if not vm.munin %}Enable{% else %}Disable{% endif %} munin monitoring"><button>Toggle Munin</button></a>
+	<a href="#" onclick="toggleMunin(); return false" id="munin" title="{% if not vm.munin %}Enable{% else %}Disable{% endif %} munin monitoring. Note that munin data is public"><button>Toggle Munin</button></a>
 {% endif %}
 	<a href="#" onclick="editroot(); return false" title="Change root password"><button>Root password</button></a>
 </span>
@@ -132,7 +132,7 @@ $(function(){
 	<tr><td><div title="The more process, the slower your machine">Process count</div></td><td>{{vz.nproc}}</td></tr>
 {% endif %}
 {% if vm.munin %}
-	<tr><td><div title="Monitoring & Graphing">Munin</div></td><td><a href="{{static_url('munin/hostOS/'+str(current_user.id)+'/'+vz.hostname+'.html')}}">View</a></td></tr>
+	<tr><td><div title="Monitoring & Graphing">Munin</div></td><td><a href="/static/munin/{% if vm.user %}{{vm.user.id}}{% else %}{{vz.hostname}}{% endif %}/{{vz.hostname}}.html">View</a></td></tr>
 {% endif %}
 	<tr><th colspan="2">Memory</th></tr>
 	<tr><td><div title="How much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vz.memlimit[0]|filesizeformat}}</td></tr>

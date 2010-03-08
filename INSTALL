@@ -52,6 +52,7 @@ sub vcl_recv{
     (Do not forget to replace YOUROVZCPHOST and CRON_KEY with the value in your configuration
     
 10. $ python munin.py
+      # chown munin:munin /opt/ovzcp/static/munin
 11. Remove /etc/munin/munin.conf and replaces with symlink to /opt/ovzcp/sysconf/munin.conf 
 
 	$ ln -s /opt/ovzcp/sysconf/munin.conf /etc/munin/munin.conf
