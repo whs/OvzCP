@@ -118,6 +118,8 @@ class Containers(BaseHandler):
 				txtmsg = "VM now belongs to you"
 			elif msg == "2":
 				txtmsg = "VM ownership removed. Other can now claim this VM"
+			elif msg == "3":
+				txtmsg = "VM destroyed"
 		self.render("container.html", container=myVM(self.current_user),
 			title="Containers", error=errmsg, message=txtmsg)
 
@@ -202,7 +204,9 @@ class DestroyVM(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
 	def get(self, veid):
-		# TODO: Confirmation page
+		vm = openvz.VM(int(veid))
+		self.render("destroy.html", veid=veid, hostname=vm.hostname, credit=vmBilling(vm), title="Destroy "+veid)
+	def post(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
@@ -214,7 +218,7 @@ class DestroyVM(BaseHandler):
 		proc = vm.destroy()
 		proc.wait()
 		sql.destroySelf()
-		self.redirect(self.get_argument("return", "/"))
+		self.redirect(self.get_argument("return", "/?msg=3"))
 
 class RestartVM(BaseHandler):
 	@tornado.web.authenticated
