@@ -167,7 +167,7 @@ Note that you can restart the proxy once only five minutes.
 </thead>
 <tbody>
 {% for i in vm.portForward %}
-	<tr><td>{{i.iface}} ({{interface[i.iface]}})</td><td>{{i.port}}</td><td>{{i.outport}}</td>
+	<tr><td>{{i.iface}} ({{interface[i.iface][0]}})</td>{% if i.outport != -1 %}<td>{{i.port}}</td><td>{{i.outport}}</td>{% else %}<td colspan="2" style="text-align: center;">DMZ</td>{% endif %}
 	<td><a href="/vm/{{veid}}/addport?delete={{i.id}}&_xsrf={{xsrf}}" title="Delete this item" onclick="return confirm('Delete {{i.iface}} {{i.port}}-{{i.outport}}?');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 </tbody>
@@ -175,7 +175,9 @@ Note that you can restart the proxy once only five minutes.
 	<tr>
 		<th><select name="iface">
 		{% for i in interface.items() %}
-			<option value="{{i[0]}}">{{i[0]}} ({{i[1]}})</option>
+		{% if not i[1][1] %}
+			<option value="{{i[0]}}">{{i[0]}} ({{i[1][0]}})</option>
+		{% endif %}
 		{% endfor %}
 		</select></th>
 		<th><input type="text" name="port" /></th>

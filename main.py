@@ -340,11 +340,12 @@ class VMinfo(BaseHandler):
 					continue
 			except ConfigParser.NoOptionError:
 				pass
+			owned = False
 			if models.PortForward.select(models.AND(models.PortForward.q.iface == iface, models.PortForward.q.outport == -1)).count():
-				continue
+				owned = True
 			try:
-				interface[iface] = netifaces.ifaddresses(iface)[netifaces.AF_INET][0]['addr']
-			except KeyError:
+				interface[iface] = [netifaces.ifaddresses(iface)[netifaces.AF_INET][0]['addr'], owned]
+			except KeyError, e:
 				pass
 		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=veid+" information", billing=vmBilling(sql.vz, True, self.current_user),
 			error=errmsg, message=txtmsg, interface=interface)
