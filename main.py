@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 
 import models
-import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces
+import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -32,10 +32,10 @@ def xsrf_check(func):
 	def f(self, *args, **kwargs):
 		try:
 			if self.get_cookie("_xsrf") != self.get_argument("_xsrf"):
-				self.write("XSRF Check fail")
+				self.write(_("XSRF Check fail"))
 				return False
 		except Exception, e:
-			self.write("XSRF Check fail by exception")
+			self.write(_("XSRF Check fail by exception"))
 			return False
 		return func(self, *args, **kwargs)
 	return f
@@ -71,6 +71,17 @@ class BaseHandler(tornado.web.RequestHandler):
 		data = self.get_user()
 		if data:
 			return data
+	def get_user_locale(self):
+		out = None
+		if self.get_argument("_locale", None):
+			out = self.get_argument("_locale")
+			self.set_cookie("locale", out)
+		if not out:
+			out=self.get_cookie("locale", None)
+		if out:
+			return [out]
+		else:
+			return None
 	def get_user(self):
 		data = self.get_secure_cookie("auth")
 		if data:
@@ -80,16 +91,20 @@ class BaseHandler(tornado.web.RequestHandler):
 				return query[0]
 			else:
 				return models.User(email=userData['email'], credit=0)
+	def prepare(self):
+		self.gettext = gettext.translation('messages', os.path.join(os.getcwd(), "po"), self.get_user_locale(), fallback=True)
+		self.gettext.install(True)
 	def render(self, tmpl, *args, **kwargs):
 		totalcost = 0
 		for i in myVM(self.current_user, True):
 			if i.vz.running:
 				totalcost += vmBilling(i.vz)
 		
-		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
+		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"), extensions=['jinja2.ext.i18n'])
+		jinja.install_gettext_translations(self.gettext)
 		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, static_url=self.static_url,
 			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), request=self.request, config=_config, totalcost=totalcost, 
-			str=str, *args, **kwargs))
+			str=str, locale=self.locale, *args, **kwargs))
 		return
 
 class Containers(BaseHandler):
@@ -104,27 +119,31 @@ class Containers(BaseHandler):
 		if self.get_argument("error", None):
 			err = self.get_argument("error")
 			if err == "1":
-				errmsg = "VM not owned by current user"
+				# NOTE: When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the current user, it will return this error
+				errmsg = _("VM not owned by current user")
 			elif err == "2":
-				errmsg = "VM is not running"
+				errmsg = _("VM is not running")
 			elif err == "3":
-				errmsg = "VM is already owned by current user"
+				# NOTE: Displayed when trying to claim a VM that belongs to yourself
+				errmsg = _("VM is already owned by current user")
 			elif err == "4":
-				errmsg = _config.get("billing", "unit") + " is under 1,000, please refill."
+				# NOTE: Displayed when trying to start a VM but user's credit is lower than 1,000 credits. The %s is the unit name such as credit
+				errmsg = _("%s is under 1,000, please refill.") % _config.get("billing", "unit")
 			elif err == "5":
-				errmsg = "VM is running"
+				errmsg = _("VM is running")
 			elif err == "6":
-				errmsg = "You need 5,000 "+_config.get("billing", "unit")+" to create a VM."
+				# NOTE: Displayed when trying to create a VM but user's credit is lower than 5,000 credits. The %s is the unit name such as credit
+				errmsg = _("You need 5,000 %s to create a VM." % _config.get("billing", "unit"))
 		if self.get_argument("msg", None):
 			msg = self.get_argument("msg")
 			if msg == "1":
-				txtmsg = "VM now belongs to you"
+				txtmsg = _("VM now belongs to you")
 			elif msg == "2":
-				txtmsg = "VM ownership removed. Other can now claim this VM"
+				txtmsg = _("VM ownership removed. Other can now claim this VM")
 			elif msg == "3":
-				txtmsg = "VM destroyed"
+				txtmsg = _("VM destroyed")
 		self.render("container.html", container=myVM(self.current_user),
-			title="Containers", error=errmsg, message=txtmsg)
+			title=_("Containers"), error=errmsg, message=txtmsg)
 
 class HostSpec(BaseHandler):
 	@tornado.web.authenticated
@@ -155,7 +174,7 @@ class HostSpec(BaseHandler):
 		cpu = commands.getoutput('cat /proc/cpuinfo |grep "model name"').split("\n")[0].split("\t")[1][2:]
 		hostname = open("/etc/hostname").read().strip()
 		self.render("spec.html", mem=mem, disk=disk, loadAvg=loadAvg, os=dist, uptime=uptime, kernel=kernel, nproc=nproc,
-			runningVM=runningVM, cpu=cpu, hostname=hostname, title="Host OS specification")
+			runningVM=runningVM, cpu=cpu, hostname=hostname, title=_("Host OS specification"))
 
 class CreateVM(BaseHandler):
 	@tornado.web.authenticated
@@ -168,15 +187,15 @@ class CreateVM(BaseHandler):
 		if self.get_argument("error", None):
 			e = self.get_argument("error")
 			if e == "1":
-				err="Terms of Service not accepted"
+				err=_("Terms of Service not accepted")
 			elif e == "2":
-				err="Invalid template name"
+				err=_("Invalid template name")
 			elif e == "3":
-				err="Password do not match"
+				err=_("Passwords do not match")
 			elif e == "4":
-				err="Invalid hostname"
+				err=_("Invalid hostname")
 		self.render("create.html", templates=openvz.listTemplates(), hostnames = hostnames,
-			title="Creating VM", error=err)
+			title=_("Creating VM"), error=err)
 	def post(self):
 		if self.current_user.credit < 5000:
 			self.redirect("/?error=6")
@@ -214,7 +233,7 @@ class DestroyVM(BaseHandler):
 	@xsrf_check
 	def get(self, veid):
 		vm = openvz.VM(int(veid))
-		self.render("destroy.html", veid=veid, hostname=vm.hostname, credit=vmBilling(vm), title="Destroy "+veid)
+		self.render("destroy.html", veid=veid, hostname=vm.hostname, credit=vmBilling(vm), title=_("Destroy %s")%veid)
 	def post(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
@@ -320,30 +339,32 @@ class VMinfo(BaseHandler):
 		errmsg = ""
 		txtmsg = ""
 		if sql.vz.diskinfo[1] > sql.vz.diskinfo[0]:
-			errmsg="VM disk usage exceed allocated amount. You will be billed by amount used instead"
+			errmsg=_("VM disk usage exceed allocated amount. You will be billed by amount used instead")
 		if self.get_argument("error", None):
 			err = self.get_argument("error")
 			if err == "1":
-				errmsg = "Entry already exists"
+				# NOTE: Duplicate entry
+				errmsg = _("Entry already exists")
 			elif err == "2":
 				restart = (int(self.get_secure_cookie("varnishrestart"))+300) - time.time()
-				errmsg = "You have to wait <span class='time'>%s</span> before you can restart the reverse proxy again"%restart
+				# NOTE: <span class='time'>%s</span> is time in this format: 1 day 3 hours 4 minutes 5 seconds
+				errmsg = _("You have to wait <span class='time'>%s</span> before you can restart the reverse proxy again")%restart
 			elif err == "3":
-				errmsg = "Invalid hostname"
+				# NOTE: Malformat hostname
+				errmsg = _("Invalid hostname")
 			elif err == "4":
-				errmsg = "Invalid interface"
+				# NOTE: Network interface
+				errmsg = _("Invalid interface")
 			elif err == "5":
-				errmsg = "Passwords do not match"
-			elif err == "6":
-				errmsg = "VM disk usage is lower than used amount"
+				errmsg = _("Passwords do not match")
 		if self.get_argument("message", None):
 			msg = self.get_argument("message")
 			if msg == "1":
-				txtmsg = "Settings commited."
+				txtmsg = _("Settings commited.")
 			elif msg == "2":
-				txtmsg = "No changes."
+				txtmsg = _("No changes.")
 			elif msg == "3":
-				txtmsg = "Root password successfully changed"
+				txtmsg = _("Root password successfully changed")
 		interface={}
 		for iface in netifaces.interfaces():
 			if not re.match(_config.get("iface", "allowed"), iface):
@@ -360,7 +381,7 @@ class VMinfo(BaseHandler):
 				interface[iface] = [netifaces.ifaddresses(iface)[netifaces.AF_INET][0]['addr'], owned]
 			except KeyError, e:
 				pass
-		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=veid+" information", billing=vmBilling(sql.vz, True, self.current_user),
+		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=_("%s information")%veid, billing=vmBilling(sql.vz, True, self.current_user),
 			error=errmsg, message=txtmsg, interface=interface)
 
 class VMedit(BaseHandler):
@@ -379,7 +400,7 @@ class VMedit(BaseHandler):
 		if self.get_argument("error", None):
 			pass
 		hostnames = map(lambda x: x.hostname, filter(lambda x: x.veid != int(veid),openvz.listVM()))
-		self.render("edit.html", veid=veid, vz=sql.vz, title="Edit "+veid, error=errmsg, message=txtmsg, hostnames=hostnames)
+		self.render("edit.html", veid=veid, vz=sql.vz, title=_("Edit %s")%veid, error=errmsg, message=txtmsg, hostnames=hostnames)
 	@tornado.web.authenticated
 	def post(self, veid):
 		try:
@@ -423,7 +444,7 @@ class Billing(BaseHandler):
 		for i in myVM(self.current_user, True):
 			if i.vz.running:
 				vmcost.append((i.veid, vmBilling(i.vz)))
-		self.render("billing.html", vmcost=vmcost, title="Billing")
+		self.render("billing.html", vmcost=vmcost, title=_("Billing"))
 
 class PayReceive(BaseHandler):
 	def check_xsrf_cookie(self):
@@ -541,7 +562,7 @@ class Munin(BaseHandler):
 		if not _config.getboolean("munin", "enabled"): return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
-			self.write(`{"error": "VM not owned by current user"}`.replace("'", '"'))
+			self.write(`{"error": _("VM not owned by current user")}`.replace("'", '"'))
 			return
 		if self.get_argument("status") == "toggle":
 			e = not sql.munin
@@ -550,7 +571,7 @@ class Munin(BaseHandler):
 		import munin
 		if e:
 			if not munin.check_ip(sql.vz.ip):
-				self.write(`{"error": "Cannot connect to Munin on the VM"}`.replace("'", '"'))
+				self.write(`{"error": _("Cannot connect to Munin on the VM.")}`.replace("'", '"'))
 				return
 			models.Munin(vm=sql)
 		else:
@@ -568,7 +589,7 @@ class VarnishRestart(BaseHandler):
 				cookie=1
 			if (int(cookie)+300) - time.time() > 0:
 				#self.redirect("/vm/%s?error=2"%self.get_argument("veid"))
-				self.write("Limit not reached. Please wait "+str((int(cookie)+300) - time.time())+" seconds")
+				self.write(_("Limit not reached. Please wait %s seconds") % (int(cookie)+300) - time.time())
 				return
 			self.set_secure_cookie("varnishrestart", str(int(time.time())))
 			self.set_secure_cookie("varnishcookie", str(int(time.time())))
@@ -590,7 +611,7 @@ class Dashboard(BaseHandler):
 		for i in myvm:
 			if i.vz.running:
 				billing += vmBilling(i.vz)
-		self.render("dashboard.html", title="Dashboard", container=myvm, billing=billing)
+		self.render("dashboard.html", title=_("Dashboard"), container=myvm, billing=billing)
 	def post(self):
 		data = self.get_argument("data")
 		if data == "vmload":
@@ -600,7 +621,8 @@ class Dashboard(BaseHandler):
 					out[i.vz.hostname] = i.vz.loadAvg[0]
 			d = open("/proc/loadavg").read()
 			loadAvg= map(lambda x:float(x), d.split(" ")[:3])
-			out['Host OS'] = loadAvg[0]
+			# NOTE: Please make this valid as both JSON key and Python dict key
+			out[_('Host OS')] = loadAvg[0]
 			self.write(`[out]`)
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):

@@ -3,7 +3,7 @@
 {% if vm.user == current_user %}
 function editroot(){
 	window.location.hash = "rootedit"
-	$("#rootedit").dialog({modal: true, title: "Root password", width: "50%", height: 200, close: function(x,y){
+	$("#rootedit").dialog({modal: true, title: "{% trans %}Root password{% endtrans %}", width: "50%", height: 200, close: function(x,y){
 		window.location.hash = ""
 		window.location.reload()
 	}});
@@ -11,7 +11,7 @@ function editroot(){
 {% if config.getboolean("varnish", "enabled") %}
 function editweb(){
 	window.location.hash = "webedit"
-	$("#webedit").dialog({modal: true, title: "Web forward", width: "75%", height: 400, close: function(x,y){
+	$("#webedit").dialog({modal: true, title: "{% trans %}Web forward{% endtrans %}", width: "75%", height: 400, close: function(x,y){
 		window.location.hash = ""
 		window.location.reload()
 	}});
@@ -20,18 +20,18 @@ function editweb(){
 {% if config.getboolean("iface", "enabled") %}
 function editport(){
 	window.location.hash = "portedit"
-	$("#portedit").dialog({modal: true, title: "Port forward", width: "75%", height: 400, close: function(x,y){
+	$("#portedit").dialog({modal: true, title: "{% trans %}Port forward{% endtrans %}", width: "75%", height: 400, close: function(x,y){
 		window.location.hash = ""
 		window.location.reload()
 	}});
 }
 function restartVarnish(){
-	if(!confirm("Restart reverse proxy?")) return;
+	if(!confirm("{% trans %}Restart reverse proxy?{% endtrans %}")) return;
 	$("#varnishRestartButton").attr("disabled", true);
 	$.get("/varnishRestart", {"_xsrf": "{{xsrf}}", veid: "{{veid}}", state: 0}, function(d){
 		if(d){ alert(d); return; }
 		$.get("/varnishRestart", {"_xsrf": "{{xsrf}}", state: 1}, function(){
-			alert("The reverse proxy is being restarted. Please be patience, every sites may not be accesible for few seconds.");
+			alert("{% trans %}The reverse proxy is being restarted. Please be patience, every sites may not be accesible for few seconds.{% endtrans %}");
 		})
 	});
 }
@@ -44,10 +44,8 @@ function toggleMunin(){
 		d=JSON.parse(d)
 		if(d.error) alert(d)
 		else if(d.status){
-			$("#munin").attr("title", "Disable munin monitoring")
 			alert("Munin monitoring enabled");
 		}else{
-			$("#munin").attr("title", "Enable munin monitoring")
 			alert("Munin monitoring disabled");
 		}
 	})
@@ -80,59 +78,59 @@ $(function(){
 {% endblock %}
 {% block body %}
 <div id="bighead">{{vz.hostname}} ({{veid}})</div>
-<div id="subhead">{% if vz.running %}Running{% else %}Stopped{% endif %}</div>
+<div id="subhead">{% if vz.running %}{% trans %}Running{% endtrans %}{% else %}{% trans %}Stopped{% endtrans %}{% endif %}</div>
 {% if vm.user == current_user %}
 <span id="toolbar">
 {% if vz.running %}
-	<a href="/vm/{{veid}}/restart?_xsrf={{xsrf}}" onclick="return confirm('Restart {{vz.veid}}?')"><button><img src="{{static_url('restart.png')}}" / > Restart</button></a>
-	<a href="/vm/{{veid}}/stop?_xsrf={{xsrf}}" onclick="return confirm('Stop {{vz.veid}}?')"><button><img src="{{static_url('poweroff.png')}}" /> Stop</button></a>
+	<a href="/vm/{{veid}}/restart?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Restart {{veid}}?{% endtrans %}')"><button><img src="{{static_url('restart.png')}}" / > {% trans %}Restart{% endtrans %}</button></a>
+	<a href="/vm/{{veid}}/stop?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Stop {{veid}}?{% endtrans %}')"><button><img src="{{static_url('poweroff.png')}}" /> {% trans %}Stop{% endtrans %}</button></a>
 {% else %}
-	<a href="/vm/{{veid}}/start?_xsrf={{xsrf}}" onclick="return confirm('Start {{vz.veid}}?')"><button><img src="{{static_url('start.png')}}" /> Start</button></a>
-	<a href="/vm/{{veid}}/destroy?_xsrf={{xsrf}}" onclick="return confirm('Destroy {{veid}}?')" title="Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><button><img src="{{static_url('destroy.png')}}" /> Destroy</button></a>
+	<a href="/vm/{{veid}}/start?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Start {{veid}}?{% endtrans %}')"><button><img src="{{static_url('start.png')}}" /> {% trans %}Start{% endtrans %}</button></a>
+	<a href="/vm/{{veid}}/destroy?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Destroy {{veid}}?{% endtrans %}')" title="{% trans %}Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>.{% endtrans %}"><button><img src="{{static_url('destroy.png')}}" /> {% trans %}Destroy{% endtrans %}</button></a>
 {% endif %}
-	<a href="/vm/{{veid}}/edit"><button><img src="{{static_url('edit.png')}}" /> Edit</button></a>
+	<a href="/vm/{{veid}}/edit"><button><img src="{{static_url('edit.png')}}" /> {% trans %}Edit{% endtrans %}</button></a>
 {% if config.getboolean("varnish", "enabled") %}
-	<a href="#" onclick="editweb(); return false" title="Forward HTTP application port to port 80 on specified hostname."><button>Web forward</button></a>
+	<a href="#" onclick="editweb(); return false" title="{% trans %}Forward HTTP application port to port 80 on specified hostname.{% endtrans %}"><button>{% trans %}Web forward{% endtrans %}</button></a>
 {% endif %}
 {% if config.getboolean("iface", "enabled") %}
-	<a href="#" onclick="editport(); return false" title="Forward port on an interface"><button>Port forward</button></a>
+	<a href="#" onclick="editport(); return false" title="{% trans %}Forward port on an interface{% endtrans %}"><button>{% trans %}Port forward{% endtrans %}</button></a>
 {% endif %}
 {% if config.getboolean("munin", "enabled") %}
-	<a href="#" onclick="toggleMunin(); return false" id="munin" title="{% if not vm.munin %}Enable{% else %}Disable{% endif %} munin monitoring. Note that munin data is public"><button>Toggle Munin</button></a>
+	<a href="#" onclick="toggleMunin(); return false" id="munin" title="{% if not vm.munin %}{% trans %}Enable munin monitoring. Note that munin data is public{% endtrans %}{% else %}{% trans %}Disable munin monitoring. Note that munin data is public{% endtrans %}{% endif %}"><button>{% trans %}Toggle Munin{% endtrans %}</button></a>
 {% endif %}
-	<a href="#" onclick="editroot(); return false" title="Change root password"><button>Root password</button></a>
+	<a href="#" onclick="editroot(); return false" title="{% trans %}Change root's password{% endtrans %}"><button>{% trans %}Root password{% endtrans %}</button></a>
 </span>
 {% endif %}
-<h1>Billing</h1>
-<div class="notify">To calculate credit depletion time for every VM, see <a href="/billing">billing</a>. <u>All calculations are rounded up.</u></div>
+<h1>{% trans %}Billing{% endtrans %}</h1>
+<div class="notify">{% trans %}To calculate {{unit}} depletion time for every VM, see <a href="/billing">billing</a>.{% endtrans %} <u>{% trans %}All calculations are rounded up.{% endtrans %}</u></div>
 <table>
 <thead>
-	<tr><th>Kind</th><th>Cost ({{unit}})</th></tr>
+	<tr><th>{% trans %}Kind{% endtrans %}</th><th>{% trans %}Cost ({{unit}}){% endtrans %}</th></tr>
 </thead>
 <tbody>
-	<tr><td><div title="Every VM created must paid this amount.">Per VM</div></td><td>{{billing['perVM']}}</td></tr>
-	<tr><td><div title="{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB">Memory</div></td><td>{{billing['memory']}}</td></tr>
-	<tr><td><div title="{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} MB">Disk</div></td><td>{{billing['disk']}}</td></tr>
-	<tr><th>Total</th><td>{{billing['total']}}</td></tr>
-	<tr><th>Credit will run out in <small>(when no other VM are running)</small></th><td class="time">{{billing['time']}}</td></tr>
+	<tr><td><div title="{% trans %}Every VM created must paid this amount.{% endtrans %}">{% trans %}Per VM{% endtrans %}</div></td><td>{{billing['perVM']}}</td></tr>
+	<tr><td><div title="{{config.get("billing", "memory")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "memoryPer")}} MB">{% trans %}Memory{% endtrans %}</div></td><td>{{billing['memory']}}</td></tr>
+	<tr><td><div title="{{config.get("billing", "disk")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "diskPer")}} MB">{% trans %}Disk{% endtrans %}</div></td><td>{{billing['disk']}}</td></tr>
+	<tr><th>{% trans %}Total{% endtrans %}</th><td>{{billing['total']}}</td></tr>
+	<tr><th>{% trans %}{{unit}} will run out in <small>(not counting other VM)</small>{% endtrans %}</th><td class="time">{{billing['time']}}</td></tr>
 </tbody>
 </table>
-<h1>Information</h1>
+<h1>{% trans %}Information{% endtrans %}</h1>
 <table>
 <thead>
-	<tr><th>Key</th><th>Value</th></tr>
+	<tr><th>{% trans %}Key{% endtrans %}</th><th>{% trans %}Value{% endtrans %}</th></tr>
 </thead>
 <tbody>
-	<tr><td><div title="Internal IP of this VM. Every other VM running in the same machine can access this IP so you have to keep ports secure.">IP</div></td><td>{{vz.ip}}</td></tr>
-	<tr><td><div title="OS template used to create this VM">OS</div></td><td>{{vz.os|capitalize}}</td></tr>
-	<tr><td><div title="How many space your VM can use. Note that you might able to exceed this capacity temporary.">Disk Capacity</div></td><td>{{(vz.diskinfo[0]*1000)|filesizeformat}}</td></tr>
+	<tr><td><div title="{% trans %}Internal IP of this VM. Every other VM running in the same machine can access this IP so you have to keep ports secure.{% endtrans %}">{% trans %}IP{% endtrans %}</div></td><td>{{vz.ip}}</td></tr>
+	<tr><td><div title="{% trans %}OS template used to create this VM{% endtrans %}">{% trans %}OS Template{% endtrans %}</div></td><td>{{vz.os|capitalize}}</td></tr>
+	<tr><td><div title="{% trans %}How many space your VM can use. Note that you might able to exceed this capacity temporary.{% endtrans %}">{% trans %}Disk Capacity{% endtrans %}</div></td><td>{{(vz.diskinfo[0]*1000)|filesizeformat}}</td></tr>
 {% if vz.running %}
-	<tr><td><div title="How long does this VM have been started">Uptime</div></td><td><div class="time">{{vz.uptime}}</div></td></tr>
-	<tr><td>Load average</td><td><span title="5 minute">{{vz.loadAvg[0]}}</span> <span title="10 minute">{{vz.loadAvg[1]}}</span> <span title="15 minute">{{vz.loadAvg[2]}}</span></td></tr>
-	<tr><td><div title="The more process, the slower your machine">Process count</div></td><td>{{vz.nproc}}</td></tr>
+	<tr><td><div title="{% trans %}How long does this VM have been started{% endtrans %}">{% trans %}Uptime{% endtrans %}</div></td><td><div class="time">{{vz.uptime}}</div></td></tr>
+	<tr><td>{% trans %}Load average{% endtrans %}</td><td><span title="{% trans %}5 minutes{% endtrans %}">{{vz.loadAvg[0]}}</span> <span title="{% trans %}10 minutes{% endtrans %}">{{vz.loadAvg[1]}}</span> <span title="{% trans %}15 minutes{% endtrans %}">{{vz.loadAvg[2]}}</span></td></tr>
+	<tr><td><div title="{% trans %}The more process, the slower your machine{% endtrans %}">{% trans %}Process count{% endtrans %}</div></td><td>{{vz.nproc}}</td></tr>
 {% endif %}
 {% if vm.munin %}
-	<tr><td><div title="Monitoring & Graphing">Munin</div></td><td><a href="/static/munin/{% if vm.user %}{{vm.user.id}}{% else %}{{vz.hostname}}{% endif %}/{{vz.hostname}}.html">View</a></td></tr>
+	<tr><td><div title="{% trans %}Monitoring & Graphing{% endtrans %}">{% trans %}Munin{% endtrans %}</div></td><td><a href="/static/munin/{% if vm.user %}{{vm.user.id}}{% else %}{{vz.hostname}}{% endif %}/{{vz.hostname}}.html">View</a></td></tr>
 {% endif %}
 	<tr><th colspan="2">Memory</th></tr>
 	<tr><td><div title="How much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vz.memlimit[0]|filesizeformat}}</td></tr>

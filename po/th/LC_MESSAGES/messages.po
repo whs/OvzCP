@@ -1,0 +1,497 @@
+# Thai translations for OvzCP.
+# Copyright (C) 2010 whsgroup.ath.cx
+# This file is distributed under the same license as the OvzCP project.
+# Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2010-03-09 00:15+0700\n"
+"PO-Revision-Date: 2010-03-09 02:05+0700\n"
+"Last-Translator: Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>\n"
+"Language-Team: Thai L10N <thai-l10n@googlegroups.com>\n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Virtaal 0.5.2\n"
+"Generated-By: Babel 0.9.1\n"
+
+#: ../main.py:35
+msgid "XSRF Check fail"
+msgstr "ไม่ผ่านการตรวจสอบ XSRF"
+
+#: ../main.py:38
+msgid "XSRF Check fail by exception"
+msgstr "มีข้อผิดพลาดในการตรวจสอบ XSRF"
+
+#. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
+#. current user, it will return this error
+#: ../main.py:123 ../main.py:565
+msgid "VM not owned by current user"
+msgstr "ผู้ใช้ปัจจุบันไม่ได้เป็นเจ้าของ VM นี้"
+
+#: ../main.py:125
+msgid "VM is not running"
+msgstr "VM ไม่ได้ทำงานอยู่"
+
+#. Displayed when trying to claim a VM that belongs to yourself
+#: ../main.py:128
+msgid "VM is already owned by current user"
+msgstr "ท่านเป็นเจ้าของ VM นี้อยู่แล้ว"
+
+#. Displayed when trying to start a VM but user's credit is lower than 1,000
+#. credits. The %s is the unit name such as credit
+#: ../main.py:131
+#, python-format
+msgid "%s is under 1,000, please refill."
+msgstr "มี %s น้อยกว่า 1,000 กรุณาเติมเพิ่ม"
+
+#: ../main.py:133
+msgid "VM is running"
+msgstr "VM กำลังทำงานอยู่"
+
+#. Displayed when trying to create a VM but user's credit is lower than 5,000
+#. credits. The %s is the unit name such as credit
+#: ../main.py:136
+#, python-format
+msgid "You need 5,000 %s to create a VM."
+msgstr "คุณจะต้องมี 5,000 %s จึงจะสร้าง VM ได้"
+
+#: ../main.py:140
+msgid "VM now belongs to you"
+msgstr "VM กลายเป็นของคุณแล้ว"
+
+#: ../main.py:142
+msgid "VM ownership removed. Other can now claim this VM"
+msgstr "ยกเลิกความเป็นเจ้าของ VM แล้ว ผู้ใช้คนอื่นจะสามารถครอบครอง VM นี้ได้"
+
+#: ../main.py:144
+msgid "VM destroyed"
+msgstr "ทำลาย VM แล้ว"
+
+#: ../main.py:146 ../template/base.html:298
+msgid "Containers"
+msgstr "Containers"
+
+#: ../main.py:177
+msgid "Host OS specification"
+msgstr "สเปคเครื่องหลัก"
+
+#: ../main.py:190
+msgid "Terms of Service not accepted"
+msgstr "ไม่ได้ยอมรับเงื่อนไขในการให้บริการ"
+
+#: ../main.py:192
+msgid "Invalid template name"
+msgstr "ชื่อเทมเพลตผิดรูปแบบ"
+
+#: ../main.py:194 ../main.py:359
+msgid "Passwords do not match"
+msgstr "รหัสผ่านไม่ตรงกัน"
+
+#. Malformat hostname
+#: ../main.py:196 ../main.py:354
+msgid "Invalid hostname"
+msgstr "ชื่อโฮสต์ไม่ถูกต้อง"
+
+#: ../main.py:198
+msgid "Creating VM"
+msgstr "สร้าง VM"
+
+#: ../main.py:236
+#, python-format
+msgid "Destroy %s"
+msgstr "ทำลาย %s"
+
+#: ../main.py:342
+msgid ""
+"VM disk usage exceed allocated amount. You will be billed by amount used "
+"instead"
+msgstr ""
+"การใช้งานพื้นที่ดิสก์ของ VM เกินพื้นที่ที่ได้จัดสรรไว้ "
+"คุณจะถูกเรียกเก็บเงินตามจำนวนที่ใช้จริงแทน"
+
+#. Duplicate entry
+#: ../main.py:347
+msgid "Entry already exists"
+msgstr "มีรายการอยู่แล้ว"
+
+#. <span class='time'>%s</span> is time in this format: 1 day 3 hours 4 minutes
+#. 5 seconds
+#: ../main.py:351
+#, python-format
+msgid ""
+"You have to wait <span class='time'>%s</span> before you can restart the "
+"reverse proxy again"
+msgstr ""
+"คุณต้องรออีก <span class='time'>%s</span> จึงจะสามารถรีสตาร์ท reverse "
+"proxy ได้อีกครั้ง"
+
+#. Network interface
+#: ../main.py:357
+msgid "Invalid interface"
+msgstr ""
+
+#: ../main.py:363
+msgid "Settings commited."
+msgstr "บันทึกค่าแล้ว"
+
+#: ../main.py:365
+msgid "No changes."
+msgstr "ไม่มีการเปลี่ยนแปลง"
+
+#: ../main.py:367
+msgid "Root password successfully changed"
+msgstr "เปลี่ยนรหัสผ่าน root แล้ว"
+
+#: ../main.py:384
+#, python-format
+msgid "%s information"
+msgstr "ข้อมูล %s"
+
+#: ../main.py:403
+#, python-format
+msgid "Edit %s"
+msgstr "แก้ไข %s"
+
+#: ../main.py:447 ../template/base.html:300 ../template/info.html:104
+msgid "Billing"
+msgstr "การเงิน"
+
+#: ../main.py:574
+msgid "Cannot connect to Munin on the VM."
+msgstr "ไม่สามารถเชื่อมต่อหา Munin บน VM"
+
+#: ../main.py:592
+#, python-format
+msgid "Limit not reached. Please wait %s seconds"
+msgstr "ยังไม่ถึงกำหนดเวลา กรุณารออีก %s วินาที"
+
+#: ../main.py:614 ../template/base.html:299
+msgid "Dashboard"
+msgstr "แผงควบคุม"
+
+#. Please make this valid as both JSON key and Python dict key
+#: ../main.py:625
+msgid "Host OS"
+msgstr "เครื่องหลัก"
+
+#: ../template/base.html:213
+msgid ""
+"To switch account, please logout from your account at google.com before "
+"click this link.\n"
+"Otherwise, you will be returned to this page.\n"
+"\n"
+"Do you want to continue?"
+msgstr ""
+"ในการเปลี่ยนบัญชีผู้ใช้ กรุณาออกจากระบบที่ google.com ก่อนกดที่ลิงก์นี้ "
+"มิเช่นนั้นแล้วคุณจะกลับมายังหน้านี้\n"
+"\n"
+"ต้องการดำเนินการต่อไปหรือไม่?"
+
+#: ../template/base.html:224 ../template/base.html:225
+msgid "day"
+msgid_plural "days"
+msgstr[0] "วัน"
+msgstr[1] "วัน"
+
+#: ../template/base.html:227
+msgid "d"
+msgstr "ว."
+
+#: ../template/base.html:234 ../template/base.html:235
+msgid "hour"
+msgid_plural "hours"
+msgstr[0] "ชั่วโมง"
+msgstr[1] "ชั่วโมง"
+
+#: ../template/base.html:237
+msgid "h"
+msgstr "ชม."
+
+#: ../template/base.html:244 ../template/base.html:245
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] "นาที"
+msgstr[1] "นาที"
+
+#: ../template/base.html:247
+msgid "m"
+msgstr "น."
+
+#: ../template/base.html:253 ../template/base.html:254
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "วินาที"
+msgstr[1] "วินาที"
+
+#: ../template/base.html:256
+msgid "s"
+msgstr "วิ"
+
+#: ../template/base.html:261
+msgid "now"
+msgstr "ขณะนี้"
+
+#: ../template/base.html:270
+msgid "Double click to close"
+msgstr "ดับเบิลคลิกเพื่อปิด"
+
+#: ../template/base.html:290
+msgid "by whsgroup.ath.cx"
+msgstr "โดย whsgroup.ath.cx"
+
+#: ../template/base.html:292
+msgid "Time left until complete depletion"
+msgstr "จะหมดภายใน"
+
+#: ../template/base.html:301
+msgid "Host Info"
+msgstr "ข้อมูลระบบหลัก"
+
+#: ../template/base.html:311
+msgid "Collapse/Expand"
+msgstr "ย่อ/ขยาย"
+
+#: ../template/base.html:322
+#, python-format
+msgid "You have no %(unit)s available!"
+msgstr "คุณไม่เหลือ %(unit)s แล้ว!"
+
+#: ../template/info.html:6 ../template/info.html:101
+msgid "Root password"
+msgstr "รหัสผ่าน root"
+
+#: ../template/info.html:14 ../template/info.html:93
+msgid "Web forward"
+msgstr "เปิดเว็บ"
+
+#: ../template/info.html:23 ../template/info.html:96
+msgid "Port forward"
+msgstr "เปิดพอร์ต"
+
+#: ../template/info.html:29
+msgid "Restart reverse proxy?"
+msgstr "รีสตาร์ท reverse proxy?"
+
+#: ../template/info.html:34
+msgid ""
+"The reverse proxy is being restarted. Please be patience, every sites may"
+" not be accesible for few seconds."
+msgstr ""
+"โปรดรอขณะที่ Reverse proxy กำลังถูกรีสตาร์ท "
+"ซึ่งทุกเว็บไซต์อาจจะเข้าไม่ได้สักครู่หนึ่ง"
+
+#: ../template/info.html:81
+msgid "Running"
+msgstr "กำลังทำงาน"
+
+#: ../template/info.html:81
+msgid "Stopped"
+msgstr "หยุด"
+
+#: ../template/info.html:85
+#, python-format
+msgid "Restart %(veid)s?"
+msgstr "รีสตาร์ท %(veid)s?"
+
+#: ../template/info.html:85
+msgid "Restart"
+msgstr "รีสตาร์ท"
+
+#: ../template/info.html:86
+#, python-format
+msgid "Stop %(veid)s?"
+msgstr "ปิดเครื่อง %(veid)s?"
+
+#: ../template/info.html:86
+msgid "Stop"
+msgstr "ปิดเครื่อง"
+
+#: ../template/info.html:88
+#, python-format
+msgid "Start %(veid)s?"
+msgstr "เปิดเครื่อง %(veid)s?"
+
+#: ../template/info.html:88
+msgid "Start"
+msgstr "เปิดเครื่อง"
+
+#: ../template/info.html:89
+#, python-format
+msgid "Destroy %(veid)s?"
+msgstr "ทำลาย %(veid)s?"
+
+#: ../template/info.html:89
+#, python-format
+msgid ""
+"Destroy all data on %(veid)s. Note that there are no backup made and "
+"<b>IRREVERSIBLE</b>."
+msgstr "ทำลายข้อมูลทั้งหมดบน %(veid)s โดยไม่มีการสำรองข้อมูลและ<b>ยกเลิกไม่ได้</b>"
+
+#: ../template/info.html:89
+msgid "Destroy"
+msgstr "ทำลาย"
+
+#: ../template/info.html:91
+msgid "Edit"
+msgstr "แก้ไข"
+
+#: ../template/info.html:93
+msgid "Forward HTTP application port to port 80 on specified hostname."
+msgstr "เปิดพอร์ตของโปรแกรม HTTP ไปยังพอร์ต 80 บนโดเมนที่ระบุ"
+
+#: ../template/info.html:96
+msgid "Forward port on an interface"
+msgstr "เปิดพอร์ตบนเครือข่าย"
+
+#: ../template/info.html:99
+msgid "Enable munin monitoring. Note that munin data is public"
+msgstr "เปิดการเฝ้าระวังด้วย munin โดยข้อมูลนี้จะแสดงเป็นสาธารณะ"
+
+#: ../template/info.html:99
+msgid "Disable munin monitoring. Note that munin data is public"
+msgstr "ปิดการเฝ้าระวังด้วย munin โดยข้อมูลนี้จะแสดงเป็นสาธารณะ"
+
+#: ../template/info.html:99
+msgid "Toggle Munin"
+msgstr "เปิด/ปิด Munin"
+
+#: ../template/info.html:101
+msgid "Change root's password"
+msgstr "เปลี่ยนรหัสผ่านของ root"
+
+#: ../template/info.html:105
+#, python-format
+msgid ""
+"To calculate %(unit)s depletion time for every VM, see <a "
+"href=\"/billing\">billing</a>."
+msgstr ""
+"ในการคำนวนหาเวลา %(unit)s หมดสำหรับทุก VM กรุณาดูที่ <a "
+"href=\"/billing\">การเงิน</a>"
+
+#: ../template/info.html:105
+msgid "All calculations are rounded up."
+msgstr "การคำนวนทั้งหมดนี้ปัดขึ้น"
+
+#: ../template/info.html:108
+msgid "Kind"
+msgstr "ชนิด"
+
+#: ../template/info.html:108
+#, python-format
+msgid "Cost (%(unit)s)"
+msgstr "ราคา (%(unit)s)"
+
+#: ../template/info.html:111
+msgid "Every VM created must paid this amount."
+msgstr "VM ทุกตัวจะต้องจ่ายค่านี้"
+
+#: ../template/info.html:111
+msgid "Per VM"
+msgstr "ราย VM"
+
+#: ../template/info.html:112 ../template/info.html:113
+msgid "per"
+msgstr "ต่อ"
+
+#: ../template/info.html:112
+msgid "Memory"
+msgstr "หน่วยความจำ"
+
+#: ../template/info.html:113
+msgid "Disk"
+msgstr "ดิสก์"
+
+#: ../template/info.html:114
+msgid "Total"
+msgstr "รวม"
+
+#: ../template/info.html:115
+#, python-format
+msgid "%(unit)s will run out in <small>(not counting other VM)</small>"
+msgstr "%(unit)s จะหมดใน <small>(เมื่อไม่นับ VM ตัวอื่นๆ)</small>"
+
+#: ../template/info.html:118
+msgid "Information"
+msgstr "ข้อมูล"
+
+#: ../template/info.html:121
+msgid "Key"
+msgstr "ชื่อ"
+
+#: ../template/info.html:121
+msgid "Value"
+msgstr "ค่า"
+
+#: ../template/info.html:124
+msgid ""
+"Internal IP of this VM. Every other VM running in the same machine can "
+"access this IP so you have to keep ports secure."
+msgstr ""
+"IP ภายในของ VM ตัวนี้ โดย VM ตัวอื่นๆ ในเครื่องนี้จะสามารถเข้าถึง IP "
+"นี้ได้ ดังนั้นจะต้องรักษาความปลอดภัยของพอร์ตต่างๆ"
+
+#: ../template/info.html:124
+msgid "IP"
+msgstr "IP"
+
+#: ../template/info.html:125
+msgid "OS template used to create this VM"
+msgstr "แม่แบบระบบปฏิบัติการที่ใช้สร้าง VM นี้"
+
+#: ../template/info.html:125
+msgid "OS Template"
+msgstr "แม่แบบระบบ"
+
+#: ../template/info.html:126
+msgid ""
+"How many space your VM can use. Note that you might able to exceed this "
+"capacity temporary."
+msgstr "VM นี้ใช้เนื้อที่ได้เท่าไร โดยคุณอาจจะใช้เกินได้ชั่วคราว"
+
+#: ../template/info.html:126
+msgid "Disk Capacity"
+msgstr "ความจุดิสก์"
+
+#: ../template/info.html:128
+msgid "How long does this VM have been started"
+msgstr "ระยะเวลาที่เปิด VM นี้มา"
+
+#: ../template/info.html:128
+msgid "Uptime"
+msgstr "Uptime"
+
+#: ../template/info.html:129
+msgid "Load average"
+msgstr "โหลดเฉลี่ย"
+
+#: ../template/info.html:129
+msgid "5 minutes"
+msgstr "5 นาที"
+
+#: ../template/info.html:129
+msgid "10 minutes"
+msgstr "10 นาที"
+
+#: ../template/info.html:129
+msgid "15 minutes"
+msgstr "15 นาที"
+
+#: ../template/info.html:130
+msgid "The more process, the slower your machine"
+msgstr "ยิ่งมีโพรเซสมากเครื่องก็ยิ่งช้า"
+
+#: ../template/info.html:130
+msgid "Process count"
+msgstr "จำนวนโพรเซส"
+
+#: ../template/info.html:133
+msgid "Monitoring & Graphing"
+msgstr "การเฝ้าระวังและกราฟ"
+
+#: ../template/info.html:133
+msgid "Munin"
+msgstr "Munin"

@@ -210,7 +210,7 @@ li.os label{
 <script type="text/javascript" language="javascript" charset="utf-8">
 // <![CDATA[
 strings = {}
-strings['relogin'] = "To switch account, please logout from your account at google.com before click this link.\nOtherwise, you will be returned to this page.\n\nDo you want to continue?";
+strings['relogin'] = "{% trans %}To switch account, please logout from your account at google.com before click this link.\nOtherwise, you will be returned to this page.\n\nDo you want to continue?{% endtrans %}";
 function warn(str){
 	return alert(strings[str]);
 }
@@ -221,44 +221,44 @@ function formatTime(time, sh){
 	out = []
 	if(time >= 86400){
 		date = Math.floor(time / 86400)
-		if(date > 1) plural="s"
-		else plural=""
+		if(date > 1) form="{{ngettext('day', 'days', 2)}}"
+		else form="{{ngettext('day', 'days', 1)}}"
 		if(sh)
-			out.push(date+"d")
+			out.push(date+"{% trans %}d{% endtrans %}")
 		else
-			out.push(date+" day"+plural)
+			out.push(date+" "+form)
 		time = time - (date*86400)
 	}
 	if(time >= 3600){
 		hour = Math.floor(time / 3600)
-		if(hour > 1) plural="s"
-		else plural=""
+		if(hour > 1) form = "{{ngettext('hour', 'hours', 2)}}"
+		else form = "{{ngettext('hour', 'hours', 1)}}"
 		if(sh)
-			out.push(hour+"h")
+			out.push(hour+"{% trans %}h{% endtrans %}")
 		else
-			out.push(hour+" hour"+plural)
+			out.push(hour+" "+form)
 		time = time - (hour*3600)
 	}
 	if(time >= 60){
 		min = Math.floor(time / 60)
-		if(min > 1) plural="s"
-		else plural=""
+		if(min > 1) form = "{{ngettext('minute', 'minutes', 2)}}"
+		else form = "{{ngettext('minute', 'minutes', 1)}}"
 		if(sh)
-			out.push(min+"m")
+			out.push(min+"{% trans %}m{% endtrans %}")
 		else
-			out.push(min+" minute"+plural)
+			out.push(min+" "+form)
 		time = time - (min*60)
 	}
 	if(time > 0){
-		if(time > 1) plural = "s"
-		else plural=""
+		if(time > 1) form = "{{ngettext('second', 'seconds', 2)}}"
+		else form = "{{ngettext('second', 'seconds', 1)}}"
 		if(sh)
-			out.push(parseInt(time)+"s")
+			out.push(parseInt(time)+"{% trans %}s{% endtrans %}")
 		else
-			out.push(parseInt(time)+" second"+plural)
+			out.push(parseInt(time)+" "+form)
 	}
 	if(time == 0)
-		return "now";
+		return "{% trans %}now{% endtrans %}";
 	if(sh)
 		return out.join("")
 	else
@@ -267,7 +267,7 @@ function formatTime(time, sh){
 $(function(){
 	$(".notify .close").dblclick(function(){
 		$(this).parent().slideUp(250);
-	}).attr("title", "Double click to close");
+	}).attr("title", "{% trans %}Double click to close{% endtrans %}");
 	$("#error .loghead").click(function(){
 		$("pre", $(this).parent()).slideToggle(250);
 	})
@@ -287,18 +287,18 @@ $(function(){
 <div id="top-bar">
 	<div id="top-bar-in">
 		<div id="logo"><a href="/">OvzCP</a></div>
-		<div id="version">0.1 by whsgroup.ath.cx</div>
+		<div id="version">0.1 {% trans %}by whsgroup.ath.cx{% endtrans %}</div>
 		<div id="user"><a href="/auth" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
-		({{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="Time left until complete depletion">{{((current_user.credit)/totalcost)*60}}</span>{% endif %})</div>
+		({{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="{% trans %}Time left until complete depletion{% endtrans %}">{{((current_user.credit)/totalcost)*60}}</span>{% endif %})</div>
 	</div>
 </div>
 <div id="left-bar">
 	<div id="left-bar-in">
 		<ul>
-			<li><a href="/">Containers</a></li>
-			<li><a href="/dashboard">Dashboard</a></li>
-			<li><a href="/billing">Billing</a></li>
-			<li><a href="/spec">Host Info</a></li>
+			<li><a href="/">{% trans %}Containers{% endtrans %}</a></li>
+			<li><a href="/dashboard">{% trans %}Dashboard{% endtrans %}</a></li>
+			<li><a href="/billing">{% trans %}Billing{% endtrans %}</a></li>
+			<li><a href="/spec">{% trans %}Host Info{% endtrans %}</a></li>
 		</ul>
 	</div>
 </div>
@@ -308,7 +308,7 @@ $(function(){
 		<div class="close"><img src="{{static_url("close.png")}}" /></div>
 		{{error}}
 		{% if error_log %}
-		<div class="loghead">Collapse/Expand</div>
+		<div class="loghead">{% trans %}Collapse/Expand{% endtrans %}</div>
 		<pre>{{error_log}}</pre>
 		{% endif %}
 	</div>
@@ -319,7 +319,7 @@ $(function(){
 	{% if current_user.credit < 0 %}
 	<div id="error" class="notify">
 		<div class="close"><img src="{{static_url("close.png")}}" /></div>
-		You have no credit available!
+		{% trans %}You have no {{unit}} available!{% endtrans %}
 	</div>
 	{% endif %}
 	{% block body %}

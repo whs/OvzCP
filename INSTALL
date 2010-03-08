@@ -10,6 +10,7 @@ might be unable to run OvzCP.
 - python-pycurl
 - python-simplejson
 - python-sqlobject
+- python-pybabel
 - Varnish
 - Of course, OpenVZ
 

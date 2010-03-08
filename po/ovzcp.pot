@@ -1,0 +1,481 @@
+# Translations template for PROJECT.
+# Copyright (C) 2010 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2010-03-09 02:03+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.1\n"
+
+#: ../main.py:35
+msgid "XSRF Check fail"
+msgstr ""
+
+#: ../main.py:38
+msgid "XSRF Check fail by exception"
+msgstr ""
+
+#. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
+#. current user, it will return this error
+#: ../main.py:123 ../main.py:565
+msgid "VM not owned by current user"
+msgstr ""
+
+#: ../main.py:125
+msgid "VM is not running"
+msgstr ""
+
+#. Displayed when trying to claim a VM that belongs to yourself
+#: ../main.py:128
+msgid "VM is already owned by current user"
+msgstr ""
+
+#. Displayed when trying to start a VM but user's credit is lower than 1,000
+#. credits. The %s is the unit name such as credit
+#: ../main.py:131
+#, python-format
+msgid "%s is under 1,000, please refill."
+msgstr ""
+
+#: ../main.py:133
+msgid "VM is running"
+msgstr ""
+
+#. Displayed when trying to create a VM but user's credit is lower than 5,000
+#. credits. The %s is the unit name such as credit
+#: ../main.py:136
+#, python-format
+msgid "You need 5,000 %s to create a VM."
+msgstr ""
+
+#: ../main.py:140
+msgid "VM now belongs to you"
+msgstr ""
+
+#: ../main.py:142
+msgid "VM ownership removed. Other can now claim this VM"
+msgstr ""
+
+#: ../main.py:144
+msgid "VM destroyed"
+msgstr ""
+
+#: ../main.py:146 ../template/base.html:298
+msgid "Containers"
+msgstr ""
+
+#: ../main.py:177
+msgid "Host OS specification"
+msgstr ""
+
+#: ../main.py:190
+msgid "Terms of Service not accepted"
+msgstr ""
+
+#: ../main.py:192
+msgid "Invalid template name"
+msgstr ""
+
+#: ../main.py:194 ../main.py:359
+msgid "Passwords do not match"
+msgstr ""
+
+#. Malformat hostname
+#: ../main.py:196 ../main.py:354
+msgid "Invalid hostname"
+msgstr ""
+
+#: ../main.py:198
+msgid "Creating VM"
+msgstr ""
+
+#: ../main.py:236
+#, python-format
+msgid "Destroy %s"
+msgstr ""
+
+#: ../main.py:342
+msgid ""
+"VM disk usage exceed allocated amount. You will be billed by amount used "
+"instead"
+msgstr ""
+
+#. Duplicate entry
+#: ../main.py:347
+msgid "Entry already exists"
+msgstr ""
+
+#. <span class='time'>%s</span> is time in this format: 1 day 3 hours 4 minutes
+#. 5 seconds
+#: ../main.py:351
+#, python-format
+msgid ""
+"You have to wait <span class='time'>%s</span> before you can restart the "
+"reverse proxy again"
+msgstr ""
+
+#. Network interface
+#: ../main.py:357
+msgid "Invalid interface"
+msgstr ""
+
+#: ../main.py:363
+msgid "Settings commited."
+msgstr ""
+
+#: ../main.py:365
+msgid "No changes."
+msgstr ""
+
+#: ../main.py:367
+msgid "Root password successfully changed"
+msgstr ""
+
+#: ../main.py:384
+#, python-format
+msgid "%s information"
+msgstr ""
+
+#: ../main.py:403
+#, python-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../main.py:447 ../template/base.html:300 ../template/info.html:104
+msgid "Billing"
+msgstr ""
+
+#: ../main.py:574
+msgid "Cannot connect to Munin on the VM."
+msgstr ""
+
+#: ../main.py:592
+#, python-format
+msgid "Limit not reached. Please wait %s seconds"
+msgstr ""
+
+#: ../main.py:614 ../template/base.html:299
+msgid "Dashboard"
+msgstr ""
+
+#. Please make this valid as both JSON key and Python dict key
+#: ../main.py:625
+msgid "Host OS"
+msgstr ""
+
+#: ../template/base.html:213
+msgid ""
+"To switch account, please logout from your account at google.com before "
+"click this link.\\nOtherwise, you will be returned to this page.\\n\\nDo "
+"you want to continue?"
+msgstr ""
+
+#: ../template/base.html:224 ../template/base.html:225
+msgid "day"
+msgid_plural "days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../template/base.html:227
+msgid "d"
+msgstr ""
+
+#: ../template/base.html:234 ../template/base.html:235
+msgid "hour"
+msgid_plural "hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../template/base.html:237
+msgid "h"
+msgstr ""
+
+#: ../template/base.html:244 ../template/base.html:245
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../template/base.html:247
+msgid "m"
+msgstr ""
+
+#: ../template/base.html:253 ../template/base.html:254
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../template/base.html:256
+msgid "s"
+msgstr ""
+
+#: ../template/base.html:261
+msgid "now"
+msgstr ""
+
+#: ../template/base.html:270
+msgid "Double click to close"
+msgstr ""
+
+#: ../template/base.html:290
+msgid "by whsgroup.ath.cx"
+msgstr ""
+
+#: ../template/base.html:292
+msgid "Time left until complete depletion"
+msgstr ""
+
+#: ../template/base.html:301
+msgid "Host Info"
+msgstr ""
+
+#: ../template/base.html:311
+msgid "Collapse/Expand"
+msgstr ""
+
+#: ../template/base.html:322
+#, python-format
+msgid "You have no %(unit)s available!"
+msgstr ""
+
+#: ../template/info.html:6 ../template/info.html:101
+msgid "Root password"
+msgstr ""
+
+#: ../template/info.html:14 ../template/info.html:93
+msgid "Web forward"
+msgstr ""
+
+#: ../template/info.html:23 ../template/info.html:96
+msgid "Port forward"
+msgstr ""
+
+#: ../template/info.html:29
+msgid "Restart reverse proxy?"
+msgstr ""
+
+#: ../template/info.html:34
+msgid ""
+"The reverse proxy is being restarted. Please be patience, every sites may"
+" not be accesible for few seconds."
+msgstr ""
+
+#: ../template/info.html:81
+msgid "Running"
+msgstr ""
+
+#: ../template/info.html:81
+msgid "Stopped"
+msgstr ""
+
+#: ../template/info.html:85
+#, python-format
+msgid "Restart %(veid)s?"
+msgstr ""
+
+#: ../template/info.html:85
+msgid "Restart"
+msgstr ""
+
+#: ../template/info.html:86
+#, python-format
+msgid "Stop %(veid)s?"
+msgstr ""
+
+#: ../template/info.html:86
+msgid "Stop"
+msgstr ""
+
+#: ../template/info.html:88
+#, python-format
+msgid "Start %(veid)s?"
+msgstr ""
+
+#: ../template/info.html:88
+msgid "Start"
+msgstr ""
+
+#: ../template/info.html:89
+#, python-format
+msgid "Destroy %(veid)s?"
+msgstr ""
+
+#: ../template/info.html:89
+#, python-format
+msgid ""
+"Destroy all data on %(veid)s. Note that there are no backup made and "
+"<b>IRREVERSIBLE</b>."
+msgstr ""
+
+#: ../template/info.html:89
+msgid "Destroy"
+msgstr ""
+
+#: ../template/info.html:91
+msgid "Edit"
+msgstr ""
+
+#: ../template/info.html:93
+msgid "Forward HTTP application port to port 80 on specified hostname."
+msgstr ""
+
+#: ../template/info.html:96
+msgid "Forward port on an interface"
+msgstr ""
+
+#: ../template/info.html:99
+msgid "Enable munin monitoring. Note that munin data is public"
+msgstr ""
+
+#: ../template/info.html:99
+msgid "Disable munin monitoring. Note that munin data is public"
+msgstr ""
+
+#: ../template/info.html:99
+msgid "Toggle Munin"
+msgstr ""
+
+#: ../template/info.html:101
+msgid "Change root's password"
+msgstr ""
+
+#: ../template/info.html:105
+#, python-format
+msgid ""
+"To calculate %(unit)s depletion time for every VM, see <a "
+"href=\"/billing\">billing</a>."
+msgstr ""
+
+#: ../template/info.html:105
+msgid "All calculations are rounded up."
+msgstr ""
+
+#: ../template/info.html:108
+msgid "Kind"
+msgstr ""
+
+#: ../template/info.html:108
+#, python-format
+msgid "Cost (%(unit)s)"
+msgstr ""
+
+#: ../template/info.html:111
+msgid "Every VM created must paid this amount."
+msgstr ""
+
+#: ../template/info.html:111
+msgid "Per VM"
+msgstr ""
+
+#: ../template/info.html:112 ../template/info.html:113
+msgid "per"
+msgstr ""
+
+#: ../template/info.html:112
+msgid "Memory"
+msgstr ""
+
+#: ../template/info.html:113
+msgid "Disk"
+msgstr ""
+
+#: ../template/info.html:114
+msgid "Total"
+msgstr ""
+
+#: ../template/info.html:115
+#, python-format
+msgid "%(unit)s will run out in <small>(not counting other VM)</small>"
+msgstr ""
+
+#: ../template/info.html:118
+msgid "Information"
+msgstr ""
+
+#: ../template/info.html:121
+msgid "Key"
+msgstr ""
+
+#: ../template/info.html:121
+msgid "Value"
+msgstr ""
+
+#: ../template/info.html:124
+msgid ""
+"Internal IP of this VM. Every other VM running in the same machine can "
+"access this IP so you have to keep ports secure."
+msgstr ""
+
+#: ../template/info.html:124
+msgid "IP"
+msgstr ""
+
+#: ../template/info.html:125
+msgid "OS template used to create this VM"
+msgstr ""
+
+#: ../template/info.html:125
+msgid "OS Template"
+msgstr ""
+
+#: ../template/info.html:126
+msgid ""
+"How many space your VM can use. Note that you might able to exceed this "
+"capacity temporary."
+msgstr ""
+
+#: ../template/info.html:126
+msgid "Disk Capacity"
+msgstr ""
+
+#: ../template/info.html:128
+msgid "How long does this VM have been started"
+msgstr ""
+
+#: ../template/info.html:128
+msgid "Uptime"
+msgstr ""
+
+#: ../template/info.html:129
+msgid "Load average"
+msgstr ""
+
+#: ../template/info.html:129
+msgid "5 minutes"
+msgstr ""
+
+#: ../template/info.html:129
+msgid "10 minutes"
+msgstr ""
+
+#: ../template/info.html:129
+msgid "15 minutes"
+msgstr ""
+
+#: ../template/info.html:130
+msgid "The more process, the slower your machine"
+msgstr ""
+
+#: ../template/info.html:130
+msgid "Process count"
+msgstr ""
+
+#: ../template/info.html:133
+msgid "Monitoring & Graphing"
+msgstr ""
+
+#: ../template/info.html:133
+msgid "Munin"
+msgstr ""
+
