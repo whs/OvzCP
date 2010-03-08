@@ -116,16 +116,16 @@ $(function(){
 	<tr><td><div title="Maximum limit. You application may use these memory but if other VM that haven't reach its guaranteed memory need more memory, your application will be terminated.">Burstable</div></td><td>{{vz.memlimit[1]|filesizeformat}}</td></tr>
 </tbody>
 </table>
-{% if vz.running %}
 <h1>Graph</h1>
+{% if vz.running %}
 {% set memused=vz.meminfo['MemTotal']-vz.meminfo['MemFree'] %}
 {% if memused < vz.memlimit[0] %}
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vz.meminfo['MemTotal']|filesizeformat}})&amp;chl=Used {{memused|filesizeformat}}|Free {{vz.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{memused}},{{vz.meminfo['MemFree']}}&amp;chds=0,{{vz.meminfo['MemTotal']}}" />
 {% else %}
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vz.meminfo['MemTotal']|filesizeformat}})&amp;chl=Guaranteed Used {{vz.memlimit[0]|filesizeformat}}|Burst {{(memused-vz.memlimit[0])|filesizeformat}}|Free {{vz.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{vz.memlimit[0]}},{{memused-vz.memlimit[0]}},{{vz.meminfo['MemFree']}}&amp;chds=0,{{vz.meminfo['MemTotal']}}" />
 {% endif %}
-<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vz.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vz.diskinfo[1]*1000)|filesizeformat}}|Free {{(vz.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vz.diskinfo[1]}},{{vz.diskinfo[2]}}&amp;chds=0,{{vz.diskinfo[0]}}" />
 {% endif %}
+<img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vz.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vz.diskinfo[1]*1000)|filesizeformat}}|Free {{(vz.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vz.diskinfo[1]}},{{vz.diskinfo[2]}}&amp;chds=0,{{vz.diskinfo[0]}}" />
 {% if config.getboolean("varnish", "enabled") %}
 <div id="webedit" style="display: none;">
 Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
