@@ -113,6 +113,8 @@ class Containers(BaseHandler):
 				errmsg = _config.get("billing", "unit") + " is under 1,000, please refill."
 			elif err == "5":
 				errmsg = "VM is running"
+			elif err == "6":
+				errmsg = "You need 5,000 "+_config.get("billing", "unit")+" to create a VM."
 		if self.get_argument("msg", None):
 			msg = self.get_argument("msg")
 			if msg == "1":
@@ -158,6 +160,9 @@ class HostSpec(BaseHandler):
 class CreateVM(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
+		if self.current_user.credit < 5000:
+			self.redirect("/?error=6")
+			return
 		hostnames = map(lambda x: x.hostname,openvz.listVM())
 		err=""
 		if self.get_argument("error", None):
@@ -173,6 +178,9 @@ class CreateVM(BaseHandler):
 		self.render("create.html", templates=openvz.listTemplates(), hostnames = hostnames,
 			title="Creating VM", error=err)
 	def post(self):
+		if self.current_user.credit < 5000:
+			self.redirect("/?error=6")
+			return
 		if not self.get_argument("tos"):
 			self.redirect("/create?error=1")
 			return
