@@ -1,7 +1,10 @@
-import os, sys
+import os, sys, ConfigParser
 sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 import jinja2, netifaces
+
+_config = ConfigParser.SafeConfigParser()
+_config.read("config.ini")
 
 # iptables forwarding configuration generator
 def update(data):
@@ -14,7 +17,7 @@ def update(data):
 			pass
 		except ValueError:
 			pass
-	d = jinja.get_template("vmfw.sh").render(port=data, ip=ip)
+	d = jinja.get_template("vmfw.sh").render(port=data, ip=ip, vmip=_config.get("iface", "vmIP"))
 	open("sysconf/vmfw.sh", "w").write(d)
 
 def restart():

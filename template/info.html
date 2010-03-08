@@ -141,7 +141,7 @@ Note that you can restart the proxy once only five minutes.
 {% for i in vm.varnishBackend %}
 {% for i2 in i.cond %}
 	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td><img src='{{static_url((i2.subdomain|lower)+".png")}}' /></td>
-	<td><a href="/addweb?delete={{i2.id}}&_xsrf={{xsrf}}" title="Delete" onclick="return confirm('Delete {{i2.hostname}}?')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+	<td><a href="/vm/{{veid}}/addweb?delete={{i2.id}}&_xsrf={{xsrf}}" title="Delete" onclick="return confirm('Delete {{i2.hostname}}?')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 {% endfor %}
 </tbody>
@@ -168,7 +168,7 @@ Note that you can restart the proxy once only five minutes.
 <tbody>
 {% for i in vm.portForward %}
 	<tr><td>{{i.iface}} ({{interface[i.iface]}})</td><td>{{i.port}}</td><td>{{i.outport}}</td>
-	<td><a href="/addport?delete={{i.id}}&_xsrf={{xsrf}}" title="Delete this item" onclick="return confirm('Delete {{i.iface}} {{i.port}}-{{i.outport}}?');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+	<td><a href="/vm/{{veid}}/addport?delete={{i.id}}&_xsrf={{xsrf}}" title="Delete this item" onclick="return confirm('Delete {{i.iface}} {{i.port}}-{{i.outport}}?');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 </tbody>
 <tfooter>
@@ -184,6 +184,7 @@ Note that you can restart the proxy once only five minutes.
 	</tr>
 </tfooter>
 </table>
+<div class="notify" style="color: black; width: 95%;">To forward every port, type DMZ as External Port. Other fields doesn't need to be filled.</div>
 </form>
 </div>
 <div id="rootedit" style="display: none;">

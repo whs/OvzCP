@@ -336,6 +336,13 @@ class VMinfo(BaseHandler):
 			if not re.match(_config.get("iface", "allowed"), iface):
 				continue
 			try:
+				if _config.get("ifaceuser", iface.replace(":", "-")) != self.current_user.email:
+					continue
+			except ConfigParser.NoOptionError:
+				pass
+			if models.PortForward.select(models.AND(models.PortForward.q.iface == iface, models.PortForward.q.outport == -1)).count():
+				continue
+			try:
 				interface[iface] = netifaces.ifaddresses(iface)[netifaces.AF_INET][0]['addr']
 			except KeyError:
 				pass
@@ -449,11 +456,23 @@ class AddPort(BaseHandler):
 		if not re.match(_config.get("iface", "allowed"), self.get_argument("iface")):
 			self.redirect("/vm/%s?error=4"%veid)
 			return
+		try:
+			if _config.get("ifaceuser", self.get_argument("iface").replace(":", "-")) != self.current_user.email:
+				self.redirect("/vm/%s?error=4"%veid)
+				return
+		except ConfigParser.NoOptionError:
+			pass
+		if self.get_argument("outport").lower() == "dmz":
+			outport = -1
+			inport = -1
+		else:
+			outport = int(self.get_argument("outport")) 
+			inport = int(self.get_argument("port"))
 		if models.PortForward.select(models.AND(models.PortForward.q.iface==self.get_argument("iface"), 
-				models.PortForward.q.outport==int(self.get_argument("outport")))).count():
+				models.OR(models.PortForward.q.outport==outport, models.PortForward.q.outport==-1))).count():
 			self.redirect("/vm/%s?error=1"%veid)
 			return
-		models.PortForward(vm=sql, iface=self.get_argument("iface"), port=int(self.get_argument("port")), outport=int(self.get_argument("outport")))
+		models.PortForward(vm=sql, iface=self.get_argument("iface"), port=inport, outport=outport)
 		import vmfw
 		vmfw.update(models.PortForward.select())
 		vmfw.restart()
