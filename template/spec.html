@@ -4,21 +4,21 @@
 <div id="subhead">{{cpu}}</div>
 <table>
 <thead>
-	<tr><th>Data</th><th>Value</th></tr>
+	<tr><th>{% trans %}Data{% endtrans %}</th><th>{% trans %}Value{% endtrans %}</th></tr>
 </thead>
 <tbody>
-	<tr><td><div title="Host operating system">OS</div></td><td>{{os|capitalize}}</td></tr>
-	<tr><td><div title="Linux kernel version that currently running on this machine">Kernel Version</div></td><td>{{kernel}}</td></tr>
-	<tr><td><div title="The more process, the slower your machine">Process count</div></td><td>{{nproc}}</td></tr>
-	<tr><td><div title="How many VM is running currently">VM online</div></td><td>{{runningVM}}</td></tr>
-	<tr><td><div title="How long does this machine have been started">Uptime</div></td><td><div class="time">{{uptime}}</div></td></tr>
-	<tr><td>Load average</td><td><span title="5 minute">{{loadAvg[0]}}</span> <span title="10 minute">{{loadAvg[1]}}</span> <span title="15 minute">{{loadAvg[2]}}</span></td></tr>
+	<tr><td><div title="{% trans %}Host operating system{% endtrans %}">{% trans %}OS{% endtrans %}</div></td><td>{{os|capitalize}}</td></tr>
+	<tr><td><div title="{% trans %}Linux kernel version that currently running on this machine{% endtrans %}">{% trans %}Kernel Version{% endtrans %}</div></td><td>{{kernel}}</td></tr>
+	<tr><td><div title="{% trans %}The more process, the slower your machine{% endtrans %}">{% trans %}Process count{% endtrans %}</div></td><td>{{nproc}}</td></tr>
+	<tr><td><div title="{% trans %}How many VM is running currently{% endtrans %}">{% trans %}VM online{% endtrans %}</div></td><td>{{runningVM}}</td></tr>
+	<tr><td><div title="{% trans %}How long does this machine have been started{% endtrans %}">{% trans %}Uptime{% endtrans %}</div></td><td><div class="time">{{uptime}}</div></td></tr>
+	<tr><td>{% trans %}Load average{% endtrans %}</td><td><span title="{% trans %}5 minutes{% endtrans %}">{{loadAvg[0]}}</span> <span title="{% trans %}10 minutes{% endtrans %}">{{loadAvg[1]}}</span> <span title="{% trans %}15 minutes{% endtrans %}">{{loadAvg[2]}}</span></td></tr>
 {% if config.getboolean("munin", "enabled") %}
-	<tr><td><div title="Monitoring & Graphing">Munin</div></td><td><a href="/static/munin/hostOS/hostOS.html">Visit</a></td></tr>
+	<tr><td><div title="{% trans %}Monitoring & Graphing{% endtrans %}">{% trans %}Munin{% endtrans %}</div></td><td><a href="/static/munin/hostOS/hostOS.html">{% trans %}View{% endtrans %}</a></td></tr>
 {% endif %}
 </tbody>
 </table>
-<h1>Graph</h1>
+<h1>{% trans %}Graph{% endtrans %}</h1>
 {% set memused=mem['MemTotal']-mem['MemFree'] %}
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage ({{mem['MemTotal']|filesizeformat}})&amp;chl=Used {{memused|filesizeformat}}|Free {{mem['MemFree']|filesizeformat}}&amp;chd=t:{{memused}},{{mem['MemFree']}}&amp;chds=0,{{mem['MemTotal']}}" />
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage ({{disk[0]|filesizeformat}})&amp;chl=Used {{disk[1]|filesizeformat}}|Free {{disk[2]|filesizeformat}}&amp;chd=t:{{disk[1]}},{{disk[2]}}&amp;chds=0,{{disk[0]}}" />

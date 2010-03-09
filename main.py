@@ -411,6 +411,10 @@ class VMedit(BaseHandler):
 		if sql.user != self.current_user and sql.user:
 			self.redirect("/?error=1")
 			return
+		hostnames = map(lambda x: x.hostname,openvz.listVM())
+		if self.get_argument("hostname") in hostnames:
+			self.redirect("/vm/"+veid+"?error=3")
+			return
 		change = []
 		# Hostname change
 		if self.get_argument("hostname") != sql.vz.hostname:
@@ -621,9 +625,8 @@ class Dashboard(BaseHandler):
 					out[i.vz.hostname] = i.vz.loadAvg[0]
 			d = open("/proc/loadavg").read()
 			loadAvg= map(lambda x:float(x), d.split(" ")[:3])
-			# NOTE: Please make this valid as both JSON key and Python dict key
-			out[_('Host OS')] = loadAvg[0]
-			self.write(`[out]`)
+			out['Host OS'] = loadAvg[0]
+			self.write((`[out]`).replace("'", '"'))
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous

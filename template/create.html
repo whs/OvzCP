@@ -19,9 +19,9 @@ $(function(){
 	});
 	$("#ram-slider").slider({animate: true, max: 1000, min: 150, step: 25, slide: function(event, ui){
 		price = Math.ceil(ui.value * (memPrice[0]/memPrice[1])) + " {{unit}}"
-		$("#ram-amount").html(ui.value+" MB (burstable up to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
+		$("#ram-amount").html(ui.value+" MB {% trans amt='"+Math.floor(ui.value+(ui.value*burst/100))+"' %}(burstable up to {{amt}} MB){% endtrans %}<br />"+price);
 		$("input[name=ram]").val(ui.value*1000000);
-		$("#ram").html("2: "+ui.value+" MB memory");
+		$("#ram").html("{% trans amt='"+ui.value+"' %}2: {{amt}} MB memory{% endtrans %}");
 		$("h2 #disk").parent().show();
 		calcTotal()
 	}});
@@ -29,7 +29,7 @@ $(function(){
 		price = Math.ceil(ui.value * (diskPrice[0]/diskPrice[1])) + " {{unit}}"
 		$("#disk-amount").html((ui.value/1000)+" GB<br />"+price);
 		$("input[name=disk]").val(ui.value*1000);
-		$("#disk").html("3: "+(ui.value/1000)+" GB disk");
+		$("#disk").html("{% trans amt='"+(ui.value/1000)+"' %}3: {{amt}} GB disk{% endtrans %}");
 		$("h2 #final").parent().show();
 		calcTotal()
 	}});
@@ -61,11 +61,11 @@ $(function(){
 });
 {% endblock %}
 {% block body %}
-<h1>Create VM</h1>
+<h1>{% trans %}Create VM{% endtrans %}</h1>
 <form action="/create" method="post">
 {{ xsrf_form_html() }}
 <div id="accordion">
-<h2><a href="#" id="os">1: Pick your OS</a></h2>
+<h2><a href="#" id="os">{% trans %}1: Pick your OS{% endtrans %}</a></h2>
 <div class="block">
 	<ul style="list-style: none; padding-left: 0;">
 	{% for i in templates %}
@@ -76,64 +76,64 @@ $(function(){
 	{% endfor %}
 	</ul>
 </div>
-<h2 style="display: none"><a href="#" id="ram">2: How much memory</a></h2>
+<h2 style="display: none"><a href="#" id="ram">{% trans %}2: How much memory{% endtrans %}</a></h2>
 <div class="block">
 	<div id="ram-slider" style="margin: 10px;"></div>
 	<div class="tipbox" style="float: right;">
-		<b>TIP:</b> Optimum memory
+		{% trans %}<b>TIP:</b> Optimum memory{% endtrans %}
 		<table>
-		<thead>
-		<tr><th>Kind</th><th>Memory</th></tr>
-		</thead>
-		<tbody>
-		<tr><td>Static website (Plain HTML)</td><td>150 MB</td></tr>
-		<tr><td>Weblog</td><td>600 MB</td></tr>
-		<tr><td>Crowded forum</td><td>1000 MB</td></tr>
-		</tbody>
+			<thead>
+				<tr><th>{% trans %}Kind{% endtrans %}</th><th>{% trans %}Memory{% endtrans %}</th></tr>
+			</thead>
+			<tbody>
+				<tr><td>{% trans %}Static website (Plain HTML){% endtrans %}</td><td>150 MB</td></tr>
+				<tr><td>{% trans %}Weblog{% endtrans %}</td><td>600 MB</td></tr>
+				<tr><td>{% trans %}Crowded forum{% endtrans %}</td><td>1000 MB</td></tr>
+			</tbody>
 		</table>
 	</div>
-	<b id="ram-amount">Slide the slider to change.<br />Minimum is 150MB, maximum is 1000MB<br />Burstable up to {{config.get("billing", "memoryBurst")}}%</b><br />
-	{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB
+	<b id="ram-amount">{% trans %}Slide the slider to change.{% endtrans %}<br />{% trans burst=config.get("billing", "memoryBurst") %}Minimum is 150MB, maximum is 1000MB<br />Burstable up to {{burst}}%{% endtrans %}</b><br />
+	{{config.get("billing", "memory")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "memoryPer")}} MB
 	<input type="hidden" name="ram" value="150" />
 </div>
-<h2 style="display: none"><a href="#" id="disk">3: How many disk space</a></h2>
+<h2 style="display: none"><a href="#" id="disk">{% trans %}3: How many disk space{% endtrans %}</a></h2>
 <div class="block">
 	<div id="disk-slider" style="margin: 10px;"></div>
 	<div class="tipbox" style="float: right;">
-		<b>TIP:</b> Optimum disk space
+		{% trans %}<b>TIP:</b> Optimum disk space{% endtrans %}
 		<table>
-		<thead>
-		<tr><th>Kind</th><th>Space</th></tr>
-		</thead>
-		<tbody>
-		<tr><td>Static website (Plain HTML)</td><td>1 GB</td></tr>
-		<tr><td>Weblog</td><td>5 GB</td></tr>
-		<tr><td>Crowded forum</td><td>10 GB</td></tr>
-		</tbody>
+			<thead>
+				<tr><th>{% trans %}Kind{% endtrans %}</th><th>{% trans %}Space{% endtrans %}</th></tr>
+			</thead>
+			<tbody>
+				<tr><td>{% trans %}Static website (Plain HTML){% endtrans %}</td><td>1 GB</td></tr>
+				<tr><td>{% trans %}Weblog{% endtrans %}</td><td>5 GB</td></tr>
+				<tr><td>{% trans %}Crowded forum{% endtrans %}</td><td>10 GB</td></tr>
+			</tbody>
 		</table>
 	</div>
-	<b id="disk-amount">Slide the slider to change.<br />Minimum is 1GB, maximum is 50GB</b><br />
-	{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} MB
+	<b id="disk-amount">{% trans %}Slide the slider to change.{% endtrans %}<br />{% trans %}Minimum is 1GB, maximum is 50GB{% endtrans %}</b><br />
+	{{config.get("billing", "disk")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "diskPer")}} MB
 	<input type="hidden" name="disk" value="2048" />
 </div>
-<h2 style="display: none"><a href="#" id="final">4: Final steps</a></h2>
+<h2 style="display: none"><a href="#" id="final">{% trans %}4: Final steps{% endtrans %}</a></h2>
 <div class="block">
-	<div class="notify" style="color: black;">Hostname is the name of your machine. This must be unique but have no impact on your machine.</div>
-	<div>Hostname: <input type="text" name="hostname" /></div>
-	<div class="notify" style="color: black;">Root is the adminstrator of the system. Root's password is key to the entire system so please use a secure password.<br />
-	Note that to ssh into the machine, you need to add port forwarding afterward
+	<div class="notify" style="color: black;">{% trans %}Hostname is the name of your machine. This must be unique but have no impact on your machine.{% endtrans %}</div>
+	<div>{% trans %}Hostname{% endtrans %}: <input type="text" name="hostname" /></div>
+	<div class="notify" style="color: black;">{% trans %}Root is the adminstrator of the system. Root's password is key to the entire system so please use a secure password.<br />
+	Note that to ssh into the machine, you need to add port 22 forwarding afterward{% endtrans %}
 	</div>
 	<div>
-		Root password: <input type="password" name="root" /><br />
-		Confirm: <input type="password" name="root2" />
+		{% trans %}Root password{% endtrans %}: <input type="password" name="root" /><br />
+		{% trans %}Confirm Root password{% endtrans %}: <input type="password" name="root2" />
 	</div>
 	<p>
-		This virtual machine will consume <b id="totalmoney"></b> {{unit}} per minute. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})
+		{% trans cost='<b id="totalmoney"></b>', perVM=config.get("billing", "perVM") %}This virtual machine will consume {{cost}} {{unit}} per minute. (incl. per VM cost of {{perVM}} {{unit}}){% endtrans %}
 	</p>
 	<div id="createp" style="display: none;">
-		<p><input type='checkbox' name="tos" id="tos"> <label for="tos">I accept the terms of services</label></p>
-		<p><b>Check every setting before click on </b><input type="submit" value="Create" disabled /></p>
-		<p>After click "Create", it takes while to create the VM.</p>
+		<p><input type='checkbox' name="tos" id="tos"> <label for="tos">{% trans %}I accept the terms of services{% endtrans %}</label></p>
+		<p><b>{% trans create='<input type="submit" value="'+_('Create')+'" disabled />' %}Check every setting before click on {{create}}{% endtrans %}</b></p>
+		<p>{% trans %}After click "Create", it takes while to create the VM.{% endtrans %}</p>
 	</div>
 </div>
 </form>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-03-09 02:03+0700\n"
+"POT-Creation-Date: 2010-03-09 13:50+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr ""
 
 #. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
 #. current user, it will return this error
-#: ../main.py:123 ../main.py:565
+#: ../main.py:123 ../main.py:569
 msgid "VM not owned by current user"
 msgstr ""
 
@@ -70,7 +70,7 @@ msgstr ""
 msgid "VM destroyed"
 msgstr ""
 
-#: ../main.py:146 ../template/base.html:298
+#: ../main.py:146 ../template/base.html:298 ../template/container.html:3
 msgid "Containers"
 msgstr ""
 
@@ -151,26 +151,22 @@ msgstr ""
 msgid "Edit %s"
 msgstr ""
 
-#: ../main.py:447 ../template/base.html:300 ../template/info.html:104
+#: ../main.py:451 ../template/base.html:300 ../template/dashboard.html:95
+#: ../template/info.html:104
 msgid "Billing"
 msgstr ""
 
-#: ../main.py:574
+#: ../main.py:578
 msgid "Cannot connect to Munin on the VM."
 msgstr ""
 
-#: ../main.py:592
+#: ../main.py:596
 #, python-format
 msgid "Limit not reached. Please wait %s seconds"
 msgstr ""
 
-#: ../main.py:614 ../template/base.html:299
+#: ../main.py:618 ../template/base.html:299
 msgid "Dashboard"
-msgstr ""
-
-#. Please make this valid as both JSON key and Python dict key
-#: ../main.py:625
-msgid "Host OS"
 msgstr ""
 
 #: ../template/base.html:213
@@ -186,6 +182,7 @@ msgid_plural "days"
 msgstr[0] ""
 msgstr[1] ""
 
+#. Shorter version of day
 #: ../template/base.html:227
 msgid "d"
 msgstr ""
@@ -196,6 +193,7 @@ msgid_plural "hours"
 msgstr[0] ""
 msgstr[1] ""
 
+#. Shorter version of hour
 #: ../template/base.html:237
 msgid "h"
 msgstr ""
@@ -206,6 +204,7 @@ msgid_plural "minutes"
 msgstr[0] ""
 msgstr[1] ""
 
+#. Shorter version of minutes
 #: ../template/base.html:247
 msgid "m"
 msgstr ""
@@ -216,10 +215,12 @@ msgid_plural "seconds"
 msgstr[0] ""
 msgstr[1] ""
 
+#. Shorter version of seconds
 #: ../template/base.html:256
 msgid "s"
 msgstr ""
 
+#. Cron will be run in: now
 #: ../template/base.html:261
 msgid "now"
 msgstr ""
@@ -233,7 +234,8 @@ msgid "by whsgroup.ath.cx"
 msgstr ""
 
 #: ../template/base.html:292
-msgid "Time left until complete depletion"
+#, python-format
+msgid "Time left until %(unit)s depletion"
 msgstr ""
 
 #: ../template/base.html:301
@@ -249,8 +251,354 @@ msgstr ""
 msgid "You have no %(unit)s available!"
 msgstr ""
 
-#: ../template/info.html:6 ../template/info.html:101
+#: ../template/billing.html:4
+#, python-format
+msgid ""
+"%(unitC)s is required to run a VM. When you run out of %(unit)s every "
+"virtual machines will be stopped."
+msgstr ""
+
+#: ../template/billing.html:5
+#, python-format
+msgid ""
+"If your %(unit)s is under 100 you can't start more VM. %(unitC)s will "
+"decrease every minute."
+msgstr ""
+
+#: ../template/billing.html:7
+msgid "Click each VM's ID to view detailed cost."
+msgstr ""
+
+#: ../template/billing.html:7 ../template/info.html:105
+msgid "All calculations are rounded up."
+msgstr ""
+
+#: ../template/billing.html:8
+msgid "Rate:"
+msgstr ""
+
+#: ../template/billing.html:8 ../template/create.html:96
+#: ../template/create.html:116 ../template/edit.html:79
+#: ../template/edit.html:99 ../template/info.html:112 ../template/info.html:113
+msgid "per"
+msgstr ""
+
+#: ../template/billing.html:11 ../template/container.html:7
+#: ../template/dashboard.html:75
+msgid "VEID"
+msgstr ""
+
+#: ../template/billing.html:11 ../template/info.html:108
+#, python-format
+msgid "Cost (%(unit)s)"
+msgstr ""
+
+#: ../template/billing.html:19 ../template/info.html:114
+msgid "Total"
+msgstr ""
+
+#: ../template/billing.html:20
+msgid "Will deplete in"
+msgstr ""
+
+#: ../template/container.html:3
+msgid "Create new VM"
+msgstr ""
+
+#: ../template/container.html:7 ../template/create.html:122
+#: ../template/dashboard.html:75 ../template/edit.html:43
+#: ../template/edit.html:48 ../template/edit.html:102 ../template/edit.html:104
+msgid "Hostname"
+msgstr ""
+
+#: ../template/container.html:7 ../template/dashboard.html:75
+#: ../template/info.html:124
+msgid "IP"
+msgstr ""
+
+#: ../template/container.html:8 ../template/info.html:125
+msgid "OS Template"
+msgstr ""
+
+#: ../template/container.html:8
+msgid "Owner"
+msgstr ""
+
+#: ../template/container.html:8 ../template/dashboard.html:75
+#: ../template/info.html:159 ../template/info.html:187
+msgid "Action"
+msgstr ""
+
+#: ../template/container.html:12 ../template/dashboard.html:78
+#, python-format
+msgid "Click to show more information of %(veid)s"
+msgstr ""
+
+#: ../template/container.html:13
+msgid "You"
+msgstr ""
+
+#: ../template/container.html:16
+#, python-format
+msgid ""
+"Add %(veid)s to your account. No other user can access this VM. You have "
+"to pay for this VM. This is <b>IRREVERSIBLE</b>"
+msgstr ""
+
+#: ../template/container.html:16
+msgid "Claim"
+msgstr ""
+
+#: ../template/container.html:18 ../template/dashboard.html:81
+#, python-format
+msgid "Edit %(veid)s"
+msgstr ""
+
+#: ../template/container.html:20 ../template/dashboard.html:83
+#: ../template/info.html:85
+#, python-format
+msgid "Restart %(veid)s?"
+msgstr ""
+
+#: ../template/container.html:20 ../template/dashboard.html:83
+#, python-format
+msgid "Restart %(veid)s"
+msgstr ""
+
+#: ../template/container.html:21 ../template/dashboard.html:84
+#: ../template/info.html:86
+#, python-format
+msgid "Stop %(veid)s?"
+msgstr ""
+
+#: ../template/container.html:21 ../template/dashboard.html:84
+#, python-format
+msgid "Stop %(veid)s"
+msgstr ""
+
+#: ../template/container.html:23 ../template/dashboard.html:86
+#: ../template/info.html:88
+#, python-format
+msgid "Start %(veid)s?"
+msgstr ""
+
+#: ../template/container.html:23 ../template/dashboard.html:86
+#, python-format
+msgid "Start %(veid)s"
+msgstr ""
+
+#: ../template/container.html:24 ../template/dashboard.html:87
+#: ../template/info.html:89
+#, python-format
+msgid "Destroy %(veid)s?"
+msgstr ""
+
+#: ../template/container.html:24 ../template/dashboard.html:87
+#: ../template/info.html:89
+#, python-format
+msgid ""
+"Destroy all data on %(veid)s. Note that there are no backup made and "
+"<b>IRREVERSIBLE</b>."
+msgstr ""
+
+#: ../template/create.html:22 ../template/edit.html:29 ../template/edit.html:35
+#, python-format
+msgid "(burstable up to %(amt)s MB)"
+msgstr ""
+
+#: ../template/create.html:24
+#, python-format
+msgid "2: %(amt)s MB memory"
+msgstr ""
+
+#: ../template/create.html:32
+#, python-format
+msgid "3: %(amt)s GB disk"
+msgstr ""
+
+#: ../template/create.html:64
+msgid "Create VM"
+msgstr ""
+
+#: ../template/create.html:68
+msgid "1: Pick your OS"
+msgstr ""
+
+#: ../template/create.html:79
+msgid "2: How much memory"
+msgstr ""
+
+#: ../template/create.html:83 ../template/edit.html:86
+msgid "<b>TIP:</b> Optimum memory"
+msgstr ""
+
+#: ../template/create.html:86 ../template/create.html:106
+#: ../template/edit.html:69 ../template/edit.html:89 ../template/info.html:108
+msgid "Kind"
+msgstr ""
+
+#: ../template/create.html:86 ../template/edit.html:31 ../template/edit.html:36
+#: ../template/edit.html:82 ../template/edit.html:89 ../template/info.html:112
+#: ../template/info.html:135
+msgid "Memory"
+msgstr ""
+
+#: ../template/create.html:89 ../template/create.html:109
+#: ../template/edit.html:72 ../template/edit.html:92
+msgid "Static website (Plain HTML)"
+msgstr ""
+
+#: ../template/create.html:90 ../template/create.html:110
+#: ../template/edit.html:73 ../template/edit.html:93
+msgid "Weblog"
+msgstr ""
+
+#: ../template/create.html:91 ../template/create.html:111
+#: ../template/edit.html:74 ../template/edit.html:94
+msgid "Crowded forum"
+msgstr ""
+
+#: ../template/create.html:95 ../template/create.html:115
+msgid "Slide the slider to change."
+msgstr ""
+
+#: ../template/create.html:95
+#, python-format
+msgid "Minimum is 150MB, maximum is 1000MB<br />Burstable up to %(burst)s%%"
+msgstr ""
+
+#: ../template/create.html:99
+msgid "3: How many disk space"
+msgstr ""
+
+#: ../template/create.html:103 ../template/edit.html:66
+msgid "<b>TIP:</b> Optimum disk space"
+msgstr ""
+
+#: ../template/create.html:106 ../template/edit.html:69
+msgid "Space"
+msgstr ""
+
+#: ../template/create.html:115
+msgid "Minimum is 1GB, maximum is 50GB"
+msgstr ""
+
+#: ../template/create.html:119
+msgid "4: Final steps"
+msgstr ""
+
+#: ../template/create.html:121
+msgid ""
+"Hostname is the name of your machine. This must be unique but have no "
+"impact on your machine."
+msgstr ""
+
+#: ../template/create.html:123
+msgid ""
+"Root is the adminstrator of the system. Root's password is key to the "
+"entire system so please use a secure password.<br />\n"
+"\tNote that to ssh into the machine, you need to add port 22 forwarding "
+"afterward"
+msgstr ""
+
+#: ../template/create.html:127 ../template/info.html:6
+#: ../template/info.html:101
 msgid "Root password"
+msgstr ""
+
+#: ../template/create.html:128 ../template/info.html:217
+msgid "Confirm Root password"
+msgstr ""
+
+#: ../template/create.html:131 ../template/edit.html:108
+#, python-format
+msgid ""
+"This virtual machine will consume %(cost)s %(unit)s per minute. (incl. "
+"per VM cost of %(perVM)s %(unit)s)"
+msgstr ""
+
+#: ../template/create.html:134
+msgid "I accept the terms of services"
+msgstr ""
+
+#: ../template/create.html:135
+#, python-format
+msgid "Check every setting before click on %(create)s"
+msgstr ""
+
+#: ../template/create.html:135
+msgid "Create"
+msgstr ""
+
+#: ../template/create.html:136
+msgid "After click \"Create\", it takes while to create the VM."
+msgstr ""
+
+#: ../template/dashboard.html:72
+msgid "VM List"
+msgstr ""
+
+#: ../template/dashboard.html:97
+msgid "Total VM running cost"
+msgstr ""
+
+#: ../template/dashboard.html:98
+msgid "Deplete in"
+msgstr ""
+
+#: ../template/dashboard.html:99
+msgid "Next cron run in"
+msgstr ""
+
+#: ../template/dashboard.html:105
+msgid "VM load (5 minutes)"
+msgstr ""
+
+#: ../template/destroy.html:8
+#, python-format
+msgid "Final warning before destroying <u>%(hostname)s</u> (%(veid)s)"
+msgstr ""
+
+#: ../template/destroy.html:9
+msgid ""
+"Destroying a virtual machine means that <b>ALL DATA</b> and "
+"<b>CONFIGURATION</b> will be removed and cannot be recovered."
+msgstr ""
+
+#: ../template/destroy.html:10
+#, python-format
+msgid "Make sure to backup ALL data on the %(veid)s before continue"
+msgstr ""
+
+#: ../template/destroy.html:11
+#, python-format
+msgid "If you changed your mind, click %(back)s"
+msgstr ""
+
+#: ../template/destroy.html:11
+msgid "back"
+msgstr ""
+
+#: ../template/destroy.html:15
+msgid "I understand that this is irreversible, proceed to deletion"
+msgstr ""
+
+#: ../template/destroy.html:17
+msgid "Please enable JavaScript"
+msgstr ""
+
+#: ../template/edit.html:20 ../template/edit.html:25 ../template/edit.html:62
+#: ../template/info.html:113
+msgid "Disk"
+msgstr ""
+
+#: ../template/edit.html:58
+msgid "Saving this page will result in VM being restarted"
+msgstr ""
+
+#: ../template/edit.html:106 ../template/edit.html:109
+#: ../template/info.html:174 ../template/info.html:206
+msgid "Save"
 msgstr ""
 
 #: ../template/info.html:14 ../template/info.html:93
@@ -280,17 +628,7 @@ msgid "Stopped"
 msgstr ""
 
 #: ../template/info.html:85
-#, python-format
-msgid "Restart %(veid)s?"
-msgstr ""
-
-#: ../template/info.html:85
 msgid "Restart"
-msgstr ""
-
-#: ../template/info.html:86
-#, python-format
-msgid "Stop %(veid)s?"
 msgstr ""
 
 #: ../template/info.html:86
@@ -298,24 +636,7 @@ msgid "Stop"
 msgstr ""
 
 #: ../template/info.html:88
-#, python-format
-msgid "Start %(veid)s?"
-msgstr ""
-
-#: ../template/info.html:88
 msgid "Start"
-msgstr ""
-
-#: ../template/info.html:89
-#, python-format
-msgid "Destroy %(veid)s?"
-msgstr ""
-
-#: ../template/info.html:89
-#, python-format
-msgid ""
-"Destroy all data on %(veid)s. Note that there are no backup made and "
-"<b>IRREVERSIBLE</b>."
 msgstr ""
 
 #: ../template/info.html:89
@@ -357,41 +678,12 @@ msgid ""
 "href=\"/billing\">billing</a>."
 msgstr ""
 
-#: ../template/info.html:105
-msgid "All calculations are rounded up."
-msgstr ""
-
-#: ../template/info.html:108
-msgid "Kind"
-msgstr ""
-
-#: ../template/info.html:108
-#, python-format
-msgid "Cost (%(unit)s)"
-msgstr ""
-
 #: ../template/info.html:111
 msgid "Every VM created must paid this amount."
 msgstr ""
 
 #: ../template/info.html:111
 msgid "Per VM"
-msgstr ""
-
-#: ../template/info.html:112 ../template/info.html:113
-msgid "per"
-msgstr ""
-
-#: ../template/info.html:112
-msgid "Memory"
-msgstr ""
-
-#: ../template/info.html:113
-msgid "Disk"
-msgstr ""
-
-#: ../template/info.html:114
-msgid "Total"
 msgstr ""
 
 #: ../template/info.html:115
@@ -407,7 +699,7 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
-#: ../template/info.html:121
+#: ../template/info.html:121 ../template/spec.html:7
 msgid "Value"
 msgstr ""
 
@@ -417,16 +709,8 @@ msgid ""
 "access this IP so you have to keep ports secure."
 msgstr ""
 
-#: ../template/info.html:124
-msgid "IP"
-msgstr ""
-
 #: ../template/info.html:125
 msgid "OS template used to create this VM"
-msgstr ""
-
-#: ../template/info.html:125
-msgid "OS Template"
 msgstr ""
 
 #: ../template/info.html:126
@@ -443,39 +727,170 @@ msgstr ""
 msgid "How long does this VM have been started"
 msgstr ""
 
-#: ../template/info.html:128
+#: ../template/info.html:128 ../template/spec.html:14
 msgid "Uptime"
 msgstr ""
 
-#: ../template/info.html:129
+#: ../template/info.html:129 ../template/spec.html:15
 msgid "Load average"
 msgstr ""
 
-#: ../template/info.html:129
+#: ../template/info.html:129 ../template/spec.html:15
 msgid "5 minutes"
 msgstr ""
 
-#: ../template/info.html:129
+#: ../template/info.html:129 ../template/spec.html:15
 msgid "10 minutes"
 msgstr ""
 
-#: ../template/info.html:129
+#: ../template/info.html:129 ../template/spec.html:15
 msgid "15 minutes"
 msgstr ""
 
-#: ../template/info.html:130
+#: ../template/info.html:130 ../template/spec.html:12
 msgid "The more process, the slower your machine"
 msgstr ""
 
-#: ../template/info.html:130
+#: ../template/info.html:130 ../template/spec.html:12
 msgid "Process count"
 msgstr ""
 
-#: ../template/info.html:133
+#: ../template/info.html:133 ../template/spec.html:17
 msgid "Monitoring & Graphing"
 msgstr ""
 
-#: ../template/info.html:133
+#: ../template/info.html:133 ../template/spec.html:17
 msgid "Munin"
+msgstr ""
+
+#: ../template/info.html:133 ../template/spec.html:17
+msgid "View"
+msgstr ""
+
+#: ../template/info.html:136
+msgid ""
+"How much memory your application may use. If it's full you might still "
+"able to run it in burstable memory."
+msgstr ""
+
+#: ../template/info.html:136
+msgid "Guaranteed"
+msgstr ""
+
+#: ../template/info.html:137
+msgid ""
+"Maximum limit. You application may use these memory but if other VM that "
+"haven't reach its guaranteed memory need more memory, your application "
+"will be terminated."
+msgstr ""
+
+#: ../template/info.html:137
+msgid "Burstable"
+msgstr ""
+
+#: ../template/info.html:140 ../template/spec.html:21
+msgid "Graph"
+msgstr ""
+
+#: ../template/info.html:152
+#, python-format
+msgid ""
+"Wildcard forwarding will forward anything.yourdomain.com to "
+"yourdomain.com.<br />\n"
+"After edit changes will <b>NOT</b> be visible until you click "
+"%(restartButton)s. (Every site, including this may not be accessible for "
+"few seconds)\n"
+"Note that you can restart the proxy once only five minutes."
+msgstr ""
+
+#: ../template/info.html:152
+msgid "restart proxy"
+msgstr ""
+
+#: ../template/info.html:159
+msgid "Domain"
+msgstr ""
+
+#: ../template/info.html:159
+msgid "Port"
+msgstr ""
+
+#: ../template/info.html:159
+msgid "Wildcard"
+msgstr ""
+
+#: ../template/info.html:165 ../template/info.html:192
+msgid "Delete this item"
+msgstr ""
+
+#: ../template/info.html:165
+#, python-format
+msgid "Delete %(hostname)s?"
+msgstr ""
+
+#. Network interface
+#: ../template/info.html:187
+msgid "Interface"
+msgstr ""
+
+#: ../template/info.html:187
+msgid "Internal Port"
+msgstr ""
+
+#: ../template/info.html:187
+msgid "External Port"
+msgstr ""
+
+#: ../template/info.html:192
+#, python-format
+msgid "Delete %(iface)s in:%(port)s out:%(outport)s?"
+msgstr ""
+
+#: ../template/info.html:192
+#, python-format
+msgid "Delete DMZ forwarding to %(iface)s?"
+msgstr ""
+
+#. Do not translate DMZ
+#: ../template/info.html:210
+msgid ""
+"To forward every port, type DMZ as External Port. Other fields doesn't "
+"need to be filled."
+msgstr ""
+
+#: ../template/info.html:216
+msgid "New Root password"
+msgstr ""
+
+#: ../template/spec.html:7
+msgid "Data"
+msgstr ""
+
+#: ../template/spec.html:10
+msgid "Host operating system"
+msgstr ""
+
+#: ../template/spec.html:10
+msgid "OS"
+msgstr ""
+
+#: ../template/spec.html:11
+msgid "Linux kernel version that currently running on this machine"
+msgstr ""
+
+#: ../template/spec.html:11
+msgid "Kernel Version"
+msgstr ""
+
+#: ../template/spec.html:13
+msgid "How many VM is running currently"
+msgstr ""
+
+#: ../template/spec.html:13
+msgid "VM online"
+msgstr ""
+
+#: ../template/spec.html:14
+msgid "How long does this machine have been started"
 msgstr ""
 

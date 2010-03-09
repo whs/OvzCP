@@ -17,35 +17,35 @@ $(function(){
 		price = Math.ceil(ui.value * (diskPrice[0]/diskPrice[1])) + " {{unit}}"
 		$("#disk-amount").html((ui.value/1000)+" GB<br />"+price);
 		$("input[name=disk]").val(ui.value*1000);
-		$("#disk").html("Disk: "+(ui.value/1000)+" GB");
+		$("#disk").html("{% trans %}Disk{% endtrans %}: "+(ui.value/1000)+" GB");
 		calcTotal()
 	}});
 	price = Math.ceil({{vz.diskinfo[0]/1000}} * (diskPrice[0]/diskPrice[1])) + " {{unit}}"
 	$("#disk-amount").html({{vz.diskinfo[0]/1000000}}+" GB<br />"+price);
-	$("#disk").html("Disk: "+{{vz.diskinfo[0]/1000000}}+" GB");
+	$("#disk").html("{% trans %}Disk{% endtrans %}: "+{{vz.diskinfo[0]/1000000}}+" GB");
 	
 	$("#ram-slider").slider({animate: true, max: 1000, min: 150, step: 25, value: {{vz.memlimit[0]/1000000}}, slide: function(event, ui){
 		price = Math.ceil(ui.value * (memPrice[0]/memPrice[1])) + " {{unit}}"
-		$("#ram-amount").html(ui.value+" MB (burstable up to "+Math.floor(ui.value+(ui.value*burst/100))+" MB)<br />"+price);
+		$("#ram-amount").html(ui.value+" MB {% trans amt='"+Math.floor(ui.value+(ui.value*burst/100))+"' %}(burstable up to {{amt}} MB){% endtrans %}<br />"+price);
 		$("input[name=ram]").val(ui.value*1000000);
-		$("#ram").html("Memory: "+ui.value+" MB");
+		$("#ram").html("{% trans %}Memory{% endtrans %}: "+ui.value+" MB");
 		calcTotal()
 	}});
 	price = Math.ceil({{vz.memlimit[0]/1000000}} * (memPrice[0]/memPrice[1])) + " {{unit}}"
-	$("#ram-amount").html({{vz.memlimit[0]/1000000}}+" MB (burstable up to "+Math.floor({{vz.memlimit[0]/1000000}}+({{vz.memlimit[0]/1000000}}*burst/100))+" MB)<br />"+price);
-	$("#ram").html("Memory: "+{{vz.memlimit[0]/1000000}}+" MB");
+	$("#ram-amount").html({{vz.memlimit[0]/1000000}}+" MB {% trans amt='"+Math.floor('+str(vz.memlimit[0]|int/1000000)+'+('+str(vz.memlimit[0]/1000000)+'*burst/100))+"' %}(burstable up to {{amt}} MB){% endtrans %}<br />"+price);
+	$("#ram").html("{% trans %}Memory{% endtrans %}: "+{{vz.memlimit[0]/1000000}}+" MB");
 	
 	$("input[name=hostname]").keyup(function(){
 		if(this.value == "" || hostnames.indexOf(this.value) != -1){
 			$(this).css("backgroundColor", "red");
 			$(this).css("color", "white");
 			$("#submit").hide()
-			$("#hostname").html("<img src='{{static_url("false.png")}}' /> Hostname")
+			$("#hostname").html("<img src='{{static_url("false.png")}}' /> {% trans %}Hostname{% endtrans %}")
 		}else{
 			$(this).css("backgroundColor", "white");
 			$(this).css("color", "black");
 			$("#submit").show()
-			$("#hostname").html("Hostname: "+this.value)
+			$("#hostname").html("{% trans %}Hostname{% endtrans %}: "+this.value)
 		}
 	});
 	
@@ -55,58 +55,58 @@ $(function(){
 {% endblock %}
 {% block body %}
 <h1>Editing {{veid}}</h1>
-<div class="notify">Saving this page will result in VM being restarted</div>
+<div class="notify">{% trans %}Saving this page will result in VM being restarted{% endtrans %}</div>
 <form action="/vm/{{veid}}/edit" method="post">
 {{ xsrf_form_html() }}
 <div id="accordion">
-<h2><a href="#" id="disk">Disk</a></h2>
+<h2><a href="#" id="disk">{% trans %}Disk{% endtrans %}</a></h2>
 <div class="block">
 	<div id="disk-slider" style="margin: 10px;"></div>
 	<div class="tipbox" style="float: right;">
-		<b>TIP:</b> Optimum disk space
+		{% trans %}<b>TIP:</b> Optimum disk space{% endtrans %}
 		<table>
-		<thead>
-		<tr><th>Kind</th><th>Space</th></tr>
-		</thead>
-		<tbody>
-		<tr><td>Static website (Plain HTML)</td><td>1 GB</td></tr>
-		<tr><td>Weblog</td><td>5 GB</td></tr>
-		<tr><td>Crowded forum</td><td>10 GB</td></tr>
-		</tbody>
+			<thead>
+				<tr><th>{% trans %}Kind{% endtrans %}</th><th>{% trans %}Space{% endtrans %}</th></tr>
+			</thead>
+			<tbody>
+				<tr><td>{% trans %}Static website (Plain HTML){% endtrans %}</td><td>1 GB</td></tr>
+				<tr><td>{% trans %}Weblog{% endtrans %}</td><td>5 GB</td></tr>
+				<tr><td>{% trans %}Crowded forum{% endtrans %}</td><td>10 GB</td></tr>
+			</tbody>
 		</table>
 	</div>
 	<b id="disk-amount"></b><br />
-	{{config.get("billing", "disk")}} {{unit}} per {{config.get("billing", "diskPer")}} GB
+	{{config.get("billing", "disk")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "diskPer")}} GB
 	<input type="hidden" name="disk" value="{{vz.diskinfo[0]}}" />
 </div>
-<h2><a href="#" id="ram">Memory</a></h2>
+<h2><a href="#" id="ram">{% trans %}Memory{% endtrans %}</a></h2>
 <div class="block">
 	<div id="ram-slider" style="margin: 10px;"></div>
 	<div class="tipbox" style="float: right;">
-		<b>TIP:</b> Optimum memory
+		{% trans %}<b>TIP:</b> Optimum memory{% endtrans %}
 		<table>
-		<thead>
-		<tr><th>Kind</th><th>Memory</th></tr>
-		</thead>
-		<tbody>
-		<tr><td>Static website (Plain HTML)</td><td>150 MB</td></tr>
-		<tr><td>Weblog</td><td>600 MB</td></tr>
-		<tr><td>Crowded forum</td><td>1000 MB</td></tr>
-		</tbody>
+			<thead>
+				<tr><th>{% trans %}Kind{% endtrans %}</th><th>{% trans %}Memory{% endtrans %}</th></tr>
+			</thead>
+			<tbody>
+				<tr><td>{% trans %}Static website (Plain HTML){% endtrans %}</td><td>150 MB</td></tr>
+				<tr><td>{% trans %}Weblog{% endtrans %}</td><td>600 MB</td></tr>
+				<tr><td>{% trans %}Crowded forum{% endtrans %}</td><td>1000 MB</td></tr>
+			</tbody>
 		</table>
 	</div>
 	<b id="ram-amount"></b><br />
-	{{config.get("billing", "memory")}} {{unit}} per {{config.get("billing", "memoryPer")}} MB
+	{{config.get("billing", "memory")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "memoryPer")}} MB
 	<input type="hidden" name="ram" value="{{vz.memlimit[0]}}" />
 </div>
-<h2><a href="#" id="hostname">Hostname: {{vz.hostname}}</a></h2>
+<h2><a href="#" id="hostname">{% trans %}Hostname{% endtrans %}: {{vz.hostname}}</a></h2>
 <div class="block">
-	<b>Hostname:</b> <input type="text" name="hostname" value="{{vz.hostname}}" />
+	<b>{% trans %}Hostname{% endtrans %}:</b> <input type="text" name="hostname" value="{{vz.hostname}}" />
 </div>
-<h2><a href="#">Save</a></h2>
+<h2><a href="#">{% trans %}Save{% endtrans %}</a></h2>
 <div class="block">
-	<p>This virtual machine will consume <b id="totalmoney"></b> {{unit}} per minute. (incl. per VM cost of {{config.get("billing", "perVM")}} {{unit}})</p>
-	<p id="submit"><input type="submit" value="Save" /></p>
+	<p>{% trans cost='<b id="totalmoney"></b>', perVM=config.get("billing", "perVM") %}This virtual machine will consume {{cost}} {{unit}} per minute. (incl. per VM cost of {{perVM}} {{unit}}){% endtrans %}</p>
+	<p id="submit"><input type="submit" value="{% trans %}Save{% endtrans %}" /></p>
 </div>
 </div>
 </form>

@@ -105,14 +105,14 @@ $(function(){
 <div class="notify">{% trans %}To calculate {{unit}} depletion time for every VM, see <a href="/billing">billing</a>.{% endtrans %} <u>{% trans %}All calculations are rounded up.{% endtrans %}</u></div>
 <table>
 <thead>
-	<tr><th>{% trans %}Kind{% endtrans %}</th><th>{% trans %}Cost ({{unit}}){% endtrans %}</th></tr>
+	<tr><th>{% trans %}Kind{% endtrans %}</th><th>{% trans unit=unit|title %}Cost ({{unit}}){% endtrans %}</th></tr>
 </thead>
 <tbody>
 	<tr><td><div title="{% trans %}Every VM created must paid this amount.{% endtrans %}">{% trans %}Per VM{% endtrans %}</div></td><td>{{billing['perVM']}}</td></tr>
-	<tr><td><div title="{{config.get("billing", "memory")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "memoryPer")}} MB">{% trans %}Memory{% endtrans %}</div></td><td>{{billing['memory']}}</td></tr>
-	<tr><td><div title="{{config.get("billing", "disk")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "diskPer")}} MB">{% trans %}Disk{% endtrans %}</div></td><td>{{billing['disk']}}</td></tr>
+	<tr><td><div title="{{config.get("billing", "memory")}} {{unit|title}} {% trans %}per{% endtrans %} {{config.get("billing", "memoryPer")}} MB">{% trans %}Memory{% endtrans %}</div></td><td>{{billing['memory']}}</td></tr>
+	<tr><td><div title="{{config.get("billing", "disk")}} {{unit|title}} {% trans %}per{% endtrans %} {{config.get("billing", "diskPer")}} MB">{% trans %}Disk{% endtrans %}</div></td><td>{{billing['disk']}}</td></tr>
 	<tr><th>{% trans %}Total{% endtrans %}</th><td>{{billing['total']}}</td></tr>
-	<tr><th>{% trans %}{{unit}} will run out in <small>(not counting other VM)</small>{% endtrans %}</th><td class="time">{{billing['time']}}</td></tr>
+	<tr><th>{% trans unit=unit|title %}{{unit}} will run out in <small>(not counting other VM)</small>{% endtrans %}</th><td class="time">{{billing['time']}}</td></tr>
 </tbody>
 </table>
 <h1>{% trans %}Information{% endtrans %}</h1>
@@ -130,17 +130,17 @@ $(function(){
 	<tr><td><div title="{% trans %}The more process, the slower your machine{% endtrans %}">{% trans %}Process count{% endtrans %}</div></td><td>{{vz.nproc}}</td></tr>
 {% endif %}
 {% if vm.munin %}
-	<tr><td><div title="{% trans %}Monitoring & Graphing{% endtrans %}">{% trans %}Munin{% endtrans %}</div></td><td><a href="/static/munin/{% if vm.user %}{{vm.user.id}}{% else %}{{vz.hostname}}{% endif %}/{{vz.hostname}}.html">View</a></td></tr>
+	<tr><td><div title="{% trans %}Monitoring & Graphing{% endtrans %}">{% trans %}Munin{% endtrans %}</div></td><td><a href="/static/munin/{% if vm.user %}{{vm.user.id}}{% else %}{{vz.hostname}}{% endif %}/{{vz.hostname}}.html">{% trans %}View{% endtrans %}</a></td></tr>
 {% endif %}
-	<tr><th colspan="2">Memory</th></tr>
-	<tr><td><div title="How much memory your application may use. If it's full you might still able to run it in burstable memory.">Guaranteed</div></td><td>{{vz.memlimit[0]|filesizeformat}}</td></tr>
-	<tr><td><div title="Maximum limit. You application may use these memory but if other VM that haven't reach its guaranteed memory need more memory, your application will be terminated.">Burstable</div></td><td>{{vz.memlimit[1]|filesizeformat}}</td></tr>
+	<tr><th colspan="2">{% trans %}Memory{% endtrans %}</th></tr>
+	<tr><td><div title="{% trans %}How much memory your application may use. If it's full you might still able to run it in burstable memory.{% endtrans %}">{% trans %}Guaranteed{% endtrans %}</div></td><td>{{vz.memlimit[0]|filesizeformat}}</td></tr>
+	<tr><td><div title="{% trans %}Maximum limit. You application may use these memory but if other VM that haven't reach its guaranteed memory need more memory, your application will be terminated.{% endtrans %}">{% trans %}Burstable{% endtrans %}</div></td><td>{{vz.memlimit[1]|filesizeformat}}</td></tr>
 </tbody>
 </table>
-<h1>Graph</h1>
+<h1>{% trans %}Graph{% endtrans %}</h1>
 {% if vz.running %}
 {% set memused=vz.meminfo['MemTotal']-vz.meminfo['MemFree'] %}
-{% if memused < vz.memlimit[0] %}
+{% if memused < vz.memlimit[0] %} {# Graph isn't l10nable because Google Chart doesn't #}
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vz.meminfo['MemTotal']|filesizeformat}})&amp;chl=Used {{memused|filesizeformat}}|Free {{vz.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{memused}},{{vz.meminfo['MemFree']}}&amp;chds=0,{{vz.meminfo['MemTotal']}}" />
 {% else %}
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vz.meminfo['MemTotal']|filesizeformat}})&amp;chl=Guaranteed Used {{vz.memlimit[0]|filesizeformat}}|Burst {{(memused-vz.memlimit[0])|filesizeformat}}|Free {{vz.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{vz.memlimit[0]}},{{memused-vz.memlimit[0]}},{{vz.meminfo['MemFree']}}&amp;chds=0,{{vz.meminfo['MemTotal']}}" />
@@ -149,20 +149,20 @@ $(function(){
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vz.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vz.diskinfo[1]*1000)|filesizeformat}}|Free {{(vz.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vz.diskinfo[1]}},{{vz.diskinfo[2]}}&amp;chds=0,{{vz.diskinfo[0]}}" />
 {% if config.getboolean("varnish", "enabled") %}
 <div id="webedit" style="display: none;">
-Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
-After edit changes will <b>NOT</b> be visible until you click <button onclick="restartVarnish()" id="varnishRestartButton">restart proxy</button>. (Every site, including this may not be accessible for few seconds)
-Note that you can restart the proxy once only five minutes.
+<div class="notify" style="color: black;">{% trans restartButton='<button onclick="restartVarnish()" id="varnishRestartButton">'+_('restart proxy')+'</button>' %}Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
+After edit changes will <b>NOT</b> be visible until you click {{restartButton}}. (Every site, including this may not be accessible for few seconds)
+Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
 <form style="margin-top: 10px;" action="/vm/{{veid}}/addweb" method="post">
 {{ xsrf_form_html() }}
 <table>
 <thead>
-	<tr><th>Domain</th><th>Port</th><th>Wildcard</th><th>Action</th></tr>
+	<tr><th>{% trans %}Domain{% endtrans %}</th><th>{% trans %}Port{% endtrans %}</th><th>{% trans %}Wildcard{% endtrans %}</th><th>{% trans %}Action{% endtrans %}</th></tr>
 </thead>
 <tbody>
 {% for i in vm.varnishBackend %}
 {% for i2 in i.cond %}
 	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td><img src='{{static_url((i2.subdomain|lower)+".png")}}' /></td>
-	<td><a href="/vm/{{veid}}/addweb?delete={{i2.id}}&_xsrf={{xsrf}}" title="Delete" onclick="return confirm('Delete {{i2.hostname}}?')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+	<td><a href="/vm/{{veid}}/addweb?delete={{i2.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% trans hostname=i2.hostname %}Delete {{hostname}}?{% endtrans %}')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 {% endfor %}
 </tbody>
@@ -171,7 +171,7 @@ Note that you can restart the proxy once only five minutes.
 		<th><input type="text" name="host" /></th>
 		<th><input type="text" name="port" /></th>
 		<th><input type="checkbox" name="subdomain" checked="checked" /></th>
-		<th><input type="submit" value="Save" /></th>
+		<th><input type="submit" value="{% trans %}Save{% endtrans %}" /></th>
 	</tr>
 </tfooter>
 </table>
@@ -184,12 +184,12 @@ Note that you can restart the proxy once only five minutes.
 {{ xsrf_form_html() }}
 <table>
 <thead>
-	<tr><th>Interface</th><th>Port</th><th>External Port</th><th>Action</th></tr>
+	<tr><th>{% trans %}Interface{% endtrans %}{#_ Network interface #}</th><th>{% trans %}Internal Port{% endtrans %}</th><th>{% trans %}External Port{% endtrans %}</th><th>{% trans %}Action{% endtrans %}</th></tr>
 </thead>
 <tbody>
 {% for i in vm.portForward %}
 	<tr><td>{{i.iface}} ({{interface[i.iface][0]}})</td>{% if i.outport != -1 %}<td>{{i.port}}</td><td>{{i.outport}}</td>{% else %}<td colspan="2" style="text-align: center;">DMZ</td>{% endif %}
-	<td><a href="/vm/{{veid}}/addport?delete={{i.id}}&_xsrf={{xsrf}}" title="Delete this item" onclick="return confirm('Delete {{i.iface}} {{i.port}}-{{i.outport}}?');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+	<td><a href="/vm/{{veid}}/addport?delete={{i.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% if i.outport!=-1 %}{% trans iface=i.iface, port=i.port, outport=i.outport %}Delete {{iface}} in:{{port}} out:{{outport}}?{% endtrans %}{% else %}{% trans iface=i.iface %}Delete DMZ forwarding to {{iface}}?{% endtrans %}{% endif %}');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 </tbody>
 <tfooter>
@@ -203,18 +203,18 @@ Note that you can restart the proxy once only five minutes.
 		</select></th>
 		<th><input type="text" name="port" /></th>
 		<th><input type="text" name="outport" /></th>
-		<th><input type="submit" value="Save" /></th>
+		<th><input type="submit" value="{% trans %}Save{% endtrans %}" /></th>
 	</tr>
 </tfooter>
 </table>
-<div class="notify" style="color: black; width: 95%;">To forward every port, type DMZ as External Port. Other fields doesn't need to be filled.</div>
+<div class="notify" style="color: black;">{% trans %}To forward every port, type DMZ as External Port. Other fields doesn't need to be filled.{% endtrans %}</div>{#_ Do not translate DMZ #}
 </form>
 </div>
 <div id="rootedit" style="display: none;">
 <form style="margin-top: 10px;" action="/vm/{{veid}}/root" method="post">
 {{ xsrf_form_html() }}
-<b>New Root password:</b> <input type="password" name="root" /><br />
-<b>Confirm Root password:</b> <input type="password" name="root2" />
+<b>{% trans %}New Root password{% endtrans %}:</b> <input type="password" name="root" /><br />
+<b>{% trans %}Confirm Root password{% endtrans %}:</b> <input type="password" name="root2" />
 <p><input type="submit" value="Save" /></p>
 </form>
 </div>

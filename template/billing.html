@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="notify">
-	{{unit|title}} is required to run a VM. When you run out of {{unit}} every virtual machines will be stopped.<br />
-	If your {{unit}} is under 100 you can't start more VM. {{unit|title}} will decrease every minute.
+	{% trans unitC=unit|title %}{{unitC}} is required to run a VM. When you run out of {{unit}} every virtual machines will be stopped.{% endtrans %}<br />
+	{% trans unitC=unit|title %}If your {{unit}} is under 100 you can't start more VM. {{unitC}} will decrease every minute.{% endtrans %}
 </div>
-<p>Click each VM's ID to view detailed cost. <u>All calculations are rounded up.</u></p>
-<b>Rate:</b> {{config.get("billing", "credit")}} {{unit}} per {{config.get("billing", "creditPer")}} {{config.get("billing", "currency")}}
+<p>{% trans %}Click each VM's ID to view detailed cost.{% endtrans %} <u>{% trans %}All calculations are rounded up.{% endtrans %}</u></p>
+<b>{% trans %}Rate:{% endtrans %}</b> {{config.get("billing", "credit")}} {{unit}} {% trans %}per{% endtrans %} {{config.get("billing", "creditPer")}} {{config.get("billing", "currency")}}
 <table>
 <thead>
-	<tr><th>VEID</th><th>Cost ({{unit}})</th></tr>
+	<tr><th>{% trans %}VEID{% endtrans %}</th><th>{% trans %}Cost ({{unit}}){% endtrans %}</th></tr>
 </thead>
 <tbody>
 {% for i in vmcost %}
@@ -16,8 +16,8 @@
 {% endfor %}
 </tbody>
 <tfooter>
-	<tr><th>Total</th><td>{{totalcost}}</td></tr>
-	{% if totalcost %}<tr><th>Will deplete in</th><td class="time">{{((current_user.credit)/totalcost)*60}}</td></tr>{% endif %}
+	<tr><th>{% trans %}Total{% endtrans %}</th><td>{{totalcost}}</td></tr>
+	{% if totalcost %}<tr><th>{% trans %}Will deplete in{% endtrans %}</th><td class="time">{{((current_user.credit)/totalcost)*60}}</td></tr>{% endif %}
 </tfooter>
 </table>
 {% endblock %}

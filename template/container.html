@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>Containers <a href="/create" title="Create new VM"><img src="{{static_url('addvm.png')}}" /></a></h1>
+<h1>{% trans %}Containers{% endtrans %} <a href="/create" title="{% trans %}Create new VM{% endtrans %}"><img src="{{static_url('addvm.png')}}" /></a></h1>
 <table>
 <thead>
-<tr><th>VEID</th><th>Hostname</th><th>IP</th><th>OS</th><th>Owner</th><th>Action</th></tr>
+<tr>
+	<th>{% trans %}VEID{% endtrans %}</th><th>{% trans %}Hostname{% endtrans %}</th><th>{% trans %}IP{% endtrans %}</th>
+	<th>{% trans %}OS Template{% endtrans %}</th><th>{% trans %}Owner{% endtrans %}</th><th>{% trans %}Action{% endtrans %}</th></tr>
 </thead>
 {% for i in container %}
 <tr style="background-color: {% if i.vz.running %}lightgreen{%else%}pink{% endif %}">
-	<td><a href="/vm/{{i.veid}}" title="Click to show more information of {{i.veid}}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a></td><td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td><td>{{i.vz.os|capitalize}}</td>
-	{% if i.user != None %}<td>You</td>{% endif %}
+	<td><a href="/vm/{{i.veid}}" title="{% trans veid=i.veid %}Click to show more information of {{veid}}{% endtrans %}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a></td><td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td><td>{{i.vz.os|capitalize}}</td>
+	{% if i.user != None %}<td>{% trans %}You{% endtrans %}</td>{% endif %}
 <td{% if i.user == None %} colspan="2"{% endif %}>
 {% if i.user == None %}
-	<a href="/vm/{{i.veid}}/claim?return=/" title="Add {{i.veid}} to your account. No other user can access this VM. You have to pay for this VM. This is <b>IRREVERSIBLE</b>">Claim</a>
+	<a href="/vm/{{i.veid}}/claim?return=/" title="{% trans veid=i.veid %}Add {{veid}} to your account. No other user can access this VM. You have to pay for this VM. This is <b>IRREVERSIBLE</b>{% endtrans %}">{% trans %}Claim{% endtrans %}</a>
 {% else %}
-	<a href="/vm/{{i.veid}}/edit" title="Edit {{i.veid}}"><img src="{{static_url('edit.png')}}" /></a>
+	<a href="/vm/{{i.veid}}/edit" title="{% trans veid=i.veid %}Edit {{veid}}{% endtrans %}"><img src="{{static_url('edit.png')}}" /></a>
 {% if i.vz.running %}
-	<a href="/vm/{{i.veid}}/restart?return=/&_xsrf={{xsrf}}" onclick="return confirm('Restart {{i.veid}}?')" title="Restart {{i.veid}}"><img src="/static/restart.png" /></a> 
-	<a href="/vm/{{i.veid}}/stop?return=/&_xsrf={{xsrf}}" onclick="return confirm('Stop {{i.veid}}?')" title="Stop {{i.veid}}"><img src="/static/poweroff.png" /></a> 
+	<a href="/vm/{{i.veid}}/restart?return=/&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Restart {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Restart {{veid}}{% endtrans %}"><img src="/static/restart.png" /></a> 
+	<a href="/vm/{{i.veid}}/stop?return=/&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Stop {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Stop {{veid}}{% endtrans %}"><img src="/static/poweroff.png" /></a> 
 {% else %}
-	<a href="/vm/{{i.veid}}/start?return=/&_xsrf={{xsrf}}" onclick="return confirm('Start {{i.veid}}?')" title="Start {{i.veid}}"><img src="/static/start.png" /></a> 
-	<a href="/vm/{{i.veid}}/destroy?return=/&_xsrf={{xsrf}}" onclick="return confirm('Destroy {{i.veid}}?')"  title="Destroy all data on {{i.veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>."><img src="/static/destroy.png" /></a> 
+	<a href="/vm/{{i.veid}}/start?return=/&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Start {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Start {{veid}}{% endtrans %}"><img src="/static/start.png" /></a> 
+	<a href="/vm/{{i.veid}}/destroy?return=/&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Destroy {{veid}}?{% endtrans %}')"  title="{% trans veid=i.veid %}Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>.{% endtrans %}"><img src="/static/destroy.png" /></a> 
 {% endif %}
 {% endif %}
 </td></tr>

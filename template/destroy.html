@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block javascript %}
 $(function(){
-	$("button").button();
+	$("input[type=submit]").button();
 });
 {% endblock %}
 {% block body %}
-<h1>Final warning before destroying <u>{{hostname}}</u> ({{veid}})</h1>
-<p>	Destroying a virtual machine means that <b>ALL DATA</b> and <b>CONFIGURATION</b> will be removed and cannot be recovered.</p>
-<p>Make sure to backup ALL data on the {{veid}} before continue</p>
-<div class="notify">If you changed your mind, click <a href="/vm/{{veid}}">back</a></div>
+<h1>{% trans %}Final warning before destroying <u>{{hostname}}</u> ({{veid}}){% endtrans %}</h1>
+<p>	{% trans %}Destroying a virtual machine means that <b>ALL DATA</b> and <b>CONFIGURATION</b> will be removed and cannot be recovered.{% endtrans %}</p>
+<p>{% trans %}Make sure to backup ALL data on the {{veid}} before continue{% endtrans %}</p>
+<div class="notify">{% trans back='<a href="/vm/{{veid}}">'+_('back')+'</a>' %}If you changed your mind, click {{back}}{% endtrans %}</div>
 <p>
 	<form action="destroy" method="post">
 	{{xsrf_form_html()}}
-	<input type="submit" value="I understand that this is irreversible, proceed to deletion" />
+	<input type="submit" value="{% trans %}I understand that this is irreversible, proceed to deletion{% endtrans %}" />
 	</form>
-	<noscript>Please enable JavaScript</noscript>
+	<noscript>{% trans %}Please enable JavaScript{% endtrans %}</noscript>
 </p>
 {% endblock %}
