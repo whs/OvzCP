@@ -8,9 +8,9 @@ $(function(){
 <h1>{% trans %}Final warning before destroying <u>{{hostname}}</u> ({{veid}}){% endtrans %}</h1>
 <p>	{% trans %}Destroying a virtual machine means that <b>ALL DATA</b> and <b>CONFIGURATION</b> will be removed and cannot be recovered.{% endtrans %}</p>
 <p>{% trans %}Make sure to backup ALL data on the {{veid}} before continue{% endtrans %}</p>
-<div class="notify">{% trans back='<a href="/vm/{{veid}}">'+_('back')+'</a>' %}If you changed your mind, click {{back}}{% endtrans %}</div>
+<div class="notify">{% trans back='<a href="'+reverse_url('vminfo', veid)+'">'+_('back')+'</a>' %}If you changed your mind, click {{back}}{% endtrans %}</div>
 <p>
-	<form action="destroy" method="post">
+	<form action="{{reverse_url('destroyvm', veid)}}" method="post">
 	{{xsrf_form_html()}}
 	<input type="submit" value="{% trans %}I understand that this is irreversible, proceed to deletion{% endtrans %}" />
 	</form>

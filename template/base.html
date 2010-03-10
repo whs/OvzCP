@@ -287,18 +287,18 @@ $(function(){
 <div id="top-bar">
 	<div id="top-bar-in">
 		<div id="logo"><a href="/">OvzCP</a></div>
-		<div id="version">0.1 {% trans %}by whsgroup.ath.cx{% endtrans %}</div>
-		<div id="user"><a href="/auth" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
+		<div id="version">0.1 {% trans %}by whsgroup.ath.cx{% endtrans %} | {{localeName}}</div>
+		<div id="user"><a href="{{reverse_url('auth')}}" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
 		({{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="{% trans %}Time left until {{unit}} depletion{% endtrans %}">{{((current_user.credit)/totalcost)*60}}</span>{% endif %})</div>
 	</div>
 </div>
 <div id="left-bar">
 	<div id="left-bar-in">
 		<ul>
-			<li><a href="/">{% trans %}Containers{% endtrans %}</a></li>
-			<li><a href="/dashboard">{% trans %}Dashboard{% endtrans %}</a></li>
-			<li><a href="/billing">{% trans %}Billing{% endtrans %}</a></li>
-			<li><a href="/spec">{% trans %}Host Info{% endtrans %}</a></li>
+			<li><a href="{{reverse_url('dashboard')}}">{% trans %}Dashboard{% endtrans %}</a></li>
+			<li><a href="{{reverse_url('containers')}}">{% trans %}Containers{% endtrans %}</a></li>
+			<li><a href="{{reverse_url('billing')}}">{% trans %}Billing{% endtrans %}</a></li>
+			<li><a href="{{reverse_url('hostspec')}}">{% trans %}Host Info{% endtrans %}</a></li>
 		</ul>
 	</div>
 </div>

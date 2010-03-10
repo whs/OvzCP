@@ -62,7 +62,7 @@ $(function(){
 {% endblock %}
 {% block body %}
 <h1>{% trans %}Create VM{% endtrans %}</h1>
-<form action="/create" method="post">
+<form action="{{reverse_url('createvm')}}" method="post">
 {{ xsrf_form_html() }}
 <div id="accordion">
 <h2><a href="#" id="os">{% trans %}1: Pick your OS{% endtrans %}</a></h2>

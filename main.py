@@ -102,9 +102,24 @@ class BaseHandler(tornado.web.RequestHandler):
 		
 		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"), extensions=['jinja2.ext.i18n'])
 		jinja.install_gettext_translations(self.gettext)
-		self.write(jinja.get_template(tmpl).render(current_user=self.current_user, static_url=self.static_url,
-			xsrf_form_html=self.xsrf_form_html, xsrf=self.get_cookie("_xsrf"), request=self.request, config=_config, totalcost=totalcost, 
-			str=str, locale=self.locale, *args, **kwargs))
+		margs = dict({
+			# Python
+			"str": str,
+			# Internal Tornadoweb things
+			"current_user": self.current_user,
+			"static_url": self.static_url,
+			"xsrf_form_html": self.xsrf_form_html,
+			"xsrf": self.get_cookie("_xsrf"),
+			"reverse_url": self.reverse_url,
+			"locale": self.locale,
+			# NOTE: Translate this to your own language name
+			"localeName": _("English"),
+			"request": self.request,
+			# OvzCP stuff
+			"config": _config,
+			"totalcost": totalcost, 
+		}, **kwargs)
+		self.write(jinja.get_template(tmpl).render(*args, **margs))
 		return
 
 class Containers(BaseHandler):
@@ -180,7 +195,7 @@ class CreateVM(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		if self.current_user.credit < 5000:
-			self.redirect("/?error=6")
+			self.redirect(self.reverse_url("containers")+"?error=6")
 			return
 		hostnames = map(lambda x: x.hostname,openvz.listVM())
 		err=""
@@ -198,20 +213,20 @@ class CreateVM(BaseHandler):
 			title=_("Creating VM"), error=err)
 	def post(self):
 		if self.current_user.credit < 5000:
-			self.redirect("/?error=6")
+			self.redirect(self.reverse_url("containers")+"?error=6")
 			return
 		if not self.get_argument("tos"):
-			self.redirect("/create?error=1")
+			self.redirect(self.reverse_url("createvm")+"?error=1")
 			return
 		if self.get_argument("os") not in openvz.listTemplates():
-			self.redirect("/create?error=2")
+			self.redirect(self.reverse_url("createvm")+"?error=2")
 			return
 		if self.get_argument("root") != self.get_argument("root2"):
-			self.redirect("/create?error=3")
+			self.redirect(self.reverse_url("createvm")+"?error=3")
 			return
 		hostnames = map(lambda x: x.hostname,openvz.listVM())
 		if not re.match("^([0-9A-Za-z_\-]+)$", self.get_argument("hostname")) or self.get_argument("hostname") in hostnames:
-			self.redirect("/create?error=4")
+			self.redirect(self.reverse_url("createvm")+"?error=4")
 			return
 		vm=openvz.createVM(self.get_argument("os"), None, _config.get("iface", "nameserver"), self.get_argument("root"))
 		models.VM(veid=vm.veid, user=self.current_user)
@@ -226,7 +241,7 @@ class CreateVM(BaseHandler):
 		vm.diskinfo = float(self.get_argument("disk"))
 		# add IP
 		vm.ip = _config.get("iface", "vmIP")+str(vm.veid)
-		self.redirect("/vm/"+str(vm.veid))
+		self.redirect(self.reverse_url("vminfo", vm.veid))
 
 class DestroyVM(BaseHandler):
 	@tornado.web.authenticated
@@ -237,16 +252,16 @@ class DestroyVM(BaseHandler):
 	def post(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		vm = sql.vz
 		if vm.running:
-			self.redirect("/?error=5")
+			self.redirect(self.reverse_url("containers")+"?error=5")
 			return
 		proc = vm.destroy()
 		proc.wait()
 		sql.destroySelf()
-		self.redirect(self.get_argument("return", "/?msg=3"))
+		self.redirect(self.get_argument("return", self.reverse_url("containers")+"?msg=3"))
 
 class RestartVM(BaseHandler):
 	@tornado.web.authenticated
@@ -254,15 +269,15 @@ class RestartVM(BaseHandler):
 	def get(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		vm = sql.vz
 		if not vm.running:
-			self.redirect("/?error=2")
+			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
 		proc = vm.restart()
 		proc.wait()
-		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
+		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 
 class StopVM(BaseHandler):
 	@tornado.web.authenticated
@@ -270,37 +285,37 @@ class StopVM(BaseHandler):
 	def get(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		vm = sql.vz
 		if not vm.running:
-			self.redirect("/?error=2")
+			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
 		proc = vm.stop()
 		proc.wait()
-		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
+		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 
 class StartVM(BaseHandler):
 	@tornado.web.authenticated
 	@xsrf_check
 	def get(self, veid):
 		if self.current_user.credit < 1000:
-			self.redirect("/?error=4")
+			self.redirect(self.reverse_url("containers")+"?error=4")
 			return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		vm = sql.vz
 		if vm.running:
-			self.redirect("/?error=2")
+			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
 		proc = vm.start()
 		proc.wait()
 		# Sometimes OvzCP return internal server error
 		# this should remedy the bug
 		time.sleep(2)
-		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
+		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 
 class ClaimVM(BaseHandler):
 	@tornado.web.authenticated
@@ -308,22 +323,22 @@ class ClaimVM(BaseHandler):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if not self.get_argument("revert", False):
 			if sql.user:
-				self.redirect("/?error=1")
+				self.redirect(self.reverse_url("containers")+"?error=1")
 				return
 			if sql.user == self.current_user:
-				self.redirect("/?error=3")
+				self.redirect(self.reverse_url("containers")+"?error=3")
 				return
 			sql.set(user=self.current_user)
 		else:
 			return
 			if not sql.user:
-				self.redirect("/?error=1")
+				self.redirect(self.reverse_url("containers")+"?error=1")
 				return
 			if sql.user != self.current_user:
-				self.redirect("/?error=1")
+				self.redirect(self.reverse_url("containers")+"?error=1")
 				return
 			sql.set(user=None)
-		self.redirect(self.get_argument("return", "/vm/"+str(veid)))
+		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 
 class VMinfo(BaseHandler):
 	@tornado.web.authenticated
@@ -331,10 +346,10 @@ class VMinfo(BaseHandler):
 		try:
 			sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		except IndexError:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		if sql.user != self.current_user and sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		errmsg = ""
 		txtmsg = ""
@@ -390,10 +405,10 @@ class VMedit(BaseHandler):
 		try:
 			sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		except IndexError:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		if sql.user != self.current_user and sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		errmsg = ""
 		txtmsg = ""
@@ -406,14 +421,14 @@ class VMedit(BaseHandler):
 		try:
 			sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		except IndexError:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		if sql.user != self.current_user and sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		hostnames = map(lambda x: x.hostname,openvz.listVM())
 		if self.get_argument("hostname") in hostnames:
-			self.redirect("/vm/"+veid+"?error=3")
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=3")
 			return
 		change = []
 		# Hostname change
@@ -433,9 +448,9 @@ class VMedit(BaseHandler):
 			change.append("memlimit")
 		if change:
 			sql.vz.restart().wait()
-			self.redirect("/vm/"+str(veid)+"?message=1")
+			self.redirect(self.reverse_url("vminfo", veid)+"?message=1")
 		else:
-			self.redirect("/vm/"+str(veid)+"?message=2")
+			self.redirect(self.reverse_url("vminfo", veid)+"?message=2")
 
 class Billing(BaseHandler):
 	@tornado.web.authenticated
@@ -463,13 +478,13 @@ class RootPW(BaseHandler):
 	def post(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		if self.get_argument("root") != self.get_argument("root2"):
-			self.redirect("/vm/"+str(veid)+"?error=5")
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=5")
 			return
 		sql.vz.root_password(self.get_argument("root"))
-		self.redirect("/vm/"+str(veid)+"?message=3")
+		self.redirect(self.reverse_url("vminfo", veid)+"?message=3")
 
 class AddPort(BaseHandler):
 	@tornado.web.authenticated
@@ -478,26 +493,26 @@ class AddPort(BaseHandler):
 		if not _config.getboolean("iface", "enabled"): return
 		d=models.PortForward.select(models.PortForward.q.id == int(self.get_argument("delete")))[0]
 		if d.vm.user != self.current_user or not d.vm.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		d.destroySelf()
 		import vmfw
 		vmfw.update(models.PortForward.select())
 		vmfw.restart()
-		self.redirect("/vm/%s#portedit"%veid)
+		self.redirect(self.reverse_url("vminfo", veid)+"#portedit")
 	@tornado.web.authenticated
 	def post(self, veid):
 		if not _config.getboolean("iface", "enabled"): return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		if not re.match(_config.get("iface", "allowed"), self.get_argument("iface")):
-			self.redirect("/vm/%s?error=4"%veid)
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=4")
 			return
 		try:
 			if _config.get("ifaceuser", self.get_argument("iface").replace(":", "-")) != self.current_user.email:
-				self.redirect("/vm/%s?error=4"%veid)
+				self.redirect(self.reverse_url("vminfo", veid)+"?error=4")
 				return
 		except ConfigParser.NoOptionError:
 			pass
@@ -509,13 +524,13 @@ class AddPort(BaseHandler):
 			inport = int(self.get_argument("port"))
 		if models.PortForward.select(models.AND(models.PortForward.q.iface==self.get_argument("iface"), 
 				models.OR(models.PortForward.q.outport==outport, models.PortForward.q.outport==-1))).count():
-			self.redirect("/vm/%s?error=1"%veid)
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=1")
 			return
 		models.PortForward(vm=sql, iface=self.get_argument("iface"), port=inport, outport=outport)
 		import vmfw
 		vmfw.update(models.PortForward.select())
 		vmfw.restart()
-		self.redirect("/vm/%s#portedit"%veid)
+		self.redirect(self.reverse_url("vminfo", veid)+"#portedit")
 
 class AddVarnish(BaseHandler):
 	@tornado.web.authenticated
@@ -524,7 +539,7 @@ class AddVarnish(BaseHandler):
 		if not _config.getboolean("varnish", "enabled"): return
 		d=models.VarnishCond.select(models.VarnishCond.q.id == int(self.get_argument("delete")))[0]
 		if d.backend.vm.user != self.current_user or not d.backend.vm.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		# check for orphaned backend
 		backend = d.backend
@@ -534,19 +549,19 @@ class AddVarnish(BaseHandler):
 		if backend.cond.count() == 0:
 			backend.destroySelf()
 			varnish.updateBackend(models.VarnishBackend.select())
-		self.redirect("/vm/%s#webedit"%veid)
+		self.redirect(self.reverse_url("vminfo", veid)+"#webedit")
 	@tornado.web.authenticated
 	def post(self, veid):
 		if not _config.getboolean("varnish", "enabled"): return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
-			self.redirect("/?error=1")
+			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		if not re.match(r"^[a-zA-Z0-9\.\-_]+$", self.get_argument("host")):
-			self.redirect("/vm/%s?error=3"%veid)
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=3")
 			return
 		if models.VarnishCond.select(models.VarnishCond.q.hostname==self.get_argument("host")).count():
-			self.redirect("/vm/%s?error=1"%veid)
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=1")
 			return
 		backend = models.VarnishBackend.select(models.AND(models.VarnishBackend.q.port == int(self.get_argument("port")), models.VarnishBackend.q.vm==sql))
 		if backend.count():
@@ -559,7 +574,7 @@ class AddVarnish(BaseHandler):
 		if backendUpdate:
 			varnish.updateBackend(models.VarnishBackend.select())
 		varnish.updateRecv(models.VarnishCond.select())
-		self.redirect("/vm/%s#webedit"%veid)
+		self.redirect(self.reverse_url("vminfo", veid)+"#webedit")
 
 class Munin(BaseHandler):
 	def post(self, veid):
@@ -632,8 +647,8 @@ class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
 	def get(self):
 		self.next = self.get_argument("next", "/")
-		if self.next == "/auth":
-			self.next = "/"
+		if self.next == self.reverse_url("auth"):
+			self.next = self.reverse_url("dashboard")
 		if self.get_argument("openid.mode", None):
 			self.get_authenticated_user(self.async_callback(self._on_auth))
 			return
@@ -672,26 +687,26 @@ settings = {
 }
 
 application = tornado.web.Application([
-	(r"/auth", GoogleHandler),
-	(r"/", Containers),
-	(r"/dashboard", Dashboard),
-	(r"/create", CreateVM),
-	(r"/billing", Billing),
-	(r"/payreceive", PayReceive),
-	(r"/spec", HostSpec),
-	(r"/varnishRestart", VarnishRestart),
-	(r"/vm/([0-9]+)", VMinfo),
-	(r"/vm/([0-9]+)/edit", VMedit),
-	(r"/vm/([0-9]+)/destroy", DestroyVM),
-	(r"/vm/([0-9]+)/restart", RestartVM),
-	(r"/vm/([0-9]+)/stop", StopVM),
-	(r"/vm/([0-9]+)/start", StartVM),
-	(r"/vm/([0-9]+)/claim", ClaimVM),
-	(r"/vm/([0-9]+)/addweb", AddVarnish),
-	(r"/vm/([0-9]+)/addport", AddPort),
-	(r"/vm/([0-9]+)/munin", Munin),
-	(r"/vm/([0-9]+)/root", RootPW),
-	(r"/_cron", CronRun),
+	tornado.web.URLSpec(r"/auth", GoogleHandler, name="auth"),
+	tornado.web.URLSpec(r"/", Dashboard, name="dashboard"),
+	tornado.web.URLSpec(r"/containers", Containers, name="containers"),
+	tornado.web.URLSpec(r"/create", CreateVM, name="createvm"),
+	tornado.web.URLSpec(r"/billing", Billing, name="billing"),
+	tornado.web.URLSpec(r"/payreceive", PayReceive, name="payreceive"),
+	tornado.web.URLSpec(r"/spec", HostSpec, name="hostspec"),
+	tornado.web.URLSpec(r"/varnishRestart", VarnishRestart, name="varnishrestart"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)", VMinfo, name="vminfo"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/edit", VMedit, name="vmedit"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/destroy", DestroyVM, name="destroyvm"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/restart", RestartVM, name="restartvm"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/stop", StopVM, name="stopvm"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/start", StartVM, name="startvm"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/claim", ClaimVM, name="claimvm"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/addweb", AddVarnish, name="addvarnish"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/addport", AddPort, name="addport"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/munin", Munin, name="munin"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/root", RootPW, name="rootpw"),
+	tornado.web.URLSpec(r"/_cron", CronRun, name="cron"),
 ], **settings)
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ function restartVarnish(){
 	$("#varnishRestartButton").attr("disabled", true);
 	$.get("/varnishRestart", {"_xsrf": "{{xsrf}}", veid: "{{veid}}", state: 0}, function(d){
 		if(d){ alert(d); return; }
-		$.get("/varnishRestart", {"_xsrf": "{{xsrf}}", state: 1}, function(){
+		$.get("{{reverse_url('varnishrestart')}}", {"_xsrf": "{{xsrf}}", state: 1}, function(){
 			alert("{% trans %}The reverse proxy is being restarted. Please be patience, every sites may not be accesible for few seconds.{% endtrans %}");
 		})
 	});
@@ -39,7 +39,7 @@ function restartVarnish(){
 {% if config.getboolean("munin", "enabled") %}
 function toggleMunin(){
 	$("#munin button").attr("disabled", true);
-	$.post("/vm/{{veid}}/munin", {"_xsrf": "{{xsrf}}", status: "toggle"}, function(d){
+	$.post("{{reverse_url('munin', veid)}}", {"_xsrf": "{{xsrf}}", status: "toggle"}, function(d){
 		$("#munin button").attr("disabled", false);
 		d=JSON.parse(d)
 		if(d.error) alert(d)
@@ -82,13 +82,13 @@ $(function(){
 {% if vm.user == current_user %}
 <span id="toolbar">
 {% if vz.running %}
-	<a href="/vm/{{veid}}/restart?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Restart {{veid}}?{% endtrans %}')"><button><img src="{{static_url('restart.png')}}" / > {% trans %}Restart{% endtrans %}</button></a>
-	<a href="/vm/{{veid}}/stop?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Stop {{veid}}?{% endtrans %}')"><button><img src="{{static_url('poweroff.png')}}" /> {% trans %}Stop{% endtrans %}</button></a>
+	<a href="{{reverse_url('restartvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Restart {{veid}}?{% endtrans %}')"><button><img src="{{static_url('restart.png')}}" / > {% trans %}Restart{% endtrans %}</button></a>
+	<a href="{{reverse_url('stopvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Stop {{veid}}?{% endtrans %}')"><button><img src="{{static_url('poweroff.png')}}" /> {% trans %}Stop{% endtrans %}</button></a>
 {% else %}
-	<a href="/vm/{{veid}}/start?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Start {{veid}}?{% endtrans %}')"><button><img src="{{static_url('start.png')}}" /> {% trans %}Start{% endtrans %}</button></a>
-	<a href="/vm/{{veid}}/destroy?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Destroy {{veid}}?{% endtrans %}')" title="{% trans %}Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>.{% endtrans %}"><button><img src="{{static_url('destroy.png')}}" /> {% trans %}Destroy{% endtrans %}</button></a>
+	<a href="{{reverse_url('startvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Start {{veid}}?{% endtrans %}')"><button><img src="{{static_url('start.png')}}" /> {% trans %}Start{% endtrans %}</button></a>
+	<a href="{{reverse_url('destroyvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Destroy {{veid}}?{% endtrans %}')" title="{% trans %}Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>.{% endtrans %}"><button><img src="{{static_url('destroy.png')}}" /> {% trans %}Destroy{% endtrans %}</button></a>
 {% endif %}
-	<a href="/vm/{{veid}}/edit"><button><img src="{{static_url('edit.png')}}" /> {% trans %}Edit{% endtrans %}</button></a>
+	<a href="{{reverse_url('vmedit', veid)}}"><button><img src="{{static_url('edit.png')}}" /> {% trans %}Edit{% endtrans %}</button></a>
 {% if config.getboolean("varnish", "enabled") %}
 	<a href="#" onclick="editweb(); return false" title="{% trans %}Forward HTTP application port to port 80 on specified hostname.{% endtrans %}"><button>{% trans %}Web forward{% endtrans %}</button></a>
 {% endif %}
@@ -147,12 +147,14 @@ $(function(){
 {% endif %}
 {% endif %}
 <img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vz.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vz.diskinfo[1]*1000)|filesizeformat}}|Free {{(vz.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vz.diskinfo[1]}},{{vz.diskinfo[2]}}&amp;chds=0,{{vz.diskinfo[0]}}" />
+
+
 {% if config.getboolean("varnish", "enabled") %}
 <div id="webedit" style="display: none;">
 <div class="notify" style="color: black;">{% trans restartButton='<button onclick="restartVarnish()" id="varnishRestartButton">'+_('restart proxy')+'</button>' %}Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
 After edit changes will <b>NOT</b> be visible until you click {{restartButton}}. (Every site, including this may not be accessible for few seconds)
 Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
-<form style="margin-top: 10px;" action="/vm/{{veid}}/addweb" method="post">
+<form style="margin-top: 10px;" action="{{reverse_url('addvarnish', veid)}}" method="post">
 {{ xsrf_form_html() }}
 <table>
 <thead>
@@ -162,7 +164,7 @@ Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
 {% for i in vm.varnishBackend %}
 {% for i2 in i.cond %}
 	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td><img src='{{static_url((i2.subdomain|lower)+".png")}}' /></td>
-	<td><a href="/vm/{{veid}}/addweb?delete={{i2.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% trans hostname=i2.hostname %}Delete {{hostname}}?{% endtrans %}')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+	<td><a href="{{reverse_url('addvarnish', veid)}}?delete={{i2.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% trans hostname=i2.hostname %}Delete {{hostname}}?{% endtrans %}')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 {% endfor %}
 </tbody>
@@ -180,7 +182,7 @@ Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
 {% endif %}
 {% if config.getboolean("iface", "enabled") %}
 <div id="portedit" style="display: none;">
-<form style="margin-top: 10px;" action="/vm/{{veid}}/addport" method="post">
+<form style="margin-top: 10px;" action="{{reverse_url('addport', veid)}}" method="post">
 {{ xsrf_form_html() }}
 <table>
 <thead>
@@ -189,7 +191,7 @@ Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
 <tbody>
 {% for i in vm.portForward %}
 	<tr><td>{{i.iface}} ({{interface[i.iface][0]}})</td>{% if i.outport != -1 %}<td>{{i.port}}</td><td>{{i.outport}}</td>{% else %}<td colspan="2" style="text-align: center;">DMZ</td>{% endif %}
-	<td><a href="/vm/{{veid}}/addport?delete={{i.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% if i.outport!=-1 %}{% trans iface=i.iface, port=i.port, outport=i.outport %}Delete {{iface}} in:{{port}} out:{{outport}}?{% endtrans %}{% else %}{% trans iface=i.iface %}Delete DMZ forwarding to {{iface}}?{% endtrans %}{% endif %}');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+	<td><a href="{{reverse_url('addport', veid)}}?delete={{i.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% if i.outport!=-1 %}{% trans iface=i.iface, port=i.port, outport=i.outport %}Delete {{iface}} in:{{port}} out:{{outport}}?{% endtrans %}{% else %}{% trans iface=i.iface %}Delete DMZ forwarding to {{iface}}?{% endtrans %}{% endif %}');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
 {% endfor %}
 </tbody>
 <tfooter>
@@ -211,7 +213,7 @@ Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
 </form>
 </div>
 <div id="rootedit" style="display: none;">
-<form style="margin-top: 10px;" action="/vm/{{veid}}/root" method="post">
+<form style="margin-top: 10px;" action="{{reverse_url('rootpw', veid)}}" method="post">
 {{ xsrf_form_html() }}
 <b>{% trans %}New Root password{% endtrans %}:</b> <input type="password" name="root" /><br />
 <b>{% trans %}Confirm Root password{% endtrans %}:</b> <input type="password" name="root2" />
