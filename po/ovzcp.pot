@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-03-10 14:19+0700\n"
+"POT-Creation-Date: 2010-03-11 02:02+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,104 +25,99 @@ msgstr ""
 msgid "XSRF Check fail by exception"
 msgstr ""
 
-#. Translate this to your own language name
-#: ../main.py:116
-msgid "English"
-msgstr ""
-
 #. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
 #. current user, it will return this error
-#: ../main.py:138 ../main.py:584
+#: ../main.py:150 ../main.py:596
 msgid "VM not owned by current user"
 msgstr ""
 
-#: ../main.py:140
+#: ../main.py:152
 msgid "VM is not running"
 msgstr ""
 
 #. Displayed when trying to claim a VM that belongs to yourself
-#: ../main.py:143
+#: ../main.py:155
 msgid "VM is already owned by current user"
 msgstr ""
 
 #. Displayed when trying to start a VM but user's credit is lower than 1,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:146
+#: ../main.py:158
 #, python-format
 msgid "%s is under 1,000, please refill."
 msgstr ""
 
-#: ../main.py:148
+#: ../main.py:160
 msgid "VM is running"
 msgstr ""
 
 #. Displayed when trying to create a VM but user's credit is lower than 5,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:151
+#: ../main.py:163
 #, python-format
 msgid "You need 5,000 %s to create a VM."
 msgstr ""
 
-#: ../main.py:155
+#: ../main.py:167
 msgid "VM now belongs to you"
 msgstr ""
 
-#: ../main.py:157
+#: ../main.py:169
 msgid "VM ownership removed. Other can now claim this VM"
 msgstr ""
 
-#: ../main.py:159
+#: ../main.py:171
 msgid "VM destroyed"
 msgstr ""
 
-#: ../main.py:161 ../template/base.html:298 ../template/container.html:3
+#: ../main.py:173 ../template/base.html:306 ../template/container.html:3
 msgid "Containers"
 msgstr ""
 
-#: ../main.py:192
+#: ../main.py:204
 msgid "Host OS specification"
 msgstr ""
 
-#: ../main.py:205
+#: ../main.py:217
 msgid "Terms of Service not accepted"
 msgstr ""
 
-#: ../main.py:207
+#: ../main.py:219
 msgid "Invalid template name"
 msgstr ""
 
-#: ../main.py:209 ../main.py:374
+#: ../main.py:221 ../main.py:386
 msgid "Passwords do not match"
 msgstr ""
 
 #. Malformat hostname
-#: ../main.py:211 ../main.py:369
+#: ../main.py:223 ../main.py:381
 msgid "Invalid hostname"
 msgstr ""
 
-#: ../main.py:213
+#: ../main.py:225
 msgid "Creating VM"
 msgstr ""
 
-#: ../main.py:251
+#: ../main.py:263
 #, python-format
 msgid "Destroy %s"
 msgstr ""
 
-#: ../main.py:357
+#: ../main.py:369
 msgid ""
 "VM disk usage exceed allocated amount. You will be billed by amount used "
 "instead"
 msgstr ""
 
 #. Duplicate entry
-#: ../main.py:362
+#: ../main.py:374
 msgid "Entry already exists"
 msgstr ""
 
 #. <span class='time'>%s</span> is time in this format: 1 day 3 hours 4 minutes
 #. 5 seconds
-#: ../main.py:366
+#: ../main.py:378
 #, python-format
 msgid ""
 "You have to wait <span class='time'>%s</span> before you can restart the "
@@ -130,47 +125,47 @@ msgid ""
 msgstr ""
 
 #. Network interface
-#: ../main.py:372
+#: ../main.py:384
 msgid "Invalid interface"
 msgstr ""
 
-#: ../main.py:378
+#: ../main.py:390
 msgid "Settings commited."
 msgstr ""
 
-#: ../main.py:380
+#: ../main.py:392
 msgid "No changes."
 msgstr ""
 
-#: ../main.py:382
+#: ../main.py:394
 msgid "Root password successfully changed"
 msgstr ""
 
-#: ../main.py:399
+#: ../main.py:411
 #, python-format
 msgid "%s information"
 msgstr ""
 
-#: ../main.py:418
+#: ../main.py:430
 #, python-format
 msgid "Edit %s"
 msgstr ""
 
-#: ../main.py:466 ../template/base.html:300 ../template/dashboard.html:95
+#: ../main.py:478 ../template/base.html:307 ../template/dashboard.html:95
 #: ../template/info.html:104
 msgid "Billing"
 msgstr ""
 
-#: ../main.py:593
+#: ../main.py:605
 msgid "Cannot connect to Munin on the VM."
 msgstr ""
 
-#: ../main.py:611
+#: ../main.py:623
 #, python-format
 msgid "Limit not reached. Please wait %s seconds"
 msgstr ""
 
-#: ../main.py:633 ../template/base.html:299
+#: ../main.py:645 ../template/base.html:305
 msgid "Dashboard"
 msgstr ""
 
@@ -234,24 +229,24 @@ msgstr ""
 msgid "Double click to close"
 msgstr ""
 
-#: ../template/base.html:290
+#: ../template/base.html:291
 msgid "by whsgroup.ath.cx"
 msgstr ""
 
-#: ../template/base.html:292
+#: ../template/base.html:299
 #, python-format
 msgid "Time left until %(unit)s depletion"
 msgstr ""
 
-#: ../template/base.html:301
+#: ../template/base.html:308
 msgid "Host Info"
 msgstr ""
 
-#: ../template/base.html:311
+#: ../template/base.html:318
 msgid "Collapse/Expand"
 msgstr ""
 
-#: ../template/base.html:322
+#: ../template/base.html:329
 #, python-format
 msgid "You have no %(unit)s available!"
 msgstr ""
@@ -330,7 +325,7 @@ msgid "Owner"
 msgstr ""
 
 #: ../template/container.html:8 ../template/dashboard.html:75
-#: ../template/info.html:159 ../template/info.html:187
+#: ../template/info.html:161 ../template/info.html:189
 msgid "Action"
 msgstr ""
 
@@ -511,7 +506,7 @@ msgstr ""
 msgid "Root password"
 msgstr ""
 
-#: ../template/create.html:128 ../template/info.html:217
+#: ../template/create.html:128 ../template/info.html:219
 msgid "Confirm Root password"
 msgstr ""
 
@@ -602,7 +597,7 @@ msgid "Saving this page will result in VM being restarted"
 msgstr ""
 
 #: ../template/edit.html:106 ../template/edit.html:109
-#: ../template/info.html:174 ../template/info.html:206
+#: ../template/info.html:176 ../template/info.html:208
 msgid "Save"
 msgstr ""
 
@@ -797,7 +792,7 @@ msgstr ""
 msgid "Graph"
 msgstr ""
 
-#: ../template/info.html:152
+#: ../template/info.html:154
 #, python-format
 msgid ""
 "Wildcard forwarding will forward anything.yourdomain.com to "
@@ -808,62 +803,62 @@ msgid ""
 "Note that you can restart the proxy once only five minutes."
 msgstr ""
 
-#: ../template/info.html:152
+#: ../template/info.html:154
 msgid "restart proxy"
 msgstr ""
 
-#: ../template/info.html:159
+#: ../template/info.html:161
 msgid "Domain"
 msgstr ""
 
-#: ../template/info.html:159
+#: ../template/info.html:161
 msgid "Port"
 msgstr ""
 
-#: ../template/info.html:159
+#: ../template/info.html:161
 msgid "Wildcard"
 msgstr ""
 
-#: ../template/info.html:165 ../template/info.html:192
+#: ../template/info.html:167 ../template/info.html:194
 msgid "Delete this item"
 msgstr ""
 
-#: ../template/info.html:165
+#: ../template/info.html:167
 #, python-format
 msgid "Delete %(hostname)s?"
 msgstr ""
 
 #. Network interface
-#: ../template/info.html:187
+#: ../template/info.html:189
 msgid "Interface"
 msgstr ""
 
-#: ../template/info.html:187
+#: ../template/info.html:189
 msgid "Internal Port"
 msgstr ""
 
-#: ../template/info.html:187
+#: ../template/info.html:189
 msgid "External Port"
 msgstr ""
 
-#: ../template/info.html:192
+#: ../template/info.html:194
 #, python-format
 msgid "Delete %(iface)s in:%(port)s out:%(outport)s?"
 msgstr ""
 
-#: ../template/info.html:192
+#: ../template/info.html:194
 #, python-format
 msgid "Delete DMZ forwarding to %(iface)s?"
 msgstr ""
 
 #. Do not translate DMZ
-#: ../template/info.html:210
+#: ../template/info.html:212
 msgid ""
 "To forward every port, type DMZ as External Port. Other fields doesn't "
 "need to be filled."
 msgstr ""
 
-#: ../template/info.html:216
+#: ../template/info.html:218
 msgid "New Root password"
 msgstr ""
 
