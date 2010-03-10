@@ -275,6 +275,7 @@ $(function(){
 	$('.time').html(function(ind, i){
 		return formatTime(parseFloat(i));
 	});
+	$("#langfrm select").change(function(){$(this).parent().submit();});
 });
 {% block javascript %}
 {% endblock %}
@@ -287,7 +288,13 @@ $(function(){
 <div id="top-bar">
 	<div id="top-bar-in">
 		<div id="logo"><a href="/">OvzCP</a></div>
-		<div id="version">0.1 {% trans %}by whsgroup.ath.cx{% endtrans %} | {{localeName}}</div>
+		<div id="version">0.1 {% trans %}by whsgroup.ath.cx{% endtrans %} | <img src="{{static_url('flags/'+locale+'.gif')}}" />
+		<form method="get" style="display: inline;" id="langfrm"><select name="_locale">
+		{% for i in localeList.iteritems() %}
+			<option value="{{i[0]}}"{% if i[0] == locale %} selected{% endif %}>{{i[1]}}</option>
+		{% endfor %}
+		</select></form>
+		</div>
 		<div id="user"><a href="{{reverse_url('auth')}}" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
 		({{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="{% trans %}Time left until {{unit}} depletion{% endtrans %}">{{((current_user.credit)/totalcost)*60}}</span>{% endif %})</div>
 	</div>
@@ -328,7 +335,7 @@ $(function(){
 </div>
 <br style="clear: both;" />
 <div id="bottom">
-	<a href="http://pinvoke.com/">Fugue Icons</a> | <a href="http://whsgroup.ath.cx">whsgroup.ath.cx</a> | Google Charts API
+	<a href="http://pinvoke.com/" rel="nofollow">Fugue Icons</a> | <a href="http://famfamfam.com" rel="nofollow">FamFamFam</a> flag icons | <a href="http://whsgroup.ath.cx">whsgroup.ath.cx</a> | Google Charts API
 </div>
 </div>
 </body>

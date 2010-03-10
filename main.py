@@ -75,11 +75,11 @@ class BaseHandler(tornado.web.RequestHandler):
 		out = None
 		if self.get_argument("_locale", None):
 			out = self.get_argument("_locale")
-			self.set_cookie("locale", out)
+			self.set_cookie("locale", out, expires_days=1000)
 		if not out:
 			out=self.get_cookie("locale", None)
 		if out:
-			return [out]
+			return out
 		else:
 			return None
 	def get_user(self):
@@ -94,6 +94,14 @@ class BaseHandler(tornado.web.RequestHandler):
 	def prepare(self):
 		self.gettext = gettext.translation('messages', os.path.join(os.getcwd(), "po"), self.get_user_locale(), fallback=True)
 		self.gettext.install(True)
+	@property
+	def locale(self):
+		if not hasattr(self, "_locale"):
+			self._locale = self.get_user_locale()
+			if not self._locale:
+				self._locale = self.get_browser_locale().code
+				assert self._locale
+		return self._locale
 	def render(self, tmpl, *args, **kwargs):
 		totalcost = 0
 		for i in myVM(self.current_user, True):
@@ -102,6 +110,10 @@ class BaseHandler(tornado.web.RequestHandler):
 		
 		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"), extensions=['jinja2.ext.i18n'])
 		jinja.install_gettext_translations(self.gettext)
+		localeList = {"en": babel.Locale(self.locale).languages["en"]}
+		for i in os.listdir("po"):
+			if os.path.isdir(os.path.join("po", i)):
+				localeList[i] = babel.Locale(self.locale).languages[i]
 		margs = dict({
 			# Python
 			"str": str,
@@ -112,8 +124,8 @@ class BaseHandler(tornado.web.RequestHandler):
 			"xsrf": self.get_cookie("_xsrf"),
 			"reverse_url": self.reverse_url,
 			"locale": self.locale,
-			# NOTE: Translate this to your own language name
-			"localeName": _("English"),
+			"localeName": babel.Locale(self.locale).languages[self.locale],
+			"localeList": localeList,
 			"request": self.request,
 			# OvzCP stuff
 			"config": _config,
