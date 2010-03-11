@@ -522,6 +522,9 @@ class AddPort(BaseHandler):
 		if self.get_argument("outport").lower() == "dmz":
 			outport = -1
 			inport = -1
+			if models.PortForward.select(models.PortForward.q.iface==self.get_argument("iface")).count():
+				self.redirect(self.reverse_url("vminfo", veid)+"?error=1")
+				return
 		else:
 			outport = int(self.get_argument("outport")) 
 			inport = int(self.get_argument("port"))
