@@ -30,13 +30,7 @@ _config.read("config.ini")
 
 def xsrf_check(func):
 	def f(self, *args, **kwargs):
-		try:
-			if self.get_cookie("_xsrf") != self.get_argument("_xsrf"):
-				self.write(_("XSRF Check fail"))
-				return False
-		except Exception, e:
-			self.write(_("XSRF Check fail by exception"))
-			return False
+		self.check_xsrf_cookie()
 		return func(self, *args, **kwargs)
 	return f
 
@@ -121,7 +115,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			"current_user": self.current_user,
 			"static_url": self.static_url,
 			"xsrf_form_html": self.xsrf_form_html,
-			"xsrf": self.get_cookie("_xsrf"),
+			"xsrf": self.xsrf_token,
 			"reverse_url": self.reverse_url,
 			"locale": self.locale,
 			"localeName": babel.Locale(self.locale).languages[self.locale],
