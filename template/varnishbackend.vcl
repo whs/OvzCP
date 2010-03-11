@@ -1,12 +1,14 @@
 # DO NOT EDIT!
 # THIS FILE WILL BE REPLACED
+# Generated for varnish {{".".join(version)}}
+
 {% for i in backend %}
 backend {{i.name}}{
-	set backend.host = "{{i.vm.vz.ip}}";
-	set backend.port = "{{i.port}}";
+	{% if prefix %}set backend{% endif %}.host = "{{i.vm.vz.ip}}";
+	{% if prefix %}set backend{% endif %}.port = "{{i.port}}";
 }
 {% endfor %}
 backend ovzcp{
-	set backend.host = "127.0.0.1";
-	set backend.port = "21212";
+	{% if prefix %}set backend{% endif %}.host = "127.0.0.1";
+	{% if prefix %}set backend{% endif %}.port = "21212";
 }
