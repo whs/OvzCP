@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version:  0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-03-09 00:15+0700\n"
-"PO-Revision-Date: 2010-03-11 16:47+0700\n"
+"PO-Revision-Date: 2010-03-12 00:47+0700\n"
 "Last-Translator: Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>\n"
 "Language-Team: Thai L10N <thai-l10n@googlegroups.com>\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION\n"
@@ -18,84 +18,84 @@ msgstr ""
 
 #. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
 #. current user, it will return this error
-#: ../main.py:144 ../main.py:590
+#: ../main.py:142 ../main.py:591
 msgid "VM not owned by current user"
 msgstr "ผู้ใช้ปัจจุบันไม่ได้เป็นเจ้าของ VM นี้"
 
-#: ../main.py:146
+#: ../main.py:144
 msgid "VM is not running"
 msgstr "VM ไม่ได้ทำงานอยู่"
 
 #. Displayed when trying to claim a VM that belongs to yourself
-#: ../main.py:149
+#: ../main.py:147
 msgid "VM is already owned by current user"
 msgstr "ท่านเป็นเจ้าของ VM นี้อยู่แล้ว"
 
 #. Displayed when trying to start a VM but user's credit is lower than 1,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:152
+#: ../main.py:150
 #, python-format
 msgid "%s is under 1,000, please refill."
 msgstr "มี %s น้อยกว่า 1,000 กรุณาเติมเพิ่ม"
 
-#: ../main.py:154
+#: ../main.py:152
 msgid "VM is running"
 msgstr "VM กำลังทำงานอยู่"
 
 #. Displayed when trying to create a VM but user's credit is lower than 5,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:157
+#: ../main.py:155
 #, python-format
 msgid "You need 5,000 %s to create a VM."
 msgstr "คุณจะต้องมี 5,000 %s จึงจะสร้าง VM ได้"
 
-#: ../main.py:161
+#: ../main.py:159
 msgid "VM now belongs to you"
 msgstr "VM กลายเป็นของคุณแล้ว"
 
-#: ../main.py:163
+#: ../main.py:161
 msgid "VM ownership removed. Other can now claim this VM"
 msgstr "ยกเลิกความเป็นเจ้าของ VM แล้ว ผู้ใช้คนอื่นจะสามารถครอบครอง VM นี้ได้"
 
-#: ../main.py:165
+#: ../main.py:163
 msgid "VM destroyed"
 msgstr "ทำลาย VM แล้ว"
 
-#: ../main.py:167 ../template/base.html:306 ../template/container.html:3
+#: ../main.py:165 ../template/base.html:306 ../template/container.html:3
 msgid "Containers"
 msgstr "Containers"
 
-#: ../main.py:198
+#: ../main.py:196
 msgid "Host OS specification"
 msgstr "สเปคเครื่องหลัก"
 
-#: ../main.py:211
+#: ../main.py:209
 msgid "Terms of Service not accepted"
 msgstr "ไม่ได้ยอมรับเงื่อนไขในการให้บริการ"
 
-#: ../main.py:213
+#: ../main.py:211
 msgid "Invalid template name"
 msgstr "ชื่อเทมเพลตผิดรูปแบบ"
 
-#: ../main.py:215 ../main.py:380
+#: ../main.py:213 ../main.py:378
 msgid "Passwords do not match"
 msgstr "รหัสผ่านไม่ตรงกัน"
 
 #. Malformat hostname
-#: ../main.py:217 ../main.py:375
+#: ../main.py:215 ../main.py:373
 msgid "Invalid hostname"
 msgstr "ชื่อโฮสต์ไม่ถูกต้อง"
 
-#: ../main.py:219
+#: ../main.py:217
 msgid "Creating VM"
 msgstr "สร้าง VM"
 
-#: ../main.py:257
+#: ../main.py:255
 #, python-format
 msgid "Destroy %s"
 msgstr "ทำลาย %s"
 
-#: ../main.py:363
+#: ../main.py:361
 msgid ""
 "VM disk usage exceed allocated amount. You will be billed by amount used "
 "instead"
@@ -104,13 +104,13 @@ msgstr ""
 "คุณจะถูกเรียกเก็บเงินตามจำนวนที่ใช้จริงแทน"
 
 #. Duplicate entry
-#: ../main.py:368
+#: ../main.py:366
 msgid "Entry already exists"
 msgstr "มีรายการอยู่แล้ว"
 
 #. <span class='time'>%s</span> is time in this format: 1 day 3 hours 4 minutes
 #. 5 seconds
-#: ../main.py:372
+#: ../main.py:370
 #, python-format
 msgid ""
 "You have to wait <span class='time'>%s</span> before you can restart the "
@@ -120,47 +120,47 @@ msgstr ""
 "proxy ได้อีกครั้ง"
 
 #. Network interface
-#: ../main.py:378
+#: ../main.py:376
 msgid "Invalid interface"
 msgstr ""
 
-#: ../main.py:384
+#: ../main.py:382
 msgid "Settings commited."
 msgstr "บันทึกค่าแล้ว"
 
-#: ../main.py:386
+#: ../main.py:384
 msgid "No changes."
 msgstr "ไม่มีการเปลี่ยนแปลง"
 
-#: ../main.py:388
+#: ../main.py:386
 msgid "Root password successfully changed"
 msgstr "เปลี่ยนรหัสผ่าน root แล้ว"
 
-#: ../main.py:405
+#: ../main.py:403
 #, python-format
 msgid "%s information"
 msgstr "ข้อมูล %s"
 
-#: ../main.py:424
+#: ../main.py:422
 #, python-format
 msgid "Edit %s"
 msgstr "แก้ไข %s"
 
-#: ../main.py:472 ../template/base.html:307 ../template/dashboard.html:95
+#: ../main.py:470 ../template/base.html:307 ../template/dashboard.html:95
 #: ../template/info.html:104
 msgid "Billing"
 msgstr "การเงิน"
 
-#: ../main.py:599
+#: ../main.py:600
 msgid "Cannot connect to Munin on the VM."
 msgstr "ไม่สามารถเชื่อมต่อหา Munin บน VM"
 
-#: ../main.py:617
+#: ../main.py:619
 #, python-format
 msgid "Limit not reached. Please wait %s seconds"
 msgstr "ยังไม่ถึงกำหนดเวลา กรุณารออีก %s วินาที"
 
-#: ../main.py:639 ../template/base.html:305
+#: ../main.py:642 ../template/base.html:305
 msgid "Dashboard"
 msgstr "แผงควบคุม"
 
@@ -330,7 +330,7 @@ msgid "Owner"
 msgstr "เจ้าของ"
 
 #: ../template/container.html:8 ../template/dashboard.html:75
-#: ../template/info.html:161 ../template/info.html:189
+#: ../template/info.html:162 ../template/info.html:190
 msgid "Action"
 msgstr "คำสั่ง"
 
@@ -518,7 +518,7 @@ msgstr ""
 msgid "Root password"
 msgstr "รหัสผ่าน root"
 
-#: ../template/create.html:128 ../template/info.html:219
+#: ../template/create.html:128 ../template/info.html:220
 msgid "Confirm Root password"
 msgstr "ยึนยันรหัสผ่าน root"
 
@@ -615,7 +615,7 @@ msgid "Saving this page will result in VM being restarted"
 msgstr "การบันทึกหน้านี้จะทำให้ VM ถูกรีสตาร์ท"
 
 #: ../template/edit.html:106 ../template/edit.html:109
-#: ../template/info.html:176 ../template/info.html:208
+#: ../template/info.html:177 ../template/info.html:209
 msgid "Save"
 msgstr "บันทึก"
 
@@ -822,72 +822,74 @@ msgid "Graph"
 msgstr "กราฟ"
 
 #: ../template/info.html:154
-#, python-format
 msgid ""
 "Wildcard forwarding will forward anything.yourdomain.com to "
-"yourdomain.com.<br />\n"
+"yourdomain.com."
+msgstr "การส่งต่อแบบ Wildcard จะส่งต่อ อะไรก็ได้.ชื่อโดเมน.com ไปยัง ชื่อโดเมน.com"
+
+#: ../template/info.html:156
+#, python-format
+msgid ""
 "After edit changes will <b>NOT</b> be visible until you click "
 "%(restartButton)s. (Every site, including this may not be accessible for "
 "few seconds)\n"
 "Note that you can restart the proxy once only five minutes."
 msgstr ""
-"การส่งต่อแบบ Wildcard จะส่งต่อ อะไรก็ได้.ชื่อโดเมน.com ไปยัง "
-"ชื่อโดเมน.com<br />\n"
 "หลังจากคุณทำการแก้ไขแล้วจะยัง<b>ไม่</b>มีผลจนกว่าคุณจะคลิกที่ "
 "%(restartButton)s ซึ่งเว็บไซต์ทุกอันบนเครื่องนี้ "
 "รวมทั้งหน้านี้อาจจะเข้าไม่ได้ชั่วคราว\n"
 "ท่านสามารถรีสตาร์ทพร็อกซีได้ทุกห้านาทีเท่านั้น"
 
-#: ../template/info.html:154
+#: ../template/info.html:156
 msgid "restart proxy"
 msgstr "รีสตาร์ทพร็อกซี่"
 
-#: ../template/info.html:161
+#: ../template/info.html:162
 msgid "Domain"
 msgstr "โดเมน"
 
-#: ../template/info.html:161
+#: ../template/info.html:162
 msgid "Port"
 msgstr "พอร์ต"
 
-#: ../template/info.html:161
+#: ../template/info.html:162
 msgid "Wildcard"
 msgstr "Wildcard"
 
-#: ../template/info.html:167 ../template/info.html:194
+#: ../template/info.html:168 ../template/info.html:195
 msgid "Delete this item"
 msgstr "ลบรายการนี้"
 
-#: ../template/info.html:167
+#: ../template/info.html:168
 #, python-format
 msgid "Delete %(hostname)s?"
 msgstr "ลบ %(hostname)s?"
 
 #. Network interface
-#: ../template/info.html:189
+#: ../template/info.html:190
 msgid "Interface"
 msgstr ""
 
-#: ../template/info.html:189
+#: ../template/info.html:190
 msgid "Internal Port"
 msgstr "พอร์ตภายใน"
 
-#: ../template/info.html:189
+#: ../template/info.html:190
 msgid "External Port"
 msgstr "พอร์ตภายนอก"
 
-#: ../template/info.html:194
+#: ../template/info.html:195
 #, python-format
 msgid "Delete %(iface)s in:%(port)s out:%(outport)s?"
 msgstr "ลบ %(iface)s ภายใน:%(port)s ภายนอก:%(outport)s?"
 
-#: ../template/info.html:194
+#: ../template/info.html:195
 #, python-format
 msgid "Delete DMZ forwarding to %(iface)s?"
 msgstr "ลบการส่งต่อแบบ DMZ ไปยัง %(iface)s?"
 
 #. Do not translate DMZ
-#: ../template/info.html:212
+#: ../template/info.html:213
 msgid ""
 "To forward every port, type DMZ as External Port. Other fields doesn't "
 "need to be filled."
@@ -895,7 +897,7 @@ msgstr ""
 "ในการส่งต่อทุกพอร์ต พิมพ์ DMZ ในช่องพอร์ตภายนอก ช่องอื่นๆ "
 "ไม่จำเป็นต้องกรอก"
 
-#: ../template/info.html:218
+#: ../template/info.html:219
 msgid "New Root password"
 msgstr "รหัสผ่าน root ใหม่"
 
@@ -930,10 +932,4 @@ msgstr "VM กำลังทำงาน"
 #: ../template/spec.html:14
 msgid "How long does this machine have been started"
 msgstr "เครื่องนี้เปิดได้นานเท่าใดแล้ว"
-
-#~ msgid "XSRF Check fail"
-#~ msgstr "ไม่ผ่านการตรวจสอบ XSRF"
-
-#~ msgid "XSRF Check fail by exception"
-#~ msgstr "มีข้อผิดพลาดในการตรวจสอบ XSRF"
 

@@ -19,6 +19,7 @@ sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 
 import models
 import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext
+import varnish
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -400,7 +401,7 @@ class VMinfo(BaseHandler):
 			except KeyError, e:
 				pass
 		self.render("info.html", veid=veid, vz=sql.vz, vm=sql, title=_("%s information")%veid, billing=vmBilling(sql.vz, True, self.current_user),
-			error=errmsg, message=txtmsg, interface=interface)
+			varnishRestart=varnish.version()[0] < 2, error=errmsg, message=txtmsg, interface=interface)
 
 class VMedit(BaseHandler):
 	@tornado.web.authenticated
@@ -551,7 +552,6 @@ class AddVarnish(BaseHandler):
 		backend = d.backend
 		d.destroySelf()
 		varnish.updateRecv(models.VarnishCond.select())
-		import varnish
 		if backend.cond.count() == 0:
 			backend.destroySelf()
 			varnish.updateBackend(models.VarnishBackend.select())
@@ -570,13 +570,13 @@ class AddVarnish(BaseHandler):
 			self.redirect(self.reverse_url("vminfo", veid)+"?error=1")
 			return
 		backend = models.VarnishBackend.select(models.AND(models.VarnishBackend.q.port == int(self.get_argument("port")), models.VarnishBackend.q.vm==sql))
+		backendUpdate=False
 		if backend.count():
 			backend = backend[0]
 		else:
 			backend = models.VarnishBackend(name=sql.vz.hostname+str(self.get_argument("port")), vm=sql, port=int(self.get_argument("port")))
 			backendUpdate=True
 		models.VarnishCond(hostname=self.get_argument("host"), subdomain=bool(self.get_argument("subdomain", False)), varnishBackend=backend)
-		import varnish
 		if backendUpdate:
 			varnish.updateBackend(models.VarnishBackend.select())
 		varnish.updateRecv(models.VarnishCond.select())
@@ -608,21 +608,23 @@ class VarnishRestart(BaseHandler):
 	@xsrf_check
 	def get(self):
 		if not _config.getboolean("varnish", "enabled"): return
-		if self.get_argument("state") == "0":
-			cookie = self.get_secure_cookie("varnishrestart")
-			if not cookie:
-				cookie=1
-			if (int(cookie)+300) - time.time() > 0:
-				#self.redirect("/vm/%s?error=2"%self.get_argument("veid"))
-				self.write(_("Limit not reached. Please wait %s seconds") % (int(cookie)+300) - time.time())
-				return
-			self.set_secure_cookie("varnishrestart", str(int(time.time())))
-			self.set_secure_cookie("varnishcookie", str(int(time.time())))
+		if varnish.version()[0] < 2:
+			if self.get_argument("state") == "0":
+				cookie = self.get_secure_cookie("varnishrestart")
+				if not cookie:
+					cookie=1
+				if (int(cookie)+300) - time.time() > 0:
+					#self.redirect("/vm/%s?error=2"%self.get_argument("veid"))
+					self.write(_("Limit not reached. Please wait %s seconds") % (int(cookie)+300) - time.time())
+					return
+				self.set_secure_cookie("varnishrestart", str(int(time.time())))
+				self.set_secure_cookie("varnishcookie", str(int(time.time())))
+			else:
+				t = int(self.get_secure_cookie("varnishcookie"))
+				if time.time()-t > 3:
+					return
+				varnish.restart()
 		else:
-			t = int(self.get_secure_cookie("varnishcookie"))
-			if time.time()-t > 3:
-				return
-			import varnish
 			varnish.restart()
 			
 class Dashboard(BaseHandler):

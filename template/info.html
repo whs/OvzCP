@@ -3,7 +3,7 @@
 {% if vm.user == current_user %}
 function editroot(){
 	window.location.hash = "rootedit"
-	$("#rootedit").dialog({modal: true, title: "{% trans %}Root password{% endtrans %}", width: "50%", height: 200, close: function(x,y){
+	$("#real_rootedit").dialog({modal: true, title: "{% trans %}Root password{% endtrans %}", width: 500, height: 200, close: function(x,y){
 		window.location.hash = ""
 		window.location.reload()
 	}});
@@ -11,7 +11,7 @@ function editroot(){
 {% if config.getboolean("varnish", "enabled") %}
 function editweb(){
 	window.location.hash = "webedit"
-	$("#webedit").dialog({modal: true, title: "{% trans %}Web forward{% endtrans %}", width: "75%", height: 400, close: function(x,y){
+	$("#real_webedit").dialog({modal: true, title: "{% trans %}Web forward{% endtrans %}", width: "75%", height: 600, close: function(x,y){
 		window.location.hash = ""
 		window.location.reload()
 	}});
@@ -20,11 +20,12 @@ function editweb(){
 {% if config.getboolean("iface", "enabled") %}
 function editport(){
 	window.location.hash = "portedit"
-	$("#portedit").dialog({modal: true, title: "{% trans %}Port forward{% endtrans %}", width: "75%", height: 400, close: function(x,y){
+	$("#real_portedit").dialog({modal: true, title: "{% trans %}Port forward{% endtrans %}", width: "75%", height: 600, close: function(x,y){
 		window.location.hash = ""
 		window.location.reload()
 	}});
 }
+{% if varnishRestart %}
 function restartVarnish(){
 	if(!confirm("{% trans %}Restart reverse proxy?{% endtrans %}")) return;
 	$("#varnishRestartButton").attr("disabled", true);
@@ -35,6 +36,7 @@ function restartVarnish(){
 		})
 	});
 }
+{% endif %}
 {% endif %}
 {% if config.getboolean("munin", "enabled") %}
 function toggleMunin(){
@@ -65,11 +67,11 @@ $(function(){
 	if(window.location.hash == "#rootedit"){
 		editroot();
 	}
-	$("#rootedit input[name=root], #rootedit input[name=root2]").keyup(function(){
-		if($("#rootedit input[name=root]").val() != $("#rootedit input[name=root2]").val()){
-			$("#rootedit input[type=submit]").attr("disabled", true)
+	$("#real_rootedit input[name=root], #real_rootedit input[name=root2]").keyup(function(){
+		if($("#real_rootedit input[name=root]").val() != $("#real_rootedit input[name=root2]").val()){
+			$("#real_rootedit input[type=submit]").attr("disabled", true)
 		}else{
-			$("#rootedit input[type=submit]").attr("disabled", false)
+			$("#real_rootedit input[type=submit]").attr("disabled", false)
 		}
 	})
 	$("#toolbar button").button()
@@ -150,10 +152,11 @@ $(function(){
 
 
 {% if config.getboolean("varnish", "enabled") %}
-<div id="webedit" style="display: none;">
-<div class="notify" style="color: black;">{% trans restartButton='<button onclick="restartVarnish()" id="varnishRestartButton">'+_('restart proxy')+'</button>' %}Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.<br />
-After edit changes will <b>NOT</b> be visible until you click {{restartButton}}. (Every site, including this may not be accessible for few seconds)
-Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
+<div id="real_webedit" style="display: none;">
+<div class="notify" style="color: black;">{% trans %}Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.{% endtrans %}
+{% if varnishRestart %}<br />
+{% trans restartButton='<button onclick="restartVarnish()" id="varnishRestartButton">'+_('restart proxy')+'</button>' %}After edit changes will <b>NOT</b> be visible until you click {{restartButton}}. (Every site, including this may not be accessible for few seconds)
+Note that you can restart the proxy once only five minutes.{% endtrans %}{% endif %}</div>
 <form style="margin-top: 10px;" action="{{reverse_url('addvarnish', veid)}}" method="post">
 {{ xsrf_form_html() }}
 <table>
@@ -171,7 +174,7 @@ Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
 <tfooter>
 	<tr>
 		<th><input type="text" name="host" /></th>
-		<th><input type="text" name="port" /></th>
+		<th><input type="text" name="port" value="80" /></th>
 		<th><input type="checkbox" name="subdomain" checked="checked" /></th>
 		<th><input type="submit" value="{% trans %}Save{% endtrans %}" /></th>
 	</tr>
@@ -181,7 +184,7 @@ Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
 </div>
 {% endif %}
 {% if config.getboolean("iface", "enabled") %}
-<div id="portedit" style="display: none;">
+<div id="real_portedit" style="display: none;">
 <form style="margin-top: 10px;" action="{{reverse_url('addport', veid)}}" method="post">
 {{ xsrf_form_html() }}
 <table>
@@ -212,7 +215,7 @@ Note that you can restart the proxy once only five minutes.{% endtrans %}</div>
 <div class="notify" style="color: black;">{% trans %}To forward every port, type DMZ as External Port. Other fields doesn't need to be filled.{% endtrans %}</div>{#_ Do not translate DMZ #}
 </form>
 </div>
-<div id="rootedit" style="display: none;">
+<div id="real_rootedit" style="display: none;">
 <form style="margin-top: 10px;" action="{{reverse_url('rootpw', veid)}}" method="post">
 {{ xsrf_form_html() }}
 <b>{% trans %}New Root password{% endtrans %}:</b> <input type="password" name="root" /><br />
