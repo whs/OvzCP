@@ -162,7 +162,7 @@ class VM(object):
 		return subprocess.Popen("vzctl destroy "+str(self.veid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	def root_password(self, passwd):
 		import pipes
-		return commands.getoutput("sudo vzctl exec %s usermod -p `mkpasswd -m md5 %s` root"%(self.veid, pipes.quote(passwd)))
+		return commands.getoutput("echo 'root:%s' | sudo vzctl exec %s chpasswd -c SHA512"%(pipes.quote(passwd), self.veid))
 
 def listVM():
 	out = []
