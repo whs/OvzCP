@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-03-11 02:02+0700\n"
+"POT-Creation-Date: 2010-03-11 16:47+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,107 +17,99 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.1\n"
 
-#: ../main.py:35
-msgid "XSRF Check fail"
-msgstr ""
-
-#: ../main.py:38
-msgid "XSRF Check fail by exception"
-msgstr ""
-
 #. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
 #. current user, it will return this error
-#: ../main.py:150 ../main.py:596
+#: ../main.py:144 ../main.py:590
 msgid "VM not owned by current user"
 msgstr ""
 
-#: ../main.py:152
+#: ../main.py:146
 msgid "VM is not running"
 msgstr ""
 
 #. Displayed when trying to claim a VM that belongs to yourself
-#: ../main.py:155
+#: ../main.py:149
 msgid "VM is already owned by current user"
 msgstr ""
 
 #. Displayed when trying to start a VM but user's credit is lower than 1,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:158
+#: ../main.py:152
 #, python-format
 msgid "%s is under 1,000, please refill."
 msgstr ""
 
-#: ../main.py:160
+#: ../main.py:154
 msgid "VM is running"
 msgstr ""
 
 #. Displayed when trying to create a VM but user's credit is lower than 5,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:163
+#: ../main.py:157
 #, python-format
 msgid "You need 5,000 %s to create a VM."
 msgstr ""
 
-#: ../main.py:167
+#: ../main.py:161
 msgid "VM now belongs to you"
 msgstr ""
 
-#: ../main.py:169
+#: ../main.py:163
 msgid "VM ownership removed. Other can now claim this VM"
 msgstr ""
 
-#: ../main.py:171
+#: ../main.py:165
 msgid "VM destroyed"
 msgstr ""
 
-#: ../main.py:173 ../template/base.html:306 ../template/container.html:3
+#: ../main.py:167 ../template/base.html:306 ../template/container.html:3
 msgid "Containers"
 msgstr ""
 
-#: ../main.py:204
+#: ../main.py:198
 msgid "Host OS specification"
 msgstr ""
 
-#: ../main.py:217
+#: ../main.py:211
 msgid "Terms of Service not accepted"
 msgstr ""
 
-#: ../main.py:219
+#: ../main.py:213
 msgid "Invalid template name"
 msgstr ""
 
-#: ../main.py:221 ../main.py:386
+#: ../main.py:215 ../main.py:380
 msgid "Passwords do not match"
 msgstr ""
 
 #. Malformat hostname
-#: ../main.py:223 ../main.py:381
+#: ../main.py:217 ../main.py:375
 msgid "Invalid hostname"
 msgstr ""
 
-#: ../main.py:225
+#: ../main.py:219
 msgid "Creating VM"
 msgstr ""
 
-#: ../main.py:263
+#: ../main.py:257
 #, python-format
 msgid "Destroy %s"
 msgstr ""
 
-#: ../main.py:369
+#: ../main.py:363
 msgid ""
 "VM disk usage exceed allocated amount. You will be billed by amount used "
 "instead"
 msgstr ""
 
 #. Duplicate entry
-#: ../main.py:374
+#: ../main.py:368
 msgid "Entry already exists"
 msgstr ""
 
 #. <span class='time'>%s</span> is time in this format: 1 day 3 hours 4 minutes
 #. 5 seconds
-#: ../main.py:378
+#: ../main.py:372
 #, python-format
 msgid ""
 "You have to wait <span class='time'>%s</span> before you can restart the "
@@ -125,47 +117,47 @@ msgid ""
 msgstr ""
 
 #. Network interface
-#: ../main.py:384
+#: ../main.py:378
 msgid "Invalid interface"
 msgstr ""
 
-#: ../main.py:390
+#: ../main.py:384
 msgid "Settings commited."
 msgstr ""
 
-#: ../main.py:392
+#: ../main.py:386
 msgid "No changes."
 msgstr ""
 
-#: ../main.py:394
+#: ../main.py:388
 msgid "Root password successfully changed"
 msgstr ""
 
-#: ../main.py:411
+#: ../main.py:405
 #, python-format
 msgid "%s information"
 msgstr ""
 
-#: ../main.py:430
+#: ../main.py:424
 #, python-format
 msgid "Edit %s"
 msgstr ""
 
-#: ../main.py:478 ../template/base.html:307 ../template/dashboard.html:95
+#: ../main.py:472 ../template/base.html:307 ../template/dashboard.html:95
 #: ../template/info.html:104
 msgid "Billing"
 msgstr ""
 
-#: ../main.py:605
+#: ../main.py:599
 msgid "Cannot connect to Munin on the VM."
 msgstr ""
 
-#: ../main.py:623
+#: ../main.py:617
 #, python-format
 msgid "Limit not reached. Please wait %s seconds"
 msgstr ""
 
-#: ../main.py:645 ../template/base.html:305
+#: ../main.py:639 ../template/base.html:305
 msgid "Dashboard"
 msgstr ""
 

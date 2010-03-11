@@ -72,10 +72,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			self.set_cookie("locale", out, expires_days=1000)
 		if not out:
 			out=self.get_cookie("locale", None)
-		if out:
-			return out
-		else:
-			return None
+		return out
 	def get_user(self):
 		data = self.get_secure_cookie("auth")
 		if data:
@@ -86,7 +83,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			else:
 				return models.User(email=userData['email'], credit=0)
 	def prepare(self):
-		self.gettext = gettext.translation('messages', os.path.join(os.getcwd(), "po"), self.get_user_locale(), fallback=True)
+		self.gettext = gettext.translation('messages', os.path.join(os.getcwd(), "po"), [self.locale], fallback=True)
 		self.gettext.install(True)
 	@property
 	def locale(self):
