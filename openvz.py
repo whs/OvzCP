@@ -160,9 +160,8 @@ class VM(object):
 			return False
 		# any more security?
 		return subprocess.Popen("vzctl destroy "+str(self.veid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	def root_password(self, passwd):
-		import pipes
-		return commands.getoutput("echo 'root:%s' | sudo vzctl exec %s chpasswd -c SHA512"%(pipes.quote(passwd), self.veid))
+	def root_password(self, passwd, user="root"):
+		return self.set_conf('userpasswd', user+':'+passwd)
 
 def listVM():
 	out = []
