@@ -718,8 +718,11 @@ application = tornado.web.Application([
 ], **settings)
 
 if __name__ == "__main__":
-	http_server = tornado.httpserver.HTTPServer(application)
-	http_server.listen(21212)
 	import tornado.autoreload
+	port = 21212
+	if len(sys.argv) > 1:
+		port = int(sys.argv[1])
+	http_server = tornado.httpserver.HTTPServer(application)
+	http_server.listen(port)
 	tornado.autoreload.start()
 	tornado.ioloop.IOLoop.instance().start()
