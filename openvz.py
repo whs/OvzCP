@@ -159,7 +159,11 @@ class VM(object):
 		if self.running:
 			return False
 		# any more security?
-		return subprocess.Popen("vzctl destroy "+str(self.veid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		subprocess.Popen("vzctl destroy "+str(self.veid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait()
+		try:
+			os.unlink("/etc/vz/"+str(self.veid)+".conf.destroyed")
+		except OSError:
+			pass
 	def root_password(self, passwd, user="root"):
 		return self.set_conf('userpasswd', user+':'+passwd)
 
