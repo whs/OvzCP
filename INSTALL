@@ -19,6 +19,7 @@ might be unable to run OvzCP.
   (both are same) you don't need to create any VM right now.
 - OpenVZ templates
   http://download.openvz.org/template/precreated/
+- munin munin-node
 
 2. Extract ovzcp or branch from trunk to /opt/ovzcp
 3. $ cd /opt/ovzcp

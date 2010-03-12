@@ -263,7 +263,14 @@ class DestroyVM(BaseHandler):
 			self.redirect(self.reverse_url("containers")+"?error=5")
 			return
 		proc = vm.destroy()
-		proc.wait()
+		for i in sql.varnishBackend:
+			for i2 in i.cond:
+				i2.destroySelf()
+			i.destroySelf()
+		for i in sql.portForward:
+			i.destroySelf()
+		if sql.munin:
+			sql.munin.destroySelf()
 		sql.destroySelf()
 		self.redirect(self.get_argument("return", self.reverse_url("containers")+"?msg=3"))
 
@@ -376,6 +383,8 @@ class VMinfo(BaseHandler):
 				errmsg = _("Invalid interface")
 			elif err == "5":
 				errmsg = _("Passwords do not match")
+			elif err == "6":
+				errmsg = _("Reverse HTTP proxy is enabled. Please use web forwarding instead")
 		if self.get_argument("message", None):
 			msg = self.get_argument("message")
 			if msg == "1":
@@ -451,7 +460,8 @@ class VMedit(BaseHandler):
 			sql.vz.memlimit = memlimit
 			change.append("memlimit")
 		if change:
-			sql.vz.restart().wait()
+			if sql.vz.running:
+				sql.vz.restart().wait()
 			self.redirect(self.reverse_url("vminfo", veid)+"?message=1")
 		else:
 			self.redirect(self.reverse_url("vminfo", veid)+"?message=2")
@@ -495,7 +505,10 @@ class AddPort(BaseHandler):
 	@xsrf_check
 	def get(self, veid):
 		if not _config.getboolean("iface", "enabled"): return
-		d=models.PortForward.select(models.PortForward.q.id == int(self.get_argument("delete")))[0]
+		try:
+			d=models.PortForward.select(models.PortForward.q.id == int(self.get_argument("delete")))[0]
+		except IndexError:
+			self.redirect(self.reverse_url("vminfo", veid)+"#portedit")
 		if d.vm.user != self.current_user or not d.vm.user:
 			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
@@ -520,15 +533,27 @@ class AddPort(BaseHandler):
 				return
 		except ConfigParser.NoOptionError:
 			pass
-		if self.get_argument("outport").lower() == "dmz":
+		inport = self.get_argument("port", None)
+		outport = self.get_argument("outport", None)
+		if inport and not outport:
+			outport = inport
+		elif outport and not inport:
+			inport = outport
+		elif not inport and not outport:
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=4")
+			return
+		if outport.lower() == "dmz":
 			outport = -1
 			inport = -1
 			if models.PortForward.select(models.PortForward.q.iface==self.get_argument("iface")).count():
 				self.redirect(self.reverse_url("vminfo", veid)+"?error=1")
 				return
 		else:
-			outport = int(self.get_argument("outport")) 
-			inport = int(self.get_argument("port"))
+			outport = int(outport) 
+			inport = int(inport)
+		if outport == 80 and _config.get("varnish", "enabled"):
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=6")
+			return
 		if models.PortForward.select(models.AND(models.PortForward.q.iface==self.get_argument("iface"), 
 				models.OR(models.PortForward.q.outport==outport, models.PortForward.q.outport==-1))).count():
 			self.redirect(self.reverse_url("vminfo", veid)+"?error=1")
@@ -544,7 +569,10 @@ class AddVarnish(BaseHandler):
 	@xsrf_check
 	def get(self, veid):
 		if not _config.getboolean("varnish", "enabled"): return
-		d=models.VarnishCond.select(models.VarnishCond.q.id == int(self.get_argument("delete")))[0]
+		try:
+			d=models.VarnishCond.select(models.VarnishCond.q.id == int(self.get_argument("delete")))[0]
+		except IndexError:
+			self.redirect(self.reverse_url("vminfo", veid)+"#webedit")
 		if d.backend.vm.user != self.current_user or not d.backend.vm.user:
 			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
@@ -563,20 +591,25 @@ class AddVarnish(BaseHandler):
 		if sql.user != self.current_user or not sql.user:
 			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
-		if not re.match(r"^[a-zA-Z0-9\.\-_]+$", self.get_argument("host")):
+		host = self.get_argument("host", "")
+		port = int(self.get_argument("port", 0))
+		if not host or not port:
+			self.redirect(self.reverse_url("vminfo", veid)+"#webedit")
+			return
+		if not re.match(r"^[a-zA-Z0-9\.\-_]+$", host):
 			self.redirect(self.reverse_url("vminfo", veid)+"?error=3")
 			return
-		if models.VarnishCond.select(models.VarnishCond.q.hostname==self.get_argument("host")).count():
+		if models.VarnishCond.select(models.VarnishCond.q.hostname==host).count():
 			self.redirect(self.reverse_url("vminfo", veid)+"?error=1")
 			return
-		backend = models.VarnishBackend.select(models.AND(models.VarnishBackend.q.port == int(self.get_argument("port")), models.VarnishBackend.q.vm==sql))
+		backend = models.VarnishBackend.select(models.AND(models.VarnishBackend.q.port == port, models.VarnishBackend.q.vm==sql))
 		backendUpdate=False
 		if backend.count():
 			backend = backend[0]
 		else:
-			backend = models.VarnishBackend(name=sql.vz.hostname+str(self.get_argument("port")), vm=sql, port=int(self.get_argument("port")))
+			backend = models.VarnishBackend(name=sql.vz.hostname+str(port), vm=sql, port=port)
 			backendUpdate=True
-		models.VarnishCond(hostname=self.get_argument("host"), subdomain=bool(self.get_argument("subdomain", False)), varnishBackend=backend)
+		models.VarnishCond(hostname=host, subdomain=bool(self.get_argument("subdomain", False)), varnishBackend=backend)
 		if backendUpdate:
 			varnish.updateBackend(models.VarnishBackend.select())
 		varnish.updateRecv(models.VarnishCond.select())

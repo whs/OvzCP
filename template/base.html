@@ -288,7 +288,7 @@ $(function(){
 <div id="top-bar">
 	<div id="top-bar-in">
 		<div id="logo"><a href="/">OvzCP</a></div>
-		<div id="version">0.1 {% trans %}by whsgroup.ath.cx{% endtrans %} | <img src="{{static_url('flags/'+locale+'.gif')}}" />
+		<div id="version">0.2 {% trans %}by whsgroup.ath.cx{% endtrans %} | <img src="{{static_url('flags/'+locale+'.gif')}}" />
 		<form method="get" style="display: inline;" id="langfrm"><select name="_locale">
 		{% for i in localeList.iteritems() %}
 			<option value="{{i[0]}}"{% if i[0] == locale %} selected{% endif %}>{{i[1]}}</option>

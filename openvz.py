@@ -56,7 +56,10 @@ class VM(object):
 	def set_memlimit(self, memlimit):
 		""" units are in kilobyte """
 		min, burst, max = memlimit
-		old = self.get_memlimit()
+		try:
+			old = self.get_memlimit()
+		except:
+			old = [-1,-1,-1]
 		changed = False
 		if old[0] != min:
 			self.set_conf("vmguarpages", "%s:%s"%(int(min/ARCH_PAGE), int(min/ARCH_PAGE)))
@@ -92,7 +95,10 @@ class VM(object):
 		d = re.split("[ ]+", d.split("\n")[1].strip())
 		usage = d[1]
 		if usage.endswith("*"): usage = usage[:-1]
-		usage = int(usage)
+		try:
+			usage = int(usage)
+		except ValueError:
+			return [1,1,0]
 		total = int(d[2]) # soft limit
 		return [total, usage, total-usage]
 	def set_diskinfo(self, space):
@@ -183,9 +189,9 @@ def createVM(template, veid=None, nameserver=None, root=None):
 			veid = listVM()[-1].veid+1
 		except IndexError:
 			veid = 101
-	status = os.system("vzctl create %s --ostemplate %s"%(veid, template))
-	if status != 0:
-		raise Exception, "vzctl create exited with status "+str(status)
+	status = os.system("vzctl create %s --ostemplate %s --config vps.basic"%(veid, template))
+	#if status != 0:
+	#	raise Exception, "vzctl create exited with status "+str(status)
 	vm=VM(veid)
 	vm.conf = {"onboot": True, "nameserver": nameserver}
 	if root:
