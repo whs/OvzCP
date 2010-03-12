@@ -1,0 +1,10 @@
+OvzCP was created above my old infrastructure which is:
+
+- Home networking
+- 1 IP (DMZed from the router)
+- 4-5 VM
+- 1 Administrator
+
+but when I modelled OvzCP I make some decision change like add the billing
+system and my laziness make me lazy to make a role system thus all user
+permision is equal.

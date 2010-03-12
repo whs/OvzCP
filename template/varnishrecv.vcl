@@ -10,6 +10,7 @@ if(req.http.host {% if i.subdomain %}~ "^((.+?)\.|){{i.hostname}}$"{% else %}== 
 if(req.http.host == "{{ovzcphost}}"){
 	set req.backend = ovzcp;
 	if(req.url	~ "^/static/"){
+		unset req.http.cookie;
 		lookup;
 	}
 }else{

@@ -1,18 +1,24 @@
-OvzCP is hooked into major system services so it might be little complicated to install.
+OvzCP hooks into major system services so it might be little complicated to install.
 Patch for a good command line based installer is apprecated.
 
-OvzCP is developed on Debian lenny and access OpenVZ data from /etc/vz/. RedHat based system
+OvzCP was developed on Debian lenny and access OpenVZ data from /etc/vz/. RedHat based system
 might be unable to run OvzCP.
 
 1. Install dependencies
 
-- Python 2.6
 - python-pycurl
 - python-simplejson
 - python-sqlobject
 - python-pybabel
 - Varnish
+  Note that lenny's varnish is version 1 and the latest version is 2 which is in backports.
+  Version 2 brings new additions such as reloading without restarting. OvzCP does support
+  this feature and will use if detected so I recommends you to use backports' varnish package.
 - Of course, OpenVZ
+  Read the instructions (in Thai) at http://www.thaitux.info/node/675 or http://debianclub.org/node/479
+  (both are same) you don't need to create any VM right now.
+- OpenVZ templates
+  http://download.openvz.org/template/precreated/
 
 2. Extract ovzcp or branch from trunk to /opt/ovzcp
 3. $ cd /opt/ovzcp
