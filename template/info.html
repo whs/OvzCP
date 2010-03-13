@@ -3,10 +3,7 @@
 {% if vm.user == current_user %}
 function editroot(){
 	window.location.hash = "rootedit"
-	$("#real_rootedit").dialog({modal: true, title: "{% trans %}Root password{% endtrans %}", width: 500, height: 200, close: function(x,y){
-		window.location.hash = ""
-		window.location.reload()
-	}});
+	$("#real_rootedit").dialog({modal: true, title: "{% trans %}Root password{% endtrans %}", width: 500, height: 200});
 }
 function editburst(){
 	window.location.hash = "burst"
@@ -15,19 +12,13 @@ function editburst(){
 {% if config.getboolean("varnish", "enabled") %}
 function editweb(){
 	window.location.hash = "webedit"
-	$("#real_webedit").dialog({modal: true, title: "{% trans %}Web forward{% endtrans %}", width: "75%", height: 600, close: function(x,y){
-		window.location.hash = ""
-		window.location.reload()
-	}});
+	$("#real_webedit").dialog({modal: true, title: "{% trans %}Web forward{% endtrans %}", width: "75%", height: 600});
 }
 {% endif %}
 {% if config.getboolean("iface", "enabled") %}
 function editport(){
 	window.location.hash = "portedit"
-	$("#real_portedit").dialog({modal: true, title: "{% trans %}Port forward{% endtrans %}", width: "75%", height: 600, close: function(x,y){
-		window.location.hash = ""
-		window.location.reload()
-	}});
+	$("#real_portedit").dialog({modal: true, title: "{% trans %}Port forward{% endtrans %}", width: "75%", height: 600});
 }
 {% if varnishRestart %}
 function restartVarnish(){

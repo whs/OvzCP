@@ -22,16 +22,16 @@ msgstr ""
 #. current user, it will return this error
 #: ../main.py:147 ../main.py:655
 msgid "VM not owned by current user"
-msgstr "ผู้ใช้ปัจจุบันไม่ได้เป็นเจ้าของ VM นี้"
+msgstr "แจ๋วปัจจุบันมิได้เป็นกลจักรเสมือนบดี"
 
 #: ../main.py:149
 msgid "VM is not running"
-msgstr "VM ไม่ได้ทำงานอยู่"
+msgstr "กลจักรเสมือนมิได้วิ่งอยู่"
 
 #. Displayed when trying to claim a VM that belongs to yourself
 #: ../main.py:152
 msgid "VM is already owned by current user"
-msgstr "ท่านเป็นเจ้าของ VM นี้อยู่แล้ว"
+msgstr "ท่านคือกลจักรเสมือนบดี"
 
 #. Displayed when trying to start a VM but user's credit is lower than 1,000
 #. credits. The %s is the unit name such as credit
@@ -42,34 +42,34 @@ msgstr "มี %s น้อยกว่า 1,000 กรุณาเติมเ�
 
 #: ../main.py:157
 msgid "VM is running"
-msgstr "VM กำลังทำงานอยู่"
+msgstr "กลจักรเสมือนกำลังวิ่งอยู่"
 
 #. Displayed when trying to create a VM but user's credit is lower than 5,000
 #. credits. The %s is the unit name such as credit
 #: ../main.py:160
 #, python-format
 msgid "You need 5,000 %s to create a VM."
-msgstr "คุณจะต้องมี 5,000 %s จึงจะสร้าง VM ได้"
+msgstr "ท่านต้องมี 5,000 %s จึงจะสร้างกลจักรเสมือนได้"
 
 #: ../main.py:164
 msgid "VM now belongs to you"
-msgstr "VM กลายเป็นของคุณแล้ว"
+msgstr "ท่านกลายเป็นกลจักรเสมือนบดีแล้ว"
 
 #: ../main.py:166
 msgid "VM ownership removed. Other can now claim this VM"
-msgstr "ยกเลิกความเป็นเจ้าของ VM แล้ว ผู้ใช้คนอื่นจะสามารถครอบครอง VM นี้ได้"
+msgstr "ยุติการเป็นกลจักรเสมือนบดีแล้ว แจ๋วอื่นสามารถครอบครองกลจักรเสมือนนี้ได้"
 
 #: ../main.py:168
 msgid "VM destroyed"
-msgstr "ทำลาย VM แล้ว"
+msgstr "อภิฆาตกลจักรเสมือนแล้ว"
 
 #: ../main.py:170 ../template/base.html:306 ../template/container.html:3
 msgid "Containers"
-msgstr "Containers"
+msgstr "ปุฏะ"
 
 #: ../main.py:201
 msgid "Host OS specification"
-msgstr "สเปคเครื่องหลัก"
+msgstr "คุณทรัพย์เครื่องเหย้า"
 
 #: ../main.py:214
 msgid "Terms of Service not accepted"
@@ -81,21 +81,21 @@ msgstr "ชื่อเทมเพลตผิดรูปแบบ"
 
 #: ../main.py:218 ../main.py:397
 msgid "Passwords do not match"
-msgstr "รหัสผ่านไม่ตรงกัน"
+msgstr "ผ่านคำเกิดอยุคล"
 
 #. Malformat hostname
 #: ../main.py:220 ../main.py:392
 msgid "Invalid hostname"
-msgstr "ชื่อโฮสต์ไม่ถูกต้อง"
+msgstr "นามเหย้ามิถูกต้อง"
 
 #: ../main.py:222
 msgid "Creating VM"
-msgstr "สร้าง VM"
+msgstr "กำลังสร้างกลจักรเสมือน"
 
 #: ../main.py:260
 #, python-format
 msgid "Destroy %s"
-msgstr "ทำลาย %s"
+msgstr "อภิฆาต %s"
 
 #: ../main.py:380
 msgid ""

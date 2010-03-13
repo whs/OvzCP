@@ -3,7 +3,7 @@ if [ "$USER" != "root" ]; then
 	echo "OvzCP must be run as root"
 	exit 1
 fi
-uname -r | grep openvz
+uname -r | grep openvz > /dev/null
 if [ "$?" != 0 ]; then
 	echo "OpenVZ kernel not detected. Check uname -r"
 	exit 1

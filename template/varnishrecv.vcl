@@ -13,6 +13,6 @@ if(req.http.host == "{{ovzcphost}}"){
 		unset req.http.cookie;
 		lookup;
 	}
-}else{
+}{% if nomatch != "None" %}else{
 	set req.backend = {{nomatch}};
-}
+}{% endif %}
