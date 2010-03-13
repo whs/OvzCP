@@ -6,6 +6,7 @@ might be unable to run OvzCP.
 
 1. Install dependencies
 
+- lsb-release
 - python-pycurl
 - python-simplejson
 - python-sqlobject

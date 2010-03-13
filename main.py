@@ -183,7 +183,7 @@ class HostSpec(BaseHandler):
 			out[i[0]] = i[1]
 		mem=out.copy()
 		# copied from openvz.VM.diskinfo
-		d = commands.getoutput("df")
+		d = commands.getoutput("df -P")
 		d = re.split(" [ ]+", d.split("\n")[1])
 		disk = [int(d[1])*1000, int(d[2])*1000, int(d[3])*1000]
 		# copied from openvz.VM.loadAvg
