@@ -271,6 +271,13 @@ class DestroyVM(BaseHandler):
 			i.destroySelf()
 		if sql.munin:
 			sql.munin.destroySelf()
+		import munin, vmfw
+		munin.update(models.Munin.select(), models.User.select())
+		vmfw.update(models.PortForward.select())
+		vmfw.restart()
+		varnish.updateBackend(models.VarnishBackend.select())
+		varnish.updateRecv(models.VarnishCond.select())
+		varnish.restart()
 		sql.destroySelf()
 		self.redirect(self.get_argument("return", self.reverse_url("containers")+"?msg=3"))
 
@@ -634,6 +641,7 @@ class Munin(BaseHandler):
 			models.Munin(vm=sql)
 		else:
 			sql.munin.destroySelf()
+		munin.update(models.Munin.select(), models.User.select())
 		self.write((`{"status": bool(sql.munin)}`).lower().replace("'", '"'))
 
 class VarnishRestart(BaseHandler):
