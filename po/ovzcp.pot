@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-03-13 15:22+0700\n"
+"POT-Creation-Date: 2010-03-13 17:19+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
 #. current user, it will return this error
-#: ../main.py:147 ../main.py:653
+#: ../main.py:147 ../main.py:655
 msgid "VM not owned by current user"
 msgstr ""
 
@@ -160,17 +160,21 @@ msgstr ""
 msgid "Billing"
 msgstr ""
 
-#: ../main.py:662
+#: ../main.py:664
 msgid "Cannot connect to Munin on the VM."
 msgstr ""
 
-#: ../main.py:682
+#: ../main.py:684
 #, python-format
 msgid "Limit not reached. Please wait %s seconds"
 msgstr ""
 
-#: ../main.py:705 ../template/base.html:305
+#: ../main.py:707 ../template/base.html:305
 msgid "Dashboard"
+msgstr ""
+
+#: ../main.py:717
+msgid "Host OS"
 msgstr ""
 
 #: ../template/base.html:213
@@ -633,6 +637,14 @@ msgid ""
 " not be accesible for few seconds."
 msgstr ""
 
+#: ../template/info.html:53
+msgid "Munin monitoring enabled"
+msgstr ""
+
+#: ../template/info.html:55
+msgid "Munin monitoring disabled"
+msgstr ""
+
 #: ../template/info.html:90
 msgid "Running"
 msgstr ""
@@ -661,14 +673,13 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#. %(burst)s is the level of burst from 0 (no)
 #: ../template/info.html:101
 msgid "Set burst level"
 msgstr ""
 
 #: ../template/info.html:101
 #, python-format
-msgid "Burst %(burst)s"
+msgid "Burst (%(burst)s)"
 msgstr ""
 
 #: ../template/info.html:103

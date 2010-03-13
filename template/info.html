@@ -50,9 +50,9 @@ function toggleMunin(){
 		d=JSON.parse(d)
 		if(d.error) alert(d)
 		else if(d.status){
-			alert("Munin monitoring enabled");
+			alert("{% trans %}Munin monitoring enabled{% endtrans %}");
 		}else{
-			alert("Munin monitoring disabled");
+			alert("{% trans %}Munin monitoring disabled{% endtrans %}");
 		}
 	})
 }

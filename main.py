@@ -19,7 +19,7 @@ sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 
 import models
 import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext
-import varnish
+import varnish, simplejson
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -456,7 +456,7 @@ class VMedit(BaseHandler):
 			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
 		hostnames = map(lambda x: x.hostname,openvz.listVM())
-		if self.get_argument("hostname") in hostnames:
+		if self.get_argument("hostname") in hostnames and self.get_argument("hostname") != sql.vz.hostname:
 			self.redirect(self.reverse_url("vminfo", veid)+"?error=3")
 			return
 		change = []
@@ -643,6 +643,8 @@ class AddVarnish(BaseHandler):
 		if backendUpdate:
 			varnish.updateBackend(models.VarnishBackend.select())
 		varnish.updateRecv(models.VarnishCond.select())
+		if varnish.version()[0] > 1:
+			varnish.restart()
 		self.redirect(self.reverse_url("vminfo", veid)+"#webedit")
 
 class Munin(BaseHandler):
@@ -650,7 +652,7 @@ class Munin(BaseHandler):
 		if not _config.getboolean("munin", "enabled"): return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
-			self.write(`{"error": _("VM not owned by current user")}`.replace("'", '"'))
+			self.write(simplejson.dumps({"error": _("VM not owned by current user")}))
 			return
 		if self.get_argument("status") == "toggle":
 			e = not sql.munin
@@ -659,13 +661,13 @@ class Munin(BaseHandler):
 		import munin
 		if e:
 			if not munin.check_ip(sql.vz.ip):
-				self.write(`{"error": _("Cannot connect to Munin on the VM.")}`.replace("'", '"'))
+				self.write(simplejson.dumps({"error": _("Cannot connect to Munin on the VM.")}))
 				return
 			models.Munin(vm=sql)
 		else:
 			sql.munin.destroySelf()
 		munin.update(models.Munin.select(), models.User.select())
-		self.write((`{"status": bool(sql.munin)}`).lower().replace("'", '"'))
+		self.write(simplejson.dumps({"status": bool(sql.munin)}))
 
 class VarnishRestart(BaseHandler):
 	@tornado.web.authenticated
@@ -712,8 +714,8 @@ class Dashboard(BaseHandler):
 					out[i.vz.hostname] = i.vz.loadAvg[0]
 			d = open("/proc/loadavg").read()
 			loadAvg= map(lambda x:float(x), d.split(" ")[:3])
-			out['Host OS'] = loadAvg[0]
-			self.write((`[out]`).replace("'", '"'))
+			out[_('Host OS')] = loadAvg[0]
+			self.write(simplejson.dumps([out]))
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous

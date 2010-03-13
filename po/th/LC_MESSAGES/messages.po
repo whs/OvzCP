@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-03-09 00:15+0700\n"
-"PO-Revision-Date: 2010-03-13 15:29+0700\n"
+"PO-Revision-Date: 2010-03-13 17:20+0700\n"
 "Last-Translator: Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>\n"
 "Language-Team: Thai L10N <thai-l10n@googlegroups.com>\n"
 "Language: th\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
 #. current user, it will return this error
-#: ../main.py:147 ../main.py:653
+#: ../main.py:147 ../main.py:655
 msgid "VM not owned by current user"
 msgstr "ผู้ใช้ปัจจุบันไม่ได้เป็นเจ้าของ VM นี้"
 
@@ -165,18 +165,22 @@ msgstr "แก้ไข %s"
 msgid "Billing"
 msgstr "การเงิน"
 
-#: ../main.py:662
+#: ../main.py:664
 msgid "Cannot connect to Munin on the VM."
 msgstr "ไม่สามารถเชื่อมต่อหา Munin บน VM"
 
-#: ../main.py:682
+#: ../main.py:684
 #, python-format
 msgid "Limit not reached. Please wait %s seconds"
 msgstr "ยังไม่ถึงกำหนดเวลา กรุณารออีก %s วินาที"
 
-#: ../main.py:705 ../template/base.html:305
+#: ../main.py:707 ../template/base.html:305
 msgid "Dashboard"
 msgstr "แผงควบคุม"
+
+#: ../main.py:717
+msgid "Host OS"
+msgstr "ระบบหลัก"
 
 #: ../template/base.html:213
 msgid ""
@@ -663,6 +667,14 @@ msgstr ""
 "โปรดรอขณะที่ Reverse proxy กำลังถูกรีสตาร์ท "
 "ซึ่งทุกเว็บไซต์อาจจะเข้าไม่ได้สักครู่หนึ่ง"
 
+#: ../template/info.html:53
+msgid "Munin monitoring enabled"
+msgstr "เปิดการเฝ้าระวังด้วย Munin แล้ว"
+
+#: ../template/info.html:55
+msgid "Munin monitoring disabled"
+msgstr "ปิดการเฝ้าระวังด้วย Munin แล้ว"
+
 #: ../template/info.html:90
 msgid "Running"
 msgstr "กำลังทำงาน"
@@ -691,15 +703,14 @@ msgstr "ทำลาย"
 msgid "Edit"
 msgstr "แก้ไข"
 
-#. %(burst)s is the level of burst from 0 (no)
 #: ../template/info.html:101
 msgid "Set burst level"
 msgstr "กำหนดระดับ Burst"
 
 #: ../template/info.html:101
 #, python-format
-msgid "Burst %(burst)s"
-msgstr "Burst ระดับ %(burst)s"
+msgid "Burst (%(burst)s)"
+msgstr "Burst (%(burst)s)"
 
 #: ../template/info.html:103
 msgid "Forward HTTP application port to port 80 on specified hostname."
@@ -871,7 +882,7 @@ msgid ""
 msgstr "การส่งต่อแบบ Wildcard จะส่งต่อ อะไรก็ได้.ชื่อโดเมน.com ไปยัง ชื่อโดเมน.com"
 
 #: ../template/info.html:167
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "After edit changes will <b>NOT</b> be visible until you click %"
 "(restartButton)s. (Every site, including this may not be accessible for few "
@@ -946,15 +957,15 @@ msgstr "รหัสผ่าน root ใหม่"
 
 #: ../template/info.html:242
 msgid ""
-"Burst means that your VM got higher priority in processing. If 2 VMs needs "
-"to use the CPU, they will got 50% CPU time each. If one of that VM have "
-"burst level 2, it will got 66% CPU time.<br />\n"
-"\t\tNote that if there is only VM using the CPU, it will always receive 100% "
-"CPU time."
+"Burst means that your VM got higher priority in processing. If 2 VMs "
+"needs to use the CPU, they will got 50% CPU time each. If one of that VM "
+"have burst level 2, it will got 66% CPU time.<br />\n"
+"\t\tNote that if there is only VM using the CPU, it will always receive "
+"100% CPU time."
 msgstr ""
 "Burst คือการทำให้ VM ของคุณมีความสำคัญมากกว่า VM อื่นๆ โดยหาก VM "
-"สองตัวต้องการใช้ CPU จะได้ไปตัวละ 50% แต่ถ้า VM ตัวหนึ่งมี Burst ระดับสอง "
-"มันจะได้ 66%<br />\n"
+"สองตัวต้องการใช้ CPU จะได้ไปตัวละ 50% แต่ถ้า VM ตัวหนึ่งมี Burst ระดับสอง"
+" มันจะได้ 66%<br />\n"
 "หากว่ามี VM ตัวเดียวใช้งาน CPU จะได้ CPU 100% เสมอ"
 
 #: ../template/info.html:244
@@ -964,11 +975,11 @@ msgstr "ระดับ Burst"
 #: ../template/info.html:249
 #, python-format
 msgid ""
-"You will be billed for normal amount times (0.5 x burst level). (Eg. a 200 %"
-"(unit)s VM with level 5 burst consumes 500 %(unit)s)"
+"You will be billed for normal amount times (0.5 x burst level). (Eg. a "
+"200 %(unit)s VM with level 5 burst consumes 500 %(unit)s)"
 msgstr ""
-"คุณจะต้องชำระเงินเป็นจำนวนเท่ากับราคาปกติ คูณ 0.5 เท่าของระดับ Burst เช่น VM "
-"ที่ใช้ 200 %(unit)s และมี Burst ระดับ 5 จะใช้ 500 %(unit)s"
+"คุณจะต้องชำระเงินเป็นจำนวนเท่ากับราคาปกติ คูณ 0.5 เท่าของระดับ Burst เช่น"
+" VM ที่ใช้ 200 %(unit)s และมี Burst ระดับ 5 จะใช้ 500 %(unit)s"
 
 #: ../template/spec.html:7
 msgid "Data"

@@ -3,7 +3,7 @@
 # Generated for varnish {{".".join(version)}}
 
 {% for i in backend %}
-backend {{i.name}}{
+backend {{i.name.replace(".", "_")}}{
 	{% if prefix %}set backend{% endif %}.host = "{{i.vm.vz.ip}}";
 	{% if prefix %}set backend{% endif %}.port = "{{i.port}}";
 }
