@@ -176,6 +176,7 @@ class VM(object):
 def listVM():
 	out = []
 	for i in commands.getoutput("vzlist -a -H -o veid").split("\n"):
+		if not i: continue
 		out.append(VM(i.strip()))
 	return out
 def listTemplates():

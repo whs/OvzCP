@@ -47,22 +47,24 @@ sub vcl_recv{
 
     - Save
     - Regenerate varnish configuration with python varnish.py
-8. Edit /etc/rc.local
+8. $ python vmfw.py
+   $ chmod +x sysconf/vmfw.sh
+9. Edit /etc/rc.local
     - Add these lines before exit 0:
 
 /opt/ovzcp/sysconf/vmfw.sh
 /opt/ovzcp/start-ovzcp
 
-9. Edit cron (crontab -e) Add these lines
+10. Edit cron (crontab -e) Add these lines
 
 	* * * * * wget http://OVZCPHOST/_cron?cron_key=CRON_KEY -O - > /dev/null 2>/dev/null
 	
     (Do not forget to replace YOUROVZCPHOST and CRON_KEY with the value in your configuration
     
-10. $ python munin.py
+11. $ python munin.py
       # chown munin:munin /opt/ovzcp/static/munin
-11. Remove /etc/munin/munin.conf and replaces with symlink to /opt/ovzcp/sysconf/munin.conf 
+12. Remove /etc/munin/munin.conf and replaces with symlink to /opt/ovzcp/sysconf/munin.conf 
 
 	$ ln -s /opt/ovzcp/sysconf/munin.conf /etc/munin/munin.conf
 	
-12. Reboot your system with init 6 and have fun with OvzCP!
+13. Reboot your system with init 6 and have fun with OvzCP!
