@@ -12,7 +12,7 @@
 </thead>
 <tbody>
 {% for i in vmcost %}
-	<tr><td><a href="{{reverse_url('vminfo', i[0])}}"><img src="{{static_url('info.png')}}" /> {{i[0]}}</a></td><td>{{i[1]}}</td></tr>
+	<tr><td><a href="{{reverse_url('vminfo', i[0])}}"><img src="{{static_url('info.png')}}" /> {{i[0]}}</a>{% if i.burst %}<span title="{% trans burst=i.burst+1 %}This VM is in burst level {{burst}}{% endtrans %}"><img src="{{static_url('burst.png')}}" /></span>{% endif %}</td><td>{{i[1]}}</td></tr>
 {% endfor %}
 </tbody>
 <tfooter>

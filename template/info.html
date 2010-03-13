@@ -8,6 +8,10 @@ function editroot(){
 		window.location.reload()
 	}});
 }
+function editburst(){
+	window.location.hash = "burst"
+	$("#real_burst").dialog({modal: true, title: "{% trans %}Burst{% endtrans %}", width: 700, height: 300});
+}
 {% if config.getboolean("varnish", "enabled") %}
 function editweb(){
 	window.location.hash = "webedit"
@@ -67,6 +71,9 @@ $(function(){
 	if(window.location.hash == "#rootedit"){
 		editroot();
 	}
+	if(window.location.hash == "#burst"){
+		editburst();
+	}
 	$("#real_rootedit input[name=root], #real_rootedit input[name=root2]").keyup(function(){
 		if($("#real_rootedit input[name=root]").val() != $("#real_rootedit input[name=root2]").val()){
 			$("#real_rootedit input[type=submit]").attr("disabled", true)
@@ -91,6 +98,7 @@ $(function(){
 	<a href="{{reverse_url('destroyvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Destroy {{veid}}?{% endtrans %}')" title="{% trans %}Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>.{% endtrans %}"><button><img src="{{static_url('destroy.png')}}" /> {% trans %}Destroy{% endtrans %}</button></a>
 {% endif %}
 	<a href="{{reverse_url('vmedit', veid)}}"><button><img src="{{static_url('edit.png')}}" /> {% trans %}Edit{% endtrans %}</button></a>
+	<a href="#" onclick="editburst(); return false;" title="{% trans %}Set burst level{% endtrans %}"><button><img src="{{static_url('burst.png')}}" /> {% trans burst=vm.burst+1 %}Burst ({{burst}}){% endtrans %}</button></a>
 {% if config.getboolean("varnish", "enabled") %}
 	<a href="#" onclick="editweb(); return false" title="{% trans %}Forward HTTP application port to port 80 on specified hostname.{% endtrans %}"><button>{% trans %}Web forward{% endtrans %}</button></a>
 {% endif %}
@@ -113,6 +121,7 @@ $(function(){
 	<tr><td><div title="{% trans %}Every VM created must paid this amount.{% endtrans %}">{% trans %}Per VM{% endtrans %}</div></td><td>{{billing['perVM']}}</td></tr>
 	<tr><td><div title="{{config.get("billing", "memory")}} {{unit|title}} {% trans %}per{% endtrans %} {{config.get("billing", "memoryPer")}} MB">{% trans %}Memory{% endtrans %}</div></td><td>{{billing['memory']}}</td></tr>
 	<tr><td><div title="{{config.get("billing", "disk")}} {{unit|title}} {% trans %}per{% endtrans %} {{config.get("billing", "diskPer")}} MB">{% trans %}Disk{% endtrans %}</div></td><td>{{billing['disk']}}</td></tr>
+	<tr><td><div title="{% trans %}Total times (0.5 x burst level){% endtrans %}">{% trans %}Burst{% endtrans %}</div></td><td>{{billing['burst']}} ({% trans burst=vm.burst+1 %}level {{burst}}{% endtrans %})</td></tr>
 	<tr><th>{% trans %}Total{% endtrans %}</th><td>{{billing['total']}}</td></tr>
 	<tr><th>{% trans unit=unit|title %}{{unit}} will run out in <small>(not counting other VM)</small>{% endtrans %}</th><td class="time">{{billing['time']}}</td></tr>
 </tbody>
@@ -153,75 +162,92 @@ $(function(){
 
 {% if config.getboolean("varnish", "enabled") %}
 <div id="real_webedit" style="display: none;">
-<div class="notify" style="color: black;">{% trans %}Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.{% endtrans %}
-{% if varnishRestart %}<br />
-{% trans restartButton='<button onclick="restartVarnish()" id="varnishRestartButton">'+_('restart proxy')+'</button>' %}After edit changes will <b>NOT</b> be visible until you click {{restartButton}}. (Every site, including this may not be accessible for few seconds)
-Note that you can restart the proxy once only five minutes.{% endtrans %}{% endif %}</div>
-<form style="margin-top: 10px;" action="{{reverse_url('addvarnish', veid)}}" method="post">
-{{ xsrf_form_html() }}
-<table>
-<thead>
-	<tr><th>{% trans %}Domain{% endtrans %}</th><th>{% trans %}Port{% endtrans %}</th><th>{% trans %}Wildcard{% endtrans %}</th><th>{% trans %}Action{% endtrans %}</th></tr>
-</thead>
-<tbody>
-{% for i in vm.varnishBackend %}
-{% for i2 in i.cond %}
-	<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td><img src='{{static_url((i2.subdomain|lower)+".png")}}' /></td>
-	<td><a href="{{reverse_url('addvarnish', veid)}}?delete={{i2.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% trans hostname=i2.hostname %}Delete {{hostname}}?{% endtrans %}')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
-{% endfor %}
-{% endfor %}
-</tbody>
-<tfooter>
-	<tr>
-		<th><input type="text" name="host" /></th>
-		<th><input type="text" name="port" value="80" /></th>
-		<th><input type="checkbox" name="subdomain" checked="checked" /></th>
-		<th><input type="submit" value="{% trans %}Save{% endtrans %}" /></th>
-	</tr>
-</tfooter>
-</table>
-</form>
+	<div class="notify" style="color: black;">{% trans %}Wildcard forwarding will forward anything.yourdomain.com to yourdomain.com.{% endtrans %}
+	{% if varnishRestart %}<br />
+	{% trans restartButton='<button onclick="restartVarnish()" id="varnishRestartButton">'+_('restart proxy')+'</button>' %}After edit changes will <b>NOT</b> be visible until you click {{restartButton}}. (Every site, including this may not be accessible for few seconds)
+	Note that you can restart the proxy once only five minutes.{% endtrans %}{% endif %}</div>
+	<form style="margin-top: 10px;" action="{{reverse_url('addvarnish', veid)}}" method="post">
+	{{ xsrf_form_html() }}
+	<table>
+	<thead>
+		<tr><th>{% trans %}Domain{% endtrans %}</th><th>{% trans %}Port{% endtrans %}</th><th>{% trans %}Wildcard{% endtrans %}</th><th>{% trans %}Action{% endtrans %}</th></tr>
+	</thead>
+	<tbody>
+	{% for i in vm.varnishBackend %}
+	{% for i2 in i.cond %}
+		<tr><td><a href='http://{{i2.hostname}}'>{{i2.hostname}}</a></td><td>{{i.port}}</td><td><img src='{{static_url((i2.subdomain|lower)+".png")}}' /></td>
+		<td><a href="{{reverse_url('addvarnish', veid)}}?delete={{i2.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% trans hostname=i2.hostname %}Delete {{hostname}}?{% endtrans %}')"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+	{% endfor %}
+	{% endfor %}
+	</tbody>
+	<tfooter>
+		<tr>
+			<th><input type="text" name="host" /></th>
+			<th><input type="text" name="port" value="80" /></th>
+			<th><input type="checkbox" name="subdomain" checked="checked" /></th>
+			<th><input type="submit" value="{% trans %}Save{% endtrans %}" /></th>
+		</tr>
+	</tfooter>
+	</table>
+	</form>
 </div>
 {% endif %}
+
 {% if config.getboolean("iface", "enabled") %}
 <div id="real_portedit" style="display: none;">
-<form style="margin-top: 10px;" action="{{reverse_url('addport', veid)}}" method="post">
-{{ xsrf_form_html() }}
-<table>
-<thead>
-	<tr><th>{% trans %}Interface{% endtrans %}{#_ Network interface #}</th><th>{% trans %}Internal Port{% endtrans %}</th><th>{% trans %}External Port{% endtrans %}</th><th>{% trans %}Action{% endtrans %}</th></tr>
-</thead>
-<tbody>
-{% for i in vm.portForward %}
-	<tr><td>{{i.iface}} ({{interface[i.iface][0]}})</td>{% if i.outport != -1 %}<td>{{i.port}}</td><td>{{i.outport}}</td>{% else %}<td colspan="2" style="text-align: center;">DMZ</td>{% endif %}
-	<td><a href="{{reverse_url('addport', veid)}}?delete={{i.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% if i.outport!=-1 %}{% trans iface=i.iface, port=i.port, outport=i.outport %}Delete {{iface}} in:{{port}} out:{{outport}}?{% endtrans %}{% else %}{% trans iface=i.iface %}Delete DMZ forwarding to {{iface}}?{% endtrans %}{% endif %}');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
-{% endfor %}
-</tbody>
-<tfooter>
-	<tr>
-		<th><select name="iface">
-		{% for i in interface.items() %}
-		{% if not i[1][1] %}
-			<option value="{{i[0]}}">{{i[0]}} ({{i[1][0]}})</option>
-		{% endif %}
-		{% endfor %}
-		</select></th>
-		<th><input type="text" name="port" /></th>
-		<th><input type="text" name="outport" /></th>
-		<th><input type="submit" value="{% trans %}Save{% endtrans %}" /></th>
-	</tr>
-</tfooter>
-</table>
-<div class="notify" style="color: black;">{% trans %}To forward every port, type DMZ as External Port. Other fields doesn't need to be filled.{% endtrans %}</div>{#_ Do not translate DMZ #}
-</form>
-</div>
-<div id="real_rootedit" style="display: none;">
-<form style="margin-top: 10px;" action="{{reverse_url('rootpw', veid)}}" method="post">
-{{ xsrf_form_html() }}
-<b>{% trans %}New Root password{% endtrans %}:</b> <input type="password" name="root" /><br />
-<b>{% trans %}Confirm Root password{% endtrans %}:</b> <input type="password" name="root2" />
-<p><input type="submit" value="Save" /></p>
-</form>
+	<form style="margin-top: 10px;" action="{{reverse_url('addport', veid)}}" method="post">
+	{{ xsrf_form_html() }}
+	<table>
+	<thead>
+		<tr><th>{% trans %}Interface{% endtrans %}{#_ Network interface #}</th><th>{% trans %}Internal Port{% endtrans %}</th><th>{% trans %}External Port{% endtrans %}</th><th>{% trans %}Action{% endtrans %}</th></tr>
+	</thead>
+	<tbody>
+	{% for i in vm.portForward %}
+		<tr><td>{{i.iface}} ({{interface[i.iface][0]}})</td>{% if i.outport != -1 %}<td>{{i.port}}</td><td>{{i.outport}}</td>{% else %}<td colspan="2" style="text-align: center;">DMZ</td>{% endif %}
+		<td><a href="{{reverse_url('addport', veid)}}?delete={{i.id}}&_xsrf={{xsrf}}" title="{% trans %}Delete this item{% endtrans %}" onclick="return confirm('{% if i.outport!=-1 %}{% trans iface=i.iface, port=i.port, outport=i.outport %}Delete {{iface}} in:{{port}} out:{{outport}}?{% endtrans %}{% else %}{% trans iface=i.iface %}Delete DMZ forwarding to {{iface}}?{% endtrans %}{% endif %}');"><img src="{{static_url('delete.png')}}" /></a></td></tr>
+	{% endfor %}
+	</tbody>
+	<tfooter>
+		<tr>
+			<th><select name="iface">
+			{% for i in interface.items() %}
+			{% if not i[1][1] %}
+				<option value="{{i[0]}}">{{i[0]}} ({{i[1][0]}})</option>
+			{% endif %}
+			{% endfor %}
+			</select></th>
+			<th><input type="text" name="port" /></th>
+			<th><input type="text" name="outport" /></th>
+			<th><input type="submit" value="{% trans %}Save{% endtrans %}" /></th>
+		</tr>
+	</tfooter>
+	</table>
+	<div class="notify" style="color: black;">{% trans %}To forward every port, type DMZ as External Port. Other fields doesn't need to be filled.{% endtrans %}</div>{#_ Do not translate DMZ #}
+	</form>
 </div>
 {% endif %}
+
+<div id="real_rootedit" style="display: none;">
+	<form style="margin-top: 10px;" action="{{reverse_url('rootpw', veid)}}" method="post">
+		{{ xsrf_form_html() }}
+		<b>{% trans %}New Root password{% endtrans %}:</b> <input type="password" name="root" /><br />
+		<b>{% trans %}Confirm Root password{% endtrans %}:</b> <input type="password" name="root2" />
+		<p><input type="submit" value="Save" /></p>
+	</form>
+</div>
+
+<div id="real_burst" style="display: none;">
+	<form style="margin-top: 10px;" action="{{reverse_url('burst', veid)}}" method="post">
+		{{ xsrf_form_html() }}
+		<div class="notify" style="color: black;">{% trans %}Burst means that your VM got higher priority in processing. If 2 VMs needs to use the CPU, they will got 50% CPU time each. If one of that VM have burst level 2, it will got 66% CPU time.<br />
+		Note that if there is only VM using the CPU, it will always receive 100% CPU time.{% endtrans %}</div>
+		<b>{% trans %}Burst level{% endtrans %}:</b> <select name="burst">
+		{% for i in range(1,11) %}
+			<option{% if i-1==vm.burst %} selected{% endif %}>{{i}}</option>
+		{% endfor %}
+		</select>
+		<p>{% trans %}You will be billed for normal amount times (0.5 x burst level). (Eg. a 200 {{unit}} VM with level 5 burst consumes 500 {{unit}}){% endtrans %}</p>
+		<p><input type="submit" value="Save" /></p>
+	</form>
+</div>
 {% endblock %}

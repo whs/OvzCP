@@ -3,6 +3,11 @@ if [ "$USER" != "root" ]; then
 	echo "OvzCP must be run as root"
 	exit 1
 fi
+uname -r | grep openvz
+if [ "$?" != 0 ]; then
+	echo "OpenVZ kernel not detected. Check uname -r"
+	exit 1
+fi
 cd `dirname $0`
 for i in 21215 21216 21217 21218; do
 	/opt/ovzcp/main.py $i >> /var/log/ovzcp.log 2>&1 &

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-03-12 00:47+0700\n"
+"POT-Creation-Date: 2010-03-13 15:22+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,97 +19,97 @@ msgstr ""
 
 #. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
 #. current user, it will return this error
-#: ../main.py:142 ../main.py:591
+#: ../main.py:147 ../main.py:653
 msgid "VM not owned by current user"
 msgstr ""
 
-#: ../main.py:144
+#: ../main.py:149
 msgid "VM is not running"
 msgstr ""
 
 #. Displayed when trying to claim a VM that belongs to yourself
-#: ../main.py:147
+#: ../main.py:152
 msgid "VM is already owned by current user"
 msgstr ""
 
 #. Displayed when trying to start a VM but user's credit is lower than 1,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:150
+#: ../main.py:155
 #, python-format
 msgid "%s is under 1,000, please refill."
 msgstr ""
 
-#: ../main.py:152
+#: ../main.py:157
 msgid "VM is running"
 msgstr ""
 
 #. Displayed when trying to create a VM but user's credit is lower than 5,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:155
+#: ../main.py:160
 #, python-format
 msgid "You need 5,000 %s to create a VM."
 msgstr ""
 
-#: ../main.py:159
+#: ../main.py:164
 msgid "VM now belongs to you"
 msgstr ""
 
-#: ../main.py:161
+#: ../main.py:166
 msgid "VM ownership removed. Other can now claim this VM"
 msgstr ""
 
-#: ../main.py:163
+#: ../main.py:168
 msgid "VM destroyed"
 msgstr ""
 
-#: ../main.py:165 ../template/base.html:306 ../template/container.html:3
+#: ../main.py:170 ../template/base.html:306 ../template/container.html:3
 msgid "Containers"
 msgstr ""
 
-#: ../main.py:196
+#: ../main.py:201
 msgid "Host OS specification"
 msgstr ""
 
-#: ../main.py:209
+#: ../main.py:214
 msgid "Terms of Service not accepted"
 msgstr ""
 
-#: ../main.py:211
+#: ../main.py:216
 msgid "Invalid template name"
 msgstr ""
 
-#: ../main.py:213 ../main.py:378
+#: ../main.py:218 ../main.py:397
 msgid "Passwords do not match"
 msgstr ""
 
 #. Malformat hostname
-#: ../main.py:215 ../main.py:373
+#: ../main.py:220 ../main.py:392
 msgid "Invalid hostname"
 msgstr ""
 
-#: ../main.py:217
+#: ../main.py:222
 msgid "Creating VM"
 msgstr ""
 
-#: ../main.py:255
+#: ../main.py:260
 #, python-format
 msgid "Destroy %s"
 msgstr ""
 
-#: ../main.py:361
+#: ../main.py:380
 msgid ""
 "VM disk usage exceed allocated amount. You will be billed by amount used "
 "instead"
 msgstr ""
 
 #. Duplicate entry
-#: ../main.py:366
+#: ../main.py:385
 msgid "Entry already exists"
 msgstr ""
 
 #. <span class='time'>%s</span> is time in this format: 1 day 3 hours 4 minutes
 #. 5 seconds
-#: ../main.py:370
+#: ../main.py:389
 #, python-format
 msgid ""
 "You have to wait <span class='time'>%s</span> before you can restart the "
@@ -117,47 +117,59 @@ msgid ""
 msgstr ""
 
 #. Network interface
-#: ../main.py:376
+#: ../main.py:395
 msgid "Invalid interface"
 msgstr ""
 
-#: ../main.py:382
+#: ../main.py:399
+msgid "Reverse HTTP proxy is enabled. Please use web forwarding instead"
+msgstr ""
+
+#: ../main.py:401
+msgid "Invalid burst level"
+msgstr ""
+
+#: ../main.py:405
 msgid "Settings commited."
 msgstr ""
 
-#: ../main.py:384
+#: ../main.py:407
 msgid "No changes."
 msgstr ""
 
-#: ../main.py:386
+#: ../main.py:409
 msgid "Root password successfully changed"
 msgstr ""
 
-#: ../main.py:403
+#: ../main.py:411
+msgid "Burst level set"
+msgstr ""
+
+#: ../main.py:428
 #, python-format
 msgid "%s information"
 msgstr ""
 
-#: ../main.py:422
+#: ../main.py:447
 #, python-format
 msgid "Edit %s"
 msgstr ""
 
-#: ../main.py:470 ../template/base.html:307 ../template/dashboard.html:95
-#: ../template/info.html:104
+#: ../main.py:496 ../template/base.html:307 ../template/dashboard.html:95
+#: ../template/info.html:114
 msgid "Billing"
 msgstr ""
 
-#: ../main.py:600
+#: ../main.py:662
 msgid "Cannot connect to Munin on the VM."
 msgstr ""
 
-#: ../main.py:619
+#: ../main.py:682
 #, python-format
 msgid "Limit not reached. Please wait %s seconds"
 msgstr ""
 
-#: ../main.py:642 ../template/base.html:305
+#: ../main.py:705 ../template/base.html:305
 msgid "Dashboard"
 msgstr ""
 
@@ -261,7 +273,7 @@ msgstr ""
 msgid "Click each VM's ID to view detailed cost."
 msgstr ""
 
-#: ../template/billing.html:7 ../template/info.html:105
+#: ../template/billing.html:7 ../template/info.html:115
 msgid "All calculations are rounded up."
 msgstr ""
 
@@ -271,7 +283,7 @@ msgstr ""
 
 #: ../template/billing.html:8 ../template/create.html:96
 #: ../template/create.html:116 ../template/edit.html:79
-#: ../template/edit.html:99 ../template/info.html:112 ../template/info.html:113
+#: ../template/edit.html:99 ../template/info.html:122 ../template/info.html:123
 msgid "per"
 msgstr ""
 
@@ -280,12 +292,18 @@ msgstr ""
 msgid "VEID"
 msgstr ""
 
-#: ../template/billing.html:11 ../template/info.html:108
+#: ../template/billing.html:11 ../template/info.html:118
 #, python-format
 msgid "Cost (%(unit)s)"
 msgstr ""
 
-#: ../template/billing.html:19 ../template/info.html:114
+#: ../template/billing.html:15 ../template/container.html:12
+#: ../template/dashboard.html:78
+#, python-format
+msgid "This VM is in burst level %(burst)s"
+msgstr ""
+
+#: ../template/billing.html:19 ../template/info.html:125
 msgid "Total"
 msgstr ""
 
@@ -293,7 +311,7 @@ msgstr ""
 msgid "Will deplete in"
 msgstr ""
 
-#: ../template/container.html:3
+#: ../template/container.html:3 ../template/dashboard.html:72
 msgid "Create new VM"
 msgstr ""
 
@@ -304,11 +322,11 @@ msgid "Hostname"
 msgstr ""
 
 #: ../template/container.html:7 ../template/dashboard.html:75
-#: ../template/info.html:124
+#: ../template/info.html:135
 msgid "IP"
 msgstr ""
 
-#: ../template/container.html:8 ../template/info.html:125
+#: ../template/container.html:8 ../template/info.html:136
 msgid "OS Template"
 msgstr ""
 
@@ -317,7 +335,7 @@ msgid "Owner"
 msgstr ""
 
 #: ../template/container.html:8 ../template/dashboard.html:75
-#: ../template/info.html:162 ../template/info.html:190
+#: ../template/info.html:173 ../template/info.html:202
 msgid "Action"
 msgstr ""
 
@@ -326,67 +344,67 @@ msgstr ""
 msgid "Click to show more information of %(veid)s"
 msgstr ""
 
-#: ../template/container.html:13
+#: ../template/container.html:14
 msgid "You"
 msgstr ""
 
-#: ../template/container.html:16
+#: ../template/container.html:17
 #, python-format
 msgid ""
 "Add %(veid)s to your account. No other user can access this VM. You have "
 "to pay for this VM. This is <b>IRREVERSIBLE</b>"
 msgstr ""
 
-#: ../template/container.html:16
+#: ../template/container.html:17
 msgid "Claim"
 msgstr ""
 
-#: ../template/container.html:18 ../template/dashboard.html:81
+#: ../template/container.html:19 ../template/dashboard.html:81
 #, python-format
 msgid "Edit %(veid)s"
 msgstr ""
 
-#: ../template/container.html:20 ../template/dashboard.html:83
-#: ../template/info.html:85
+#: ../template/container.html:21 ../template/dashboard.html:83
+#: ../template/info.html:94
 #, python-format
 msgid "Restart %(veid)s?"
 msgstr ""
 
-#: ../template/container.html:20 ../template/dashboard.html:83
+#: ../template/container.html:21 ../template/dashboard.html:83
 #, python-format
 msgid "Restart %(veid)s"
 msgstr ""
 
-#: ../template/container.html:21 ../template/dashboard.html:84
-#: ../template/info.html:86
+#: ../template/container.html:22 ../template/dashboard.html:84
+#: ../template/info.html:95
 #, python-format
 msgid "Stop %(veid)s?"
 msgstr ""
 
-#: ../template/container.html:21 ../template/dashboard.html:84
+#: ../template/container.html:22 ../template/dashboard.html:84
 #, python-format
 msgid "Stop %(veid)s"
 msgstr ""
 
-#: ../template/container.html:23 ../template/dashboard.html:86
-#: ../template/info.html:88
+#: ../template/container.html:24 ../template/dashboard.html:86
+#: ../template/info.html:97
 #, python-format
 msgid "Start %(veid)s?"
 msgstr ""
 
-#: ../template/container.html:23 ../template/dashboard.html:86
+#: ../template/container.html:24 ../template/dashboard.html:86
 #, python-format
 msgid "Start %(veid)s"
 msgstr ""
 
-#: ../template/container.html:24 ../template/dashboard.html:87
-#: ../template/info.html:89
+#: ../template/container.html:25 ../template/dashboard.html:87
+#: ../template/info.html:98
 #, python-format
 msgid "Destroy %(veid)s?"
 msgstr ""
 
-#: ../template/container.html:24 ../template/dashboard.html:87
-#: ../template/info.html:89
+#: ../template/container.html:25 ../template/dashboard.html:87
+#: ../template/info.html:98
 #, python-format
 msgid ""
 "Destroy all data on %(veid)s. Note that there are no backup made and "
@@ -425,13 +443,13 @@ msgid "<b>TIP:</b> Optimum memory"
 msgstr ""
 
 #: ../template/create.html:86 ../template/create.html:106
-#: ../template/edit.html:69 ../template/edit.html:89 ../template/info.html:108
+#: ../template/edit.html:69 ../template/edit.html:89 ../template/info.html:118
 msgid "Kind"
 msgstr ""
 
 #: ../template/create.html:86 ../template/edit.html:31 ../template/edit.html:36
-#: ../template/edit.html:82 ../template/edit.html:89 ../template/info.html:112
-#: ../template/info.html:135
+#: ../template/edit.html:82 ../template/edit.html:89 ../template/info.html:122
+#: ../template/info.html:146
 msgid "Memory"
 msgstr ""
 
@@ -494,11 +512,11 @@ msgid ""
 msgstr ""
 
 #: ../template/create.html:127 ../template/info.html:6
-#: ../template/info.html:101
+#: ../template/info.html:111
 msgid "Root password"
 msgstr ""
 
-#: ../template/create.html:128 ../template/info.html:220
+#: ../template/create.html:128 ../template/info.html:234
 msgid "Confirm Root password"
 msgstr ""
 
@@ -580,7 +598,7 @@ msgid "Please enable JavaScript"
 msgstr ""
 
 #: ../template/edit.html:20 ../template/edit.html:25 ../template/edit.html:62
-#: ../template/info.html:113
+#: ../template/info.html:123
 msgid "Disk"
 msgstr ""
 
@@ -589,273 +607,316 @@ msgid "Saving this page will result in VM being restarted"
 msgstr ""
 
 #: ../template/edit.html:106 ../template/edit.html:109
-#: ../template/info.html:177 ../template/info.html:209
+#: ../template/info.html:188 ../template/info.html:221
 msgid "Save"
 msgstr ""
 
-#: ../template/info.html:14 ../template/info.html:93
+#: ../template/info.html:13 ../template/info.html:124
+msgid "Burst"
+msgstr ""
+
+#: ../template/info.html:18 ../template/info.html:103
 msgid "Web forward"
 msgstr ""
 
-#: ../template/info.html:23 ../template/info.html:96
+#: ../template/info.html:27 ../template/info.html:106
 msgid "Port forward"
 msgstr ""
 
-#: ../template/info.html:29
+#: ../template/info.html:34
 msgid "Restart reverse proxy?"
 msgstr ""
 
-#: ../template/info.html:34
+#: ../template/info.html:39
 msgid ""
 "The reverse proxy is being restarted. Please be patience, every sites may"
 " not be accesible for few seconds."
 msgstr ""
 
-#: ../template/info.html:81
+#: ../template/info.html:90
 msgid "Running"
 msgstr ""
 
-#: ../template/info.html:81
+#: ../template/info.html:90
 msgid "Stopped"
 msgstr ""
 
-#: ../template/info.html:85
+#: ../template/info.html:94
 msgid "Restart"
 msgstr ""
 
-#: ../template/info.html:86
+#: ../template/info.html:95
 msgid "Stop"
 msgstr ""
 
-#: ../template/info.html:88
+#: ../template/info.html:97
 msgid "Start"
 msgstr ""
 
-#: ../template/info.html:89
+#: ../template/info.html:98
 msgid "Destroy"
 msgstr ""
 
-#: ../template/info.html:91
+#: ../template/info.html:100
 msgid "Edit"
 msgstr ""
 
-#: ../template/info.html:93
-msgid "Forward HTTP application port to port 80 on specified hostname."
-msgstr ""
-
-#: ../template/info.html:96
-msgid "Forward port on an interface"
-msgstr ""
-
-#: ../template/info.html:99
-msgid "Enable munin monitoring. Note that munin data is public"
-msgstr ""
-
-#: ../template/info.html:99
-msgid "Disable munin monitoring. Note that munin data is public"
-msgstr ""
-
-#: ../template/info.html:99
-msgid "Toggle Munin"
+#. %(burst)s is the level of burst from 0 (no)
+#: ../template/info.html:101
+msgid "Set burst level"
 msgstr ""
 
 #: ../template/info.html:101
+#, python-format
+msgid "Burst %(burst)s"
+msgstr ""
+
+#: ../template/info.html:103
+msgid "Forward HTTP application port to port 80 on specified hostname."
+msgstr ""
+
+#: ../template/info.html:106
+msgid "Forward port on an interface"
+msgstr ""
+
+#: ../template/info.html:109
+msgid "Enable munin monitoring. Note that munin data is public"
+msgstr ""
+
+#: ../template/info.html:109
+msgid "Disable munin monitoring. Note that munin data is public"
+msgstr ""
+
+#: ../template/info.html:109
+msgid "Toggle Munin"
+msgstr ""
+
+#: ../template/info.html:111
 msgid "Change root's password"
 msgstr ""
 
-#: ../template/info.html:105
+#: ../template/info.html:115
 #, python-format
 msgid ""
 "To calculate %(unit)s depletion time for every VM, see <a "
 "href=\"/billing\">billing</a>."
 msgstr ""
 
-#: ../template/info.html:111
+#: ../template/info.html:121
 msgid "Every VM created must paid this amount."
 msgstr ""
 
-#: ../template/info.html:111
+#: ../template/info.html:121
 msgid "Per VM"
 msgstr ""
 
-#: ../template/info.html:115
+#: ../template/info.html:124
+msgid "Total times (0.5 x burst level)"
+msgstr ""
+
+#: ../template/info.html:124
+#, python-format
+msgid "level %(burst)s"
+msgstr ""
+
+#: ../template/info.html:126
 #, python-format
 msgid "%(unit)s will run out in <small>(not counting other VM)</small>"
 msgstr ""
 
-#: ../template/info.html:118
+#: ../template/info.html:129
 msgid "Information"
 msgstr ""
 
-#: ../template/info.html:121
+#: ../template/info.html:132
 msgid "Key"
 msgstr ""
 
-#: ../template/info.html:121 ../template/spec.html:7
+#: ../template/info.html:132 ../template/spec.html:7
 msgid "Value"
 msgstr ""
 
-#: ../template/info.html:124
+#: ../template/info.html:135
 msgid ""
 "Internal IP of this VM. Every other VM running in the same machine can "
 "access this IP so you have to keep ports secure."
 msgstr ""
 
-#: ../template/info.html:125
+#: ../template/info.html:136
 msgid "OS template used to create this VM"
 msgstr ""
 
-#: ../template/info.html:126
+#: ../template/info.html:137
 msgid ""
 "How many space your VM can use. Note that you might able to exceed this "
 "capacity temporary."
 msgstr ""
 
-#: ../template/info.html:126
+#: ../template/info.html:137
 msgid "Disk Capacity"
 msgstr ""
 
-#: ../template/info.html:128
+#: ../template/info.html:139
 msgid "How long does this VM have been started"
 msgstr ""
 
-#: ../template/info.html:128 ../template/spec.html:14
+#: ../template/info.html:139 ../template/spec.html:14
 msgid "Uptime"
 msgstr ""
 
-#: ../template/info.html:129 ../template/spec.html:15
+#: ../template/info.html:140 ../template/spec.html:15
 msgid "Load average"
 msgstr ""
 
-#: ../template/info.html:129 ../template/spec.html:15
+#: ../template/info.html:140 ../template/spec.html:15
 msgid "5 minutes"
 msgstr ""
 
-#: ../template/info.html:129 ../template/spec.html:15
+#: ../template/info.html:140 ../template/spec.html:15
 msgid "10 minutes"
 msgstr ""
 
-#: ../template/info.html:129 ../template/spec.html:15
+#: ../template/info.html:140 ../template/spec.html:15
 msgid "15 minutes"
 msgstr ""
 
-#: ../template/info.html:130 ../template/spec.html:12
+#: ../template/info.html:141 ../template/spec.html:12
 msgid "The more process, the slower your machine"
 msgstr ""
 
-#: ../template/info.html:130 ../template/spec.html:12
+#: ../template/info.html:141 ../template/spec.html:12
 msgid "Process count"
 msgstr ""
 
-#: ../template/info.html:133 ../template/spec.html:17
+#: ../template/info.html:144 ../template/spec.html:17
 msgid "Monitoring & Graphing"
 msgstr ""
 
-#: ../template/info.html:133 ../template/spec.html:17
+#: ../template/info.html:144 ../template/spec.html:17
 msgid "Munin"
 msgstr ""
 
-#: ../template/info.html:133 ../template/spec.html:17
+#: ../template/info.html:144 ../template/spec.html:17
 msgid "View"
 msgstr ""
 
-#: ../template/info.html:136
+#: ../template/info.html:147
 msgid ""
 "How much memory your application may use. If it's full you might still "
 "able to run it in burstable memory."
 msgstr ""
 
-#: ../template/info.html:136
+#: ../template/info.html:147
 msgid "Guaranteed"
 msgstr ""
 
-#: ../template/info.html:137
+#: ../template/info.html:148
 msgid ""
 "Maximum limit. You application may use these memory but if other VM that "
 "haven't reach its guaranteed memory need more memory, your application "
 "will be terminated."
 msgstr ""
 
-#: ../template/info.html:137
+#: ../template/info.html:148
 msgid "Burstable"
 msgstr ""
 
-#: ../template/info.html:140 ../template/spec.html:21
+#: ../template/info.html:151 ../template/spec.html:21
 msgid "Graph"
 msgstr ""
 
-#: ../template/info.html:154
+#: ../template/info.html:165
 msgid ""
 "Wildcard forwarding will forward anything.yourdomain.com to "
 "yourdomain.com."
 msgstr ""
 
-#: ../template/info.html:156
+#: ../template/info.html:167
 #, python-format
 msgid ""
 "After edit changes will <b>NOT</b> be visible until you click "
 "%(restartButton)s. (Every site, including this may not be accessible for "
 "few seconds)\n"
-"Note that you can restart the proxy once only five minutes."
+"\tNote that you can restart the proxy once only five minutes."
 msgstr ""
 
-#: ../template/info.html:156
+#: ../template/info.html:167
 msgid "restart proxy"
 msgstr ""
 
-#: ../template/info.html:162
+#: ../template/info.html:173
 msgid "Domain"
 msgstr ""
 
-#: ../template/info.html:162
+#: ../template/info.html:173
 msgid "Port"
 msgstr ""
 
-#: ../template/info.html:162
+#: ../template/info.html:173
 msgid "Wildcard"
 msgstr ""
 
-#: ../template/info.html:168 ../template/info.html:195
+#: ../template/info.html:179 ../template/info.html:207
 msgid "Delete this item"
 msgstr ""
 
-#: ../template/info.html:168
+#: ../template/info.html:179
 #, python-format
 msgid "Delete %(hostname)s?"
 msgstr ""
 
 #. Network interface
-#: ../template/info.html:190
+#: ../template/info.html:202
 msgid "Interface"
 msgstr ""
 
-#: ../template/info.html:190
+#: ../template/info.html:202
 msgid "Internal Port"
 msgstr ""
 
-#: ../template/info.html:190
+#: ../template/info.html:202
 msgid "External Port"
 msgstr ""
 
-#: ../template/info.html:195
+#: ../template/info.html:207
 #, python-format
 msgid "Delete %(iface)s in:%(port)s out:%(outport)s?"
 msgstr ""
 
-#: ../template/info.html:195
+#: ../template/info.html:207
 #, python-format
 msgid "Delete DMZ forwarding to %(iface)s?"
 msgstr ""
 
 #. Do not translate DMZ
-#: ../template/info.html:213
+#: ../template/info.html:225
 msgid ""
 "To forward every port, type DMZ as External Port. Other fields doesn't "
 "need to be filled."
 msgstr ""
 
-#: ../template/info.html:219
+#: ../template/info.html:233
 msgid "New Root password"
+msgstr ""
+
+#: ../template/info.html:242
+msgid ""
+"Burst means that your VM got higher priority in processing. If 2 VMs "
+"needs to use the CPU, they will got 50% CPU time each. If one of that VM "
+"have burst level 2, it will got 66% CPU time.<br />\n"
+"\t\tNote that if there is only VM using the CPU, it will always receive "
+"100% CPU time."
+msgstr ""
+
+#: ../template/info.html:244
+msgid "Burst level"
+msgstr ""
+
+#: ../template/info.html:249
+#, python-format
+msgid ""
+"You will be billed for normal amount times (0.5 x burst level). (Eg. a "
+"200 %(unit)s VM with level 5 burst consumes 500 %(unit)s)"
 msgstr ""
 
 #: ../template/spec.html:7

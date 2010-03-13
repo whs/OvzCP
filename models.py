@@ -16,6 +16,7 @@ class VM(SQLObject):
 	portForward = SQLMultipleJoin('PortForward')
 	munin = SingleJoin('Munin')
 	muninID = IntCol(default=0)
+	burst = IntCol(default=0)
 	@property
 	def vz(self):
 		return openvz.VM(self.veid)

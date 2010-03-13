@@ -54,6 +54,11 @@ def vmBilling(vm, desc=False, user=False):
 	prices['disk'] = int(math.ceil((_config.getint("billing", "disk")/_config.getint("billing", "diskPer"))*diskusage))
 	# sum
 	prices['total'] = reduce(lambda x,y: x+y, prices.values())
+	burst = models.VM.select(models.VM.q.veid == vm.veid)[0].burst
+	prices['burst'] = 0
+	if burst:
+		prices['burst'] = int(math.ceil(prices['total'] * (burst+1) * 0.5))
+		prices['total'] = prices['total'] + prices['burst']
 	if user:
 		prices['time'] = (user.credit / prices['total'])*60
 	if desc:
@@ -392,6 +397,8 @@ class VMinfo(BaseHandler):
 				errmsg = _("Passwords do not match")
 			elif err == "6":
 				errmsg = _("Reverse HTTP proxy is enabled. Please use web forwarding instead")
+			elif err == "7":
+				errmsg = _("Invalid burst level")
 		if self.get_argument("message", None):
 			msg = self.get_argument("message")
 			if msg == "1":
@@ -400,6 +407,8 @@ class VMinfo(BaseHandler):
 				txtmsg = _("No changes.")
 			elif msg == "3":
 				txtmsg = _("Root password successfully changed")
+			elif msg == "4":
+				txtmsg = _("Burst level set")
 		interface={}
 		for iface in netifaces.interfaces():
 			if not re.match(_config.get("iface", "allowed"), iface):
@@ -501,11 +510,25 @@ class RootPW(BaseHandler):
 		if sql.user != self.current_user or not sql.user:
 			self.redirect(self.reverse_url("containers")+"?error=1")
 			return
-		if self.get_argument("root") != self.get_argument("root2"):
+		if self.get_argument("root", "omgwtflol") != self.get_argument("root2", "roflcopters"):
 			self.redirect(self.reverse_url("vminfo", veid)+"?error=5")
 			return
 		sql.vz.root_password(self.get_argument("root"))
 		self.redirect(self.reverse_url("vminfo", veid)+"?message=3")
+
+class Burst(BaseHandler):
+	@tornado.web.authenticated
+	def post(self, veid):
+		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
+		if sql.user != self.current_user or not sql.user:
+			self.redirect(self.reverse_url("containers")+"?error=1")
+			return
+		burst = int(self.get_argument("burst"))-1
+		if burst < 0 or burst > 9:
+			self.redirect(self.reverse_url("vminfo", veid)+"?error=7")
+		sql.burst = burst
+		sql.vz.conf = {"cpuunits": (burst*1000) + 1000}
+		self.redirect(self.reverse_url("vminfo", veid)+"?message=4")
 
 class AddPort(BaseHandler):
 	@tornado.web.authenticated
@@ -755,6 +778,7 @@ application = tornado.web.Application([
 	tornado.web.URLSpec(r"/vm/([0-9]+)/addport", AddPort, name="addport"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/munin", Munin, name="munin"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/root", RootPW, name="rootpw"),
+	tornado.web.URLSpec(r"/vm/([0-9]+)/burst", Burst, name="burst"),
 	tornado.web.URLSpec(r"/_cron", CronRun, name="cron"),
 ], **settings)
 

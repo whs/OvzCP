@@ -9,7 +9,8 @@
 </thead>
 {% for i in container %}
 <tr style="background-color: {% if i.vz.running %}lightgreen{%else%}pink{% endif %}">
-	<td><a href="{{reverse_url('vminfo', i.veid)}}" title="{% trans veid=i.veid %}Click to show more information of {{veid}}{% endtrans %}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a></td><td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td><td>{{i.vz.os|capitalize}}</td>
+	<td><a href="{{reverse_url('vminfo', i.veid)}}" title="{% trans veid=i.veid %}Click to show more information of {{veid}}{% endtrans %}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a>{% if i.burst %}<span title="{% trans burst=i.burst+1 %}This VM is in burst level {{burst}}{% endtrans %}"><img src="{{static_url('burst.png')}}" /></span>{% endif %}</td>
+	<td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td><td>{{i.vz.os|capitalize}}</td>
 	{% if i.user != None %}<td>{% trans %}You{% endtrans %}</td>{% endif %}
 <td{% if i.user == None %} colspan="2"{% endif %}>
 {% if i.user == None %}

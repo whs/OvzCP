@@ -75,7 +75,7 @@ $(function() {
 				<tr><th>{% trans %}VEID{% endtrans %}</th><th>{% trans %}Hostname{% endtrans %}</th><th>{% trans %}IP{% endtrans %}</th><th>{% trans %}Action{% endtrans %}</th></tr>
 				{% for i in container %}
 				<tr style="background-color: {% if i.vz.running %}lightgreen{%else%}pink{% endif %}">
-				<td><a href="{{reverse_url('vminfo', i.veid)}}" title="{% trans veid=i.veid %}Click to show more information of {{veid}}{% endtrans %}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a></td>
+				<td><a href="{{reverse_url('vminfo', i.veid)}}" title="{% trans veid=i.veid %}Click to show more information of {{veid}}{% endtrans %}"><img src="{{static_url('info.png')}}" /> {{i.veid}}</a>{% if i.burst %}<span title="{% trans burst=i.burst %}This VM is in burst level {{burst}}{% endtrans %}"><img src="{{static_url('burst.png')}}" /></span>{% endif %}</td>
 				<td>{{i.vz.hostname}}</td><td>{{i.vz.ip}}</td>
 				<td>
 					<a href="{{reverse_url('vmedit', i.veid)}}" title="{% trans veid=i.veid %}Edit {{veid}}{% endtrans %}"><img src="{{static_url('edit.png')}}" /></a>
