@@ -44,6 +44,9 @@ class VarnishCond(SQLObject):
 class Munin(SQLObject):
 	vm = ForeignKey('VM')
 
+class Nonce(SQLObject):
+	pass
+
 if __name__ == "__main__":
 	User.createTable(True)
 	VM.createTable(True)
@@ -51,3 +54,4 @@ if __name__ == "__main__":
 	VarnishCond.createTable(True)
 	PortForward.createTable(True)
 	Munin.createTable(True)
+	Nonce.createTable(True)

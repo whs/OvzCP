@@ -218,24 +218,33 @@ class CreateVM(BaseHandler):
 				err=_("Passwords do not match")
 			elif e == "4":
 				err=_("Invalid hostname")
+			elif e == "5":
+				err = _("Verification failed. Did you double-submitted the form?")
+		import random
+		nonce=models.Nonce().id
 		self.render("create.html", templates=openvz.listTemplates(), hostnames = hostnames,
-			title=_("Creating VM"), error=err)
+			title=_("Creating VM"), error=err, nonce=nonce)
 	def post(self):
 		if self.current_user.credit < 5000:
 			self.redirect(self.reverse_url("containers")+"?error=6")
 			return
-		if not self.get_argument("tos"):
+		if not self.get_argument("tos", False):
 			self.redirect(self.reverse_url("createvm")+"?error=1")
 			return
-		if self.get_argument("os") not in openvz.listTemplates():
+		if self.get_argument("os", "_/|\_") not in openvz.listTemplates():
 			self.redirect(self.reverse_url("createvm")+"?error=2")
 			return
-		if self.get_argument("root") != self.get_argument("root2"):
+		if self.get_argument("root", "omgwtflol") != self.get_argument("root2", "roflcopters"):
 			self.redirect(self.reverse_url("createvm")+"?error=3")
 			return
 		hostnames = map(lambda x: x.hostname,openvz.listVM())
-		if not re.match("^([\.0-9A-Za-z_\-]+)$", self.get_argument("hostname")) or self.get_argument("hostname") in hostnames:
+		if not re.match("^([\.0-9A-Za-z_\-]+)$", self.get_argument("hostname", "^^!!!!")) or self.get_argument("hostname") in hostnames:
 			self.redirect(self.reverse_url("createvm")+"?error=4")
+			return
+		try:
+			models.Nonce.get(int(self.get_argument("nonce"))).destroySelf()
+		except:
+			self.redirect(self.reverse_url("createvm")+"?error=5")
 			return
 		vm=openvz.createVM(self.get_argument("os"), None, _config.get("iface", "nameserver"), self.get_argument("root"))
 		models.VM(veid=vm.veid, user=self.current_user)

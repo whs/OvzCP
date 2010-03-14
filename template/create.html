@@ -64,6 +64,7 @@ $(function(){
 <h1>{% trans %}Create VM{% endtrans %}</h1>
 <form action="{{reverse_url('createvm')}}" method="post">
 {{ xsrf_form_html() }}
+<input type="hidden" name="nonce" value="{{nonce}}" />
 <div id="accordion">
 <h2><a href="#" id="os">{% trans %}1: Pick your OS{% endtrans %}</a></h2>
 <div class="block">
