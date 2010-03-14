@@ -284,6 +284,7 @@ class DestroyVM(BaseHandler):
 		varnish.updateRecv(models.VarnishCond.select())
 		varnish.restart()
 		sql.destroySelf()
+		time.sleep(1) # wait for dusts to settle
 		self.redirect(self.get_argument("return", self.reverse_url("containers")+"?msg=3"))
 
 class RestartVM(BaseHandler):
