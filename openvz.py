@@ -171,7 +171,7 @@ class VM(object):
 		# any more security?
 		subprocess.Popen("vzctl destroy "+str(self.veid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait()
 		try:
-			os.unlink("/etc/vz/"+str(self.veid)+".conf.destroyed")
+			os.unlink("/etc/vz/conf/"+str(self.veid)+".conf.destroyed")
 		except OSError:
 			pass
 	def root_password(self, passwd, user="root"):
@@ -198,7 +198,10 @@ def createVM(template, veid=None, nameserver=None, root=None):
 	#if status != 0:
 	#	raise Exception, "vzctl create exited with status "+str(status)
 	vm=VM(veid)
-	vm.conf = {"onboot": True, "nameserver": nameserver, "ostemplate": template}
+	vm.conf = {"onboot": True, "nameserver": nameserver}
 	if root:
 		vm.root_password(root)
+	vzconf = open("/etc/vz/conf/"+str(veid)+".conf", "rw").read()
+	if "OSTEMPLATE" not in vzconf:
+		vzconf.write("OSTEMPLATE=\"%s\""%template)
 	return vm
