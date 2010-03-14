@@ -247,7 +247,11 @@ class CreateVM(BaseHandler):
 			self.redirect(self.reverse_url("createvm")+"?error=5")
 			return
 		vm=openvz.createVM(self.get_argument("os"), None, _config.get("iface", "nameserver"), self.get_argument("root"))
-		models.VM(veid=vm.veid, user=self.current_user)
+		if not models.VM.select(models.VM.q.veid == vm.veid).count():
+			models.VM(veid=vm.veid, user=self.current_user)
+		else:
+			v = models.VM.select(models.VM.q.veid == vm.veid)[0]
+			v.user = self.current_user
 		# hostname
 		vm.hostname = self.get_argument("hostname")
 		# ram
