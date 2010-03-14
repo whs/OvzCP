@@ -189,7 +189,7 @@ def listTemplates():
 		out.append(i.replace(".tar.gz", ""))
 	return out
 def waitLock(veid):
-	while os.path.isfile("/var/lib/vz/lock/"+str(veid)+".lock"):
+	while os.path.isfile("/var/lib/vz/lock/"+str(veid)+".lck"):
 		pass
 def createVM(template, veid=None, nameserver=None, root=None):
 	if not veid:
@@ -205,7 +205,7 @@ def createVM(template, veid=None, nameserver=None, root=None):
 	vm.conf = {"onboot": True, "nameserver": nameserver}
 	if root:
 		vm.root_password(root)
-	vzconf = open("/etc/vz/conf/"+str(veid)+".conf", "rw")
+	vzconf = open("/etc/vz/conf/"+str(veid)+".conf")
 	if "OSTEMPLATE" not in vzconf.read():
-		vzconf.write("OSTEMPLATE=\"%s\""%template)
+		open("/etc/vz/conf/"+str(veid)+".conf", "a").write("OSTEMPLATE=\"%s\""%template)
 	return vm
