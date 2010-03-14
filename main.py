@@ -752,6 +752,7 @@ class Cloud(BaseHandler):
 		self.finish()
 	@tornado.web.authenticated
 	def post(self):
+		if not _config.getboolean("cloudcp", "enabled"): return
 		acc=open("cloudcp/users").readlines()
 		u = re.findall("^(.*?)@", self.current_user.email)[0]
 		acd={}
