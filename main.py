@@ -4,7 +4,7 @@ from __future__ import division
 
 # trying to chdir() to dirname($0)
 import os
-if os.environ['USER'] != "root":
+if os.getuid() != 0:
 	raise Exception, "OvzCP must be run as root"
 try:
 	os.chdir(os.path.dirname(__file__))

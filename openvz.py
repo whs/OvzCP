@@ -1,5 +1,9 @@
 import commands, re, subprocess, os
 ARCH_PAGE = 4 * 1000  # memory pages of current arch, on i386/amd64 is 4kB, ia64 is 16kB
+
+if os.getuid() != 0:
+	raise Exception, "OpenVZ requires root access"
+
 service_proc = {
 	"apache": ["apache", "apache2", "httpd"],
 	"mysql": ["mysqld"],
