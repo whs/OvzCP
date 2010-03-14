@@ -198,7 +198,7 @@ def createVM(template, veid=None, nameserver=None, root=None):
 	#if status != 0:
 	#	raise Exception, "vzctl create exited with status "+str(status)
 	vm=VM(veid)
-	vm.conf = {"onboot": True, "nameserver": nameserver}
+	vm.conf = {"onboot": True, "nameserver": nameserver, "ostemplate": template}
 	if root:
 		vm.root_password(root)
 	return vm
