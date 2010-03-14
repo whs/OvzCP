@@ -20,10 +20,7 @@ sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 import models
 import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext
 import varnish, simplejson
-import tornado.httpserver
-import tornado.ioloop
-import tornado.web
-import tornado.auth
+import tornado.httpserver, tornado.ioloop, tornado.web, tornado.auth, tornado.httpclient
 
 # parse config
 _config = ConfigParser.SafeConfigParser()
@@ -224,6 +221,8 @@ class CreateVM(BaseHandler):
 		nonce=models.Nonce().id
 		self.render("create.html", templates=openvz.listTemplates(), hostnames = hostnames,
 			title=_("Creating VM"), error=err, nonce=nonce)
+	@tornado.web.asynchronous
+	@tornado.web.authenticated
 	def post(self):
 		if self.current_user.credit < 5000:
 			self.redirect(self.reverse_url("containers")+"?error=6")
@@ -246,12 +245,17 @@ class CreateVM(BaseHandler):
 		except:
 			self.redirect(self.reverse_url("createvm")+"?error=5")
 			return
-		vm=openvz.createVM(self.get_argument("os"), None, _config.get("iface", "nameserver"), self.get_argument("root"))
-		if not models.VM.select(models.VM.q.veid == vm.veid).count():
-			models.VM(veid=vm.veid, user=self.current_user)
+		try:
+			veid = openvz.listVM()[-1].veid+1
+		except IndexError:
+			veid = 101
+		if not models.VM.select(models.VM.q.veid == veid).count():
+			models.VM(veid=veid, user=self.current_user)
 		else:
-			v = models.VM.select(models.VM.q.veid == vm.veid)[0]
+			v = models.VM.select(models.VM.q.veid == veid)[0]
 			v.user = self.current_user
+		self.redirect(self.reverse_url("containers"))
+		vm=openvz.createVM(self.get_argument("os"), veid, _config.get("iface", "nameserver"), self.get_argument("root"))
 		# hostname
 		vm.hostname = self.get_argument("hostname")
 		# ram
@@ -263,7 +267,6 @@ class CreateVM(BaseHandler):
 		vm.diskinfo = float(self.get_argument("disk"))
 		# add IP
 		vm.ip = _config.get("iface", "vmIP")+str(vm.veid)
-		self.redirect(self.reverse_url("vminfo", vm.veid))
 
 class DestroyVM(BaseHandler):
 	@tornado.web.authenticated
@@ -271,6 +274,7 @@ class DestroyVM(BaseHandler):
 	def get(self, veid):
 		vm = openvz.VM(int(veid))
 		self.render("destroy.html", veid=veid, hostname=vm.hostname, credit=vmBilling(vm), title=_("Destroy %s")%veid)
+	@tornado.web.authenticated
 	def post(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user and sql.user:
@@ -302,6 +306,7 @@ class DestroyVM(BaseHandler):
 
 class RestartVM(BaseHandler):
 	@tornado.web.authenticated
+	@tornado.web.asynchronous
 	@xsrf_check
 	def get(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
@@ -312,12 +317,13 @@ class RestartVM(BaseHandler):
 		if not vm.running:
 			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
+		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 		proc = vm.restart()
 		proc.wait()
-		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 
 class StopVM(BaseHandler):
 	@tornado.web.authenticated
+	@tornado.web.asynchronous
 	@xsrf_check
 	def get(self, veid):
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
@@ -328,12 +334,13 @@ class StopVM(BaseHandler):
 		if not vm.running:
 			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
+		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 		proc = vm.stop()
 		proc.wait()
-		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 
 class StartVM(BaseHandler):
 	@tornado.web.authenticated
+	@tornado.web.asynchronous
 	@xsrf_check
 	def get(self, veid):
 		if self.current_user.credit < 1000:
@@ -347,12 +354,9 @@ class StartVM(BaseHandler):
 		if vm.running:
 			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
+		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 		proc = vm.start()
 		proc.wait()
-		# Sometimes OvzCP return internal server error
-		# this should remedy the bug
-		time.sleep(2)
-		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
 
 class ClaimVM(BaseHandler):
 	@tornado.web.authenticated
@@ -662,6 +666,7 @@ class AddVarnish(BaseHandler):
 		self.redirect(self.reverse_url("vminfo", veid)+"#webedit")
 
 class Munin(BaseHandler):
+	@tornado.web.authenticated
 	def post(self, veid):
 		if not _config.getboolean("munin", "enabled"): return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
@@ -719,6 +724,7 @@ class Dashboard(BaseHandler):
 			if i.vz.running:
 				billing += vmBilling(i.vz)
 		self.render("dashboard.html", title=_("Dashboard"), container=myvm, billing=billing)
+	@tornado.web.authenticated
 	def post(self):
 		data = self.get_argument("data")
 		if data == "vmload":
@@ -730,6 +736,37 @@ class Dashboard(BaseHandler):
 			loadAvg= map(lambda x:float(x), d.split(" ")[:3])
 			out[_('Host OS')] = loadAvg[0]
 			self.write(simplejson.dumps([out]))
+
+class Cloud(BaseHandler):
+	@tornado.web.authenticated
+	@tornado.web.asynchronous
+	def get(self):
+		if not _config.getboolean("cloudcp", "enabled"): return
+		u = re.findall("^(.*?)@", self.current_user.email)[0]
+		http = tornado.httpclient.AsyncHTTPClient()
+		http.fetch(_config.get("cloudcp", "host")+"/cgi-bin/usage.exe?user="+u, callback=self.async_callback(self.on_response))
+	def on_response(self, res):
+		d=tornado.escape.json_decode(res.body)
+		u = re.findall("^(.*?)@", self.current_user.email)[0]
+		self.render("cloud.html", title=_("Cloud Storage"), usage=int(d['used']), user=u)
+		self.finish()
+	@tornado.web.authenticated
+	def post(self):
+		acc=open("cloudcp/users").readlines()
+		u = re.findall("^(.*?)@", self.current_user.email)[0]
+		acd={}
+		for i in acc:
+			i = i.strip().split("\t")
+			acd[i[0]] = i[1]
+		import hashlib, string, random
+		def genpw(length=8, chars=string.letters + string.digits):
+			return ''.join([random.choice(chars) for i in range(length)])
+		pw = genpw()
+		acd[u] = hashlib.md5(u+":CloudCP:"+pw).hexdigest()
+		fp=open("cloudcp/users", "w")
+		for i in acd.iteritems():
+			fp.write("\t".join(i))
+		self.write(simplejson.dumps({"user": u, "password": pw}))
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
@@ -750,6 +787,7 @@ class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 
 class CronRun(BaseHandler):
 	def get(self):
+		import urllib
 		if self.get_argument("cron_key") != _config.get("auth", "cron_key"):
 			return
 		proclist = []
@@ -759,6 +797,10 @@ class CronRun(BaseHandler):
 				if i.vz.running:
 					totalcost += vmBilling(i.vz)
 			u.credit -= totalcost
+			if _config.getboolean("cloudcp", "enabled"):
+				sun = re.findall("^(.*?)@", u.email)[0]
+				cloudusage = simplejson.loads(urllib.urlopen(_config.get("cloudcp", "host")+"/cgi-bin/usage.exe?user="+sun).read())['used']
+				u.credit -= math.ceil((_config.getint("cloudcp", "price")/_config.getint("cloudcp", "pricePer"))*(cloudusage/1000))
 			if u.credit <= 0:
 				for i in myVM(u, True):
 					if i.vz.running:
@@ -783,6 +825,7 @@ application = tornado.web.Application([
 	tornado.web.URLSpec(r"/payreceive", PayReceive, name="payreceive"),
 	tornado.web.URLSpec(r"/spec", HostSpec, name="hostspec"),
 	tornado.web.URLSpec(r"/varnishRestart", VarnishRestart, name="varnishrestart"),
+	tornado.web.URLSpec(r"/cloud", Cloud, name="cloud"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)", VMinfo, name="vminfo"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/edit", VMedit, name="vmedit"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/destroy", DestroyVM, name="destroyvm"),

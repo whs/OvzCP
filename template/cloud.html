@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block javascript %}
+$(function(){
+	$("button").button().click(function(){
+		$.post("{{reverse_url('cloud')}}", {"_xsrf": "{{xsrf}}"}, function(d){
+			d = JSON.parse(d);
+			prompt("Your username is '"+d.user+"' and password is:", d.password);
+		});
+	});
+});
+{% endblock %}
+{% block body %}
+<div class="notify">
+{% trans price=config.get("cloudcp", "price"), per=config.get("cloudcp", "pricePer") %}Cloud Storage is an practically unlimited storage. This storage will be replicated to other hosts and it will be served by the host nearest to the user so your site will loads faster. However, cloud storage doesn't have scripting ability.<br />
+Cloud storage costs {{price}} {{unit}} per {{per}} MB{% endtrans %}
+</div>
+<p>
+	<b>{% trans used=(usage*1000)|filesizeformat %}You're using {{used}} of the cloud storage.{% endtrans %}</b><br />
+	{% trans amt=((config.getint("cloudcp", "price")/config.getint("cloudcp", "pricePer"))*(usage/1000))|round(0, 'ceil')|int %}It'll cost you {{amt}} {{unit}}. This amount will not count into any VM usage price thus the credit depletion date estimation won't count this.{% endtrans %}<br />
+	{% trans endpoint=config.get("cloudcp", "host") %}<b>Endpoint:</b> {{endpoint}}{% endtrans %}
+</p>
+<button>{% trans %}Get password{% endtrans %}</button>
+<div class="notify">
+{% trans %}After you receive your password, click the button again will change your password to a new one. If you happen to lost your old password, it's lost forever.<br />Note that no data would be lost if you reset your password.{% endtrans %}
+</div>
+<h1>{%trans %}API binding{% endtrans %}</h1>
+<ul>
+	<li><a href="{{static_url('cloudcp.php')}}">PHP</a><br />
+	<pre><code>$ccp = new CloudCP;
+$ccp->server = "{{config.get("cloudcp", "host")}}";
+$ccp->login("{{user}}", "<b>password</b>");
+print $ccp->upload("test.zip", true)->url; <em>// {% trans %}argument 2 is overwrite, default to false{% endtrans %}</em></code></pre></li>
+</ul>
+{% endblock %}
