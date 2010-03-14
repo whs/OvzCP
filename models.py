@@ -11,7 +11,7 @@ class User(SQLObject):
 
 class VM(SQLObject):
 	veid = IntCol()
-	user = ForeignKey('User')
+	user = ForeignKey('User', default=None)
 	varnishBackend = SQLMultipleJoin('VarnishBackend')
 	portForward = SQLMultipleJoin('PortForward')
 	munin = SingleJoin('Munin')
