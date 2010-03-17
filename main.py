@@ -668,6 +668,7 @@ class AddVarnish(BaseHandler):
 class Munin(BaseHandler):
 	@tornado.web.authenticated
 	def post(self, veid):
+		self.set_header("Content-type", "text/json")
 		if not _config.getboolean("munin", "enabled"): return
 		sql = models.VM.select(models.VM.q.veid == int(veid))[0]
 		if sql.user != self.current_user or not sql.user:
@@ -726,6 +727,7 @@ class Dashboard(BaseHandler):
 		self.render("dashboard.html", title=_("Dashboard"), container=myvm, billing=billing)
 	@tornado.web.authenticated
 	def post(self):
+		self.set_header("Content-type", "text/json")
 		data = self.get_argument("data")
 		if data == "vmload":
 			out = {}
@@ -753,6 +755,8 @@ class Cloud(BaseHandler):
 	@tornado.web.authenticated
 	def post(self):
 		if not _config.getboolean("cloudcp", "enabled"): return
+		self.set_header("Content-type", "text/json")
+		if self.current_user.credit <= 0: return
 		acc=open("cloudcp/users").readlines()
 		u = re.findall("^(.*?)@", self.current_user.email)[0]
 		acd={}
@@ -766,7 +770,7 @@ class Cloud(BaseHandler):
 		acd[u] = hashlib.md5(u+":CloudCP:"+pw).hexdigest()
 		fp=open("cloudcp/users", "w")
 		for i in acd.iteritems():
-			fp.write("\t".join(i))
+			fp.write("\t".join(i)+"\n")
 		self.write(simplejson.dumps({"user": u, "password": pw}))
 
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
@@ -789,9 +793,17 @@ class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 class CronRun(BaseHandler):
 	def get(self):
 		import urllib
+		self.set_header("Content-type", "text/plain")
 		if self.get_argument("cron_key") != _config.get("auth", "cron_key"):
+			self.write("Invalid cron key")
+			print "CRON: Invalid cron key\n"
 			return
 		proclist = []
+		acd={} # cloud storage account db
+		for i in open("cloudcp/users").readlines():
+			i = i.strip().split("\t")
+			acd[i[0]] = i[1]
+		acdChange = False
 		for u in models.User.select():
 			totalcost = 0
 			for i in myVM(u, True):
@@ -803,11 +815,25 @@ class CronRun(BaseHandler):
 				cloudusage = simplejson.loads(urllib.urlopen(_config.get("cloudcp", "host")+"/cgi-bin/usage.exe?user="+sun).read())['used']
 				u.credit -= math.ceil((_config.getint("cloudcp", "price")/_config.getint("cloudcp", "pricePer"))*(cloudusage/1000))
 			if u.credit <= 0:
+				print "CRON: User "+u.email+" run out of credit"
+				self.write(u.email+" out of credit\n")
 				for i in myVM(u, True):
 					if i.vz.running:
 						proclist.append(i.vz.stop())
+				if _config.getboolean("cloudcp", "enabled"):
+					print "CRON: Removed CloudCP login"
+					try:
+						del acd[sun]
+					except KeyError:
+						pass
+					acdChange = True
+		if acdChange:
+			fp=open("cloudcp/users", "w")
+			for i in acd.iteritems():
+				fp.write("\t".join(i)+"\n")
 		for i in proclist:
 			i.wait()
+		self.write("\n\nCron ran\n")
 			
 
 settings = {

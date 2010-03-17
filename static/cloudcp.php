@@ -50,10 +50,10 @@ class CloudCP{
 		if(!preg_match("~^/~", $file)){$file = "/".$file;}
 		return $this->server . "/" . $this->username . $file;
 	}
-	function get($file){
+	public function get($file){
 		return file_get_contents($this->get_url($file));
 	}
-	function delete($file){
+	public function delete($file){
 		if(!preg_match("~^/~", $file)){$file = "/".$file;}
 		curl_setopt($this->curl, CURLOPT_POSTFIELDS, array(
 			"dir" => $file,
@@ -67,7 +67,7 @@ class CloudCP{
 		}
 		return $out->success;
 	}
-	function get_used(){
+	public function get_used(){
 		curl_setopt($this->curl, CURLOPT_POSTFIELDS, array(
 			"user" => $this->username
 		));

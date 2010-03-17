@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block javascript %}
+{% if current_user.credit > 0 %}
 $(function(){
 	$("button").button().click(function(){
 		$.post("{{reverse_url('cloud')}}", {"_xsrf": "{{xsrf}}"}, function(d){
@@ -8,6 +9,7 @@ $(function(){
 		});
 	});
 });
+{% endif %}
 {% endblock %}
 {% block body %}
 <div class="notify">
@@ -19,10 +21,12 @@ Cloud storage costs {{price}} {{unit}} per {{per}} MB{% endtrans %}
 	{% trans amt=((config.getint("cloudcp", "price")/config.getint("cloudcp", "pricePer"))*(usage/1000))|round(0, 'ceil')|int %}It'll cost you {{amt}} {{unit}}. This amount will not count into any VM usage price thus the credit depletion date estimation won't count this.{% endtrans %}<br />
 	{% trans endpoint=config.get("cloudcp", "host") %}<b>Endpoint:</b> {{endpoint}}{% endtrans %}
 </p>
+{% if current_user.credit > 0 %}
 <button>{% trans %}Get password{% endtrans %}</button>
 <div class="notify">
 {% trans %}After you receive your password, click the button again will change your password to a new one. If you happen to lost your old password, it's lost forever.<br />Note that no data would be lost if you reset your password.{% endtrans %}
 </div>
+{% endif %}
 <h1>{%trans %}API binding{% endtrans %}</h1>
 <ul>
 	<li><a href="{{static_url('cloudcp.php')}}">PHP</a><br />
