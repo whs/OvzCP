@@ -18,11 +18,11 @@
 {% else %}
 	<a href="{{reverse_url('vmedit', i.veid)}}" title="{% trans veid=i.veid %}Edit {{veid}}{% endtrans %}"><img src="{{static_url('edit.png')}}" /></a>
 {% if i.vz.running %}
-	<a href="{{reverse_url('restartvm', i.veid)}}?return={{reverse_url('containers')}}&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Restart {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Restart {{veid}}{% endtrans %}"><img src="/static/restart.png" /></a> 
-	<a href="{{reverse_url('stopvm', i.veid)}}?return={{reverse_url('containers')}}&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Stop {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Stop {{veid}}{% endtrans %}"><img src="/static/poweroff.png" /></a> 
+	<a href="{{reverse_url('restartvm', i.veid)}}?return={{reverse_url('containers')}}&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Restart {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Restart {{veid}}{% endtrans %}"><img src="{{static_url('restart.png')}}" /></a> 
+	<a href="{{reverse_url('stopvm', i.veid)}}?return={{reverse_url('containers')}}&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Stop {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Stop {{veid}}{% endtrans %}"><img src="{{static_url('poweroff.png')}}" /></a> 
 {% else %}
-	<a href="{{reverse_url('startvm', i.veid)}}?return={{reverse_url('containers')}}&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Start {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Start {{veid}}{% endtrans %}"><img src="/static/start.png" /></a> 
-	<a href="{{reverse_url('destroyvm', i.veid)}}?return={{reverse_url('containers')}}&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Destroy {{veid}}?{% endtrans %}')"  title="{% trans veid=i.veid %}Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>.{% endtrans %}"><img src="/static/destroy.png" /></a> 
+	<a href="{{reverse_url('startvm', i.veid)}}?return={{reverse_url('containers')}}&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Start {{veid}}?{% endtrans %}')" title="{% trans veid=i.veid %}Start {{veid}}{% endtrans %}"><img src="{{static_url('start.png')}}" /></a> 
+	<a href="{{reverse_url('destroyvm', i.veid)}}?return={{reverse_url('containers')}}&_xsrf={{xsrf}}" onclick="return confirm('{% trans veid=i.veid %}Destroy {{veid}}?{% endtrans %}')"  title="{% trans veid=i.veid %}Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>.{% endtrans %}"><img src="{{static_url('destroy.png')}}" /></a> 
 {% endif %}
 {% endif %}
 </td></tr>
