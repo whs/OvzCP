@@ -62,6 +62,14 @@ def vmBilling(vm, desc=False, user=False):
 		return prices
 	else:
 		return prices['total']
+def get_cloud_usage(user):
+	if not _config.getboolean("cloudcp", "enabled"): return 0
+	if "@" in user:
+		user = re.findall("^(.*?)@", user)[0]
+	import urllib
+	d=urllib.urlopen(_config.get("cloudcp", "host")+"/cgi-bin/usage.exe?user="+user).read()
+	d=tornado.escape.json_decode(d)
+	return int(d['used'])
 
 class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
@@ -96,6 +104,25 @@ class BaseHandler(tornado.web.RequestHandler):
 				self._locale = self.get_browser_locale().code
 				assert self._locale
 		return self._locale
+	def static_url(self, path):
+		if not hasattr(self, "_static_hashes"):
+			self._static_hashes = {}
+		hashes = self._static_hashes
+		if path not in hashes:
+			import hashlib
+			try:
+				f = open(os.path.join(
+					self.application.settings["static_path"], path))
+				hashes[path] = hashlib.md5(f.read()).hexdigest()
+				f.close()
+			except:
+				print "Could not open static file %r"%path
+				hashes[path] = None
+		base = "http://static."+_config.get("varnish", "ovzcphost") + "/"
+		if hashes.get(path):
+			return base + path + "?v=" + hashes[path][:5]
+		else:
+			return base + path
 	def render(self, tmpl, *args, **kwargs):
 		totalcost = 0
 		for i in myVM(self.current_user, True):
@@ -511,7 +538,8 @@ class Billing(BaseHandler):
 		for i in myVM(self.current_user, True):
 			if i.vz.running:
 				vmcost.append((i.veid, vmBilling(i.vz)))
-		self.render("billing.html", vmcost=vmcost, title=_("Billing"))
+		cloud = get_cloud_usage(self.current_user.email)
+		self.render("billing.html", vmcost=vmcost, title=_("Billing"), cloud=cloud)
 
 class PayReceive(BaseHandler):
 	def check_xsrf_cookie(self):
@@ -547,6 +575,11 @@ class Burst(BaseHandler):
 		sql.burst = burst
 		sql.vz.conf = {"cpuunits": (burst*1000) + 1000}
 		self.redirect(self.reverse_url("vminfo", veid)+"?message=4")
+
+class Credit(BaseHandler):
+	def get(self):
+		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
+		self.write(jinja.get_template("credit.html").render(static_url=self.static_url))
 
 class AddPort(BaseHandler):
 	@tornado.web.authenticated
@@ -812,7 +845,7 @@ class CronRun(BaseHandler):
 			u.credit -= totalcost
 			if _config.getboolean("cloudcp", "enabled"):
 				sun = re.findall("^(.*?)@", u.email)[0]
-				cloudusage = simplejson.loads(urllib.urlopen(_config.get("cloudcp", "host")+"/cgi-bin/usage.exe?user="+sun).read())['used']
+				cloudusage = get_cloud_usage(sun)
 				u.credit -= math.ceil((_config.getint("cloudcp", "price")/_config.getint("cloudcp", "pricePer"))*(cloudusage/1000))
 			if u.credit <= 0:
 				print "CRON: User "+u.email+" run out of credit"
@@ -834,6 +867,40 @@ class CronRun(BaseHandler):
 		for i in proclist:
 			i.wait()
 		self.write("\n\nCron ran\n")
+
+class Stylesheet(BaseHandler):
+	def process_css(self, f, sub=False):
+		d=open(f).read()
+		incl = re.findall("(@import url\((.*?)\);)", d)
+		if incl:
+			for i in incl:
+				d = d.replace(i[0], self.process_css(os.path.join(os.path.dirname(f), i[1]), True))
+		static = re.findall("(url\((.*?)\))", d)
+		if static and not sub:
+			for i in static:
+				d = d.replace(i[0], "url("+self.static_url(i[1].replace(" ", "%20"))+")")
+		d = d.replace("\n", "").replace("\t", "")
+		d = re.sub("/\*(.*?)\*/", "", d)
+		return d
+	def get(self):
+		import stat, datetime, email
+		self.set_header("Content-Type", "text/css")
+		stat_result = os.stat("static/style.css")
+		modified = datetime.datetime.fromtimestamp(stat_result[stat.ST_MTIME])
+		self.set_header("Last-Modified", modified)
+		self.set_header("Expires", datetime.datetime.utcnow() + \
+									datetime.timedelta(days=365))
+		self.set_header("Cache-Control", "public, max-age=" + str(86400*365))
+		ims_value = self.request.headers.get("If-Modified-Since")
+		if ims_value is not None:
+			date_tuple = email.utils.parsedate(ims_value)
+			if_since = datetime.datetime.fromtimestamp(time.mktime(date_tuple))
+			if if_since >= modified:
+				self.set_status(304)
+				return
+		data = self.process_css("static/style.css")
+		self.set_header("Content-Length", len(data))
+		self.write(data)
 			
 
 settings = {
@@ -841,6 +908,8 @@ settings = {
 	"login_url": "/auth",
 	"xsrf_cookies": True,
 	"static_path": "static",
+	"gzip": True,
+	"debug": True
 }
 
 application = tornado.web.Application([
@@ -855,6 +924,7 @@ application = tornado.web.Application([
 	tornado.web.URLSpec(r"/cloud", Cloud, name="cloud"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)", VMinfo, name="vminfo"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/edit", VMedit, name="vmedit"),
+	tornado.web.URLSpec(r"/credit", Credit, name="credit"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/destroy", DestroyVM, name="destroyvm"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/restart", RestartVM, name="restartvm"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/stop", StopVM, name="stopvm"),
@@ -866,14 +936,14 @@ application = tornado.web.Application([
 	tornado.web.URLSpec(r"/vm/([0-9]+)/root", RootPW, name="rootpw"),
 	tornado.web.URLSpec(r"/vm/([0-9]+)/burst", Burst, name="burst"),
 	tornado.web.URLSpec(r"/_cron", CronRun, name="cron"),
+	
+	tornado.web.URLSpec(r"/style.css", Stylesheet, name="css"),
 ], **settings)
 
 if __name__ == "__main__":
-	import tornado.autoreload
 	port = 21212
 	if len(sys.argv) > 1:
 		port = int(sys.argv[1])
 	http_server = tornado.httpserver.HTTPServer(application)
 	http_server.listen(port)
-	tornado.autoreload.start()
 	tornado.ioloop.IOLoop.instance().start()

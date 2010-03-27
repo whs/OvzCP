@@ -13,6 +13,11 @@ if(req.http.host == "{{ovzcphost}}"){
 		unset req.http.cookie;
 		lookup;
 	}
+}elseif(req.http.host == "static.{{ovzcphost}}"){
+	set req.backend = ovzcp;
+	unset req.http.cookie;
+	set req.url = "/static" req.url;
+	lookup;
 }{% if nomatch != "None" %}else{
 	set req.backend = {{nomatch}};
 }{% endif %}

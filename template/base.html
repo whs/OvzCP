@@ -4,209 +4,68 @@
 <head>
 	{% set unit=config.get("billing", "unit").decode("utf-8")%}
 	<title>{% if title is defined %}{{title}} | {% endif %}OvzCP</title>
+	<link rel="stylesheet" href="{{reverse_url('css')}}" type="text/css" media="screen" />
 	<script src="{{static_url("jquery.js")}}" type="text/javascript" language="javascript" charset="utf-8"></script>
-	<script src="{{static_url("tips.js")}}" type="text/javascript" language="javascript" charset="utf-8"></script>
-	<script src="{{static_url("ui.js")}}" type="text/javascript" language="javascript" charset="utf-8"></script>
-	<style type="text/css" media="screen">
-	/* <![CDATA[ */
-@import url({{static_url("reset.css")}});
-@import url({{static_url("ui-dark.css")}});
-body{
-	font-family: tahoma, sans-serif; min-height: 100%; background: black;
-	line-height: 1.4em;
-}
-a{
-	color:inherit; text-decoration: none; text-shadow: #aaa 1px 1px 3px;
-	-webkit-transition: text-shadow .2s ease-out;
-}
-a:hover{text-shadow: yellow 0px 0px 3px;}
-#container{
-	width: 100%; height: 100%;
-}
-#top-bar{
-	width: 100%;
-	height: 50px;
-	background: black;
-	color: white;
-}
-#top-bar #logo a{
-	font-size: 20pt;
-	float: left;
-	font-weight: bold;
-	font-family: "Segoe UI", Sawasdee;
-	text-shadow: red 0px 0px 10px;
-}
-#top-bar #logo a:hover{
-	text-shadow: red 0px 0px 20px;
-}
-#top-bar #version{
-	float: left;
-	margin-left: 10px;
-	margin-top: 5px;
-	color: #aaa;
-}
-#top-bar-in{
-	padding: 10px;
-}
-#left-bar{
-	width: 15%;
-	background: black;
-	color: white;
-	border-top: #777 solid 1px;
-	float: left;
-	min-height: 100%;
-}
-#left-bar ul li a{
-	display: block;
-	padding: 10px;
-}
-#left-bar ul li{
-	border-bottom: #777 solid 1px;
-	-webkit-transition: background .2s ease-in-out;
-}
-#left-bar ul li:hover{
-	background: #222;
-}
-#left-bar ul li:hover a{
-	color: white;
-	text-shadow: blue 0px 0px 5px;
-}
-#user{float: right; margin-top: 2px;}
-#body{
-	padding: 10px;
-	width: 83%;
-	background: white;
-	float: right;
-}
-#bottom{
-	color: gray; margin-top: 15px; font-size: 10pt;
-	padding-left: 10px;
-	margin-bottom: 25px;
-}
-.notify{
-	width: 95%;
-	padding: 10px;
-	margin-bottom: 10px;
-	background: rgb(255, 255, 100);
-	border: yellow solid 2px;
-}
-.notify .close{
-	float: right;
-	padding: 5px;
-	margin-top: -10px;
-	cursor: pointer;
-}
-#error{
-	background: rgb(255, 100, 100);
-	border: maroon solid 2px;
-}
-#error>pre{
-	font-size: 150%;
-}
-#error pre{
-	font-size: 75%;
-	border-left: rgb(255, 0, 0) solid 2px;
-	background: white;
-	padding: 10px;
-	height: 150px;
-	overflow: auto;
-}
-#error .loghead{
-	margin-top: 10px;
-	background: rgb(255,255,100);
-	padding: 5px;
-	font-size: 50%;
-	border-top: rgb(255, 80, 80) solid 2px;
-	border-left: rgb(255, 0, 0) solid 2px;
-	cursor: pointer;
-}
-#bighead{
-	font-size: 18pt;
-}
-#subhead{
-	font-size: 15pt;
-	margin-bottom: 10px;
-	color: gray;
-}
-table{
-	width: 100%;
-}
-th{
-	background: #eee;
-}
-td,th{
-	border: black solid 1px;
-	padding: 3px;
-}
-h1{
-	font-size: 15pt;
-	margin-bottom: 10px;
-	margin-top: 10px;
-}
-.block h2{
-	font-size: 14pt;
-	margin-bottom: 5px;
-}
-.block table{
-	background: white;
-	margin-top: 5px;
-	width: 400px;
-}
-.block li p{
-	margin-left: 22px;
-	color: gray;
-}
-.block .tipbox{
-	background: yellow;
-	padding: 10px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	color: black;
-	margin-top: 10px;
-}
-.block table{
-	color: black;
-	width: 100%;
-}
-#body ul{
-	list-style: circle;
-	padding-left: 25px;
-}
-li.os{
-	border: #bbb solid 2px;
-	padding: 5px;
-	background: white;
-	color: black;
-	margin-bottom: 10px;
-}
-li.os label{
-	text-shadow: #aaa 0px 1px 3px;
-}
-#accordion .block{
-	height: 400px;
-}
-.ui-widget-content{
-	font-size: 12pt;
-}
-.ui-dialog table{
-	color: black;
-	background: white;
-}
-.ui-dialog table a, .portlet-content table a{
-	color: black !important;
-}
-#tooltip {
-	display: none;
-	background: transparent url({{static_url('tips.png')}});
-	font-size: 13px;
-	line-height: 1.1em;
-	width:179px;
-	height: 79px;
-	padding: 15px;
-	color: white;
-}
-	/* ]]> */
-	</style>
+</head>
+<body>
+<div id="tooltip"></div>
+<div id="container">
+<div id="top-bar">
+	<div id="top-bar-in">
+		<div id="logo"><a href="/">OvzCP</a></div>
+		<div id="version">0.2 {% trans %}by whsgroup.ath.cx{% endtrans %} | <img src="{{static_url('flags/'+locale+'.gif')}}" />
+		<form method="get" style="display: inline;" id="langfrm"><select name="_locale">
+		{% for i in localeList.iteritems() %}
+			<option value="{{i[0]}}"{% if i[0] == locale %} selected{% endif %}>{{i[1]}}</option>
+		{% endfor %}
+		</select></form>
+		</div>
+		<div id="user"><a href="{{reverse_url('auth')}}" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
+		({{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="{% trans %}Time left until {{unit}} depletion{% endtrans %}">{{((current_user.credit)/totalcost)*60}}</span>{% endif %})</div>
+	</div>
+</div>
+<div id="left-bar">
+	<div id="left-bar-in">
+		<ul>
+			<li><a href="{{reverse_url('dashboard')}}">{% trans %}Dashboard{% endtrans %}</a></li>
+			<li><a href="{{reverse_url('containers')}}">{% trans %}Containers{% endtrans %}</a></li>
+			<li><a href="{{reverse_url('billing')}}">{% trans %}Billing{% endtrans %}</a></li>
+			<li><a href="{{reverse_url('hostspec')}}">{% trans %}Host Info{% endtrans %}</a></li>
+{% if config.getboolean("cloudcp", "enabled") %}
+			<li><a href="{{reverse_url('cloud')}}">{% trans %}Cloud Storage{% endtrans %}</a></li>
+{% endif %}
+		</ul>
+	</div>
+</div>
+<div id="body">
+	{% if error %}
+	<div id="error" class="notify">
+		<div class="close"><img src="{{static_url("close.png")}}" /></div>
+		{{error}}
+		{% if error_log %}
+		<div class="loghead">{% trans %}Collapse/Expand{% endtrans %}</div>
+		<pre>{{error_log}}</pre>
+		{% endif %}
+	</div>
+	{% endif %}
+	{% if message %}
+	<div class="notify"><div class="close"><img src="{{static_url("close.png")}}" /></div>{{message}}</div>
+	{% endif %}
+	{% if current_user.credit < 0 %}
+	<div id="error" class="notify">
+		<div class="close"><img src="{{static_url("close.png")}}" /></div>
+		{% trans %}You have no {{unit}} available!{% endtrans %}
+	</div>
+	{% endif %}
+	{% block body %}
+	{% endblock %}
+	<br style="clear: both;" />
+</div>
+<br style="clear: both;" />
+<div id="bottom">
+	<a href="http://pinvoke.com/" rel="nofollow">Fugue Icons</a> | <a href="http://famfamfam.com" rel="nofollow">FamFamFam</a> flag icons | <a href="http://whsgroup.ath.cx">whsgroup.ath.cx</a> | Google Charts API
+</div>
+</div>
 <script type="text/javascript" language="javascript" charset="utf-8">
 // <![CDATA[
 strings = {}
@@ -281,65 +140,5 @@ $(function(){
 {% endblock %}
 // ]]>
 </script>
-</head>
-<body>
-<div id="tooltip"></div>
-<div id="container">
-<div id="top-bar">
-	<div id="top-bar-in">
-		<div id="logo"><a href="/">OvzCP</a></div>
-		<div id="version">0.2 {% trans %}by whsgroup.ath.cx{% endtrans %} | <img src="{{static_url('flags/'+locale+'.gif')}}" />
-		<form method="get" style="display: inline;" id="langfrm"><select name="_locale">
-		{% for i in localeList.iteritems() %}
-			<option value="{{i[0]}}"{% if i[0] == locale %} selected{% endif %}>{{i[1]}}</option>
-		{% endfor %}
-		</select></form>
-		</div>
-		<div id="user"><a href="{{reverse_url('auth')}}" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
-		({{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="{% trans %}Time left until {{unit}} depletion{% endtrans %}">{{((current_user.credit)/totalcost)*60}}</span>{% endif %})</div>
-	</div>
-</div>
-<div id="left-bar">
-	<div id="left-bar-in">
-		<ul>
-			<li><a href="{{reverse_url('dashboard')}}">{% trans %}Dashboard{% endtrans %}</a></li>
-			<li><a href="{{reverse_url('containers')}}">{% trans %}Containers{% endtrans %}</a></li>
-			<li><a href="{{reverse_url('billing')}}">{% trans %}Billing{% endtrans %}</a></li>
-			<li><a href="{{reverse_url('hostspec')}}">{% trans %}Host Info{% endtrans %}</a></li>
-{% if config.getboolean("cloudcp", "enabled") %}
-			<li><a href="{{reverse_url('cloud')}}">{% trans %}Cloud Storage{% endtrans %}</a></li>
-{% endif %}
-		</ul>
-	</div>
-</div>
-<div id="body">
-	{% if error %}
-	<div id="error" class="notify">
-		<div class="close"><img src="{{static_url("close.png")}}" /></div>
-		{{error}}
-		{% if error_log %}
-		<div class="loghead">{% trans %}Collapse/Expand{% endtrans %}</div>
-		<pre>{{error_log}}</pre>
-		{% endif %}
-	</div>
-	{% endif %}
-	{% if message %}
-	<div class="notify"><div class="close"><img src="{{static_url("close.png")}}" /></div>{{message}}</div>
-	{% endif %}
-	{% if current_user.credit < 0 %}
-	<div id="error" class="notify">
-		<div class="close"><img src="{{static_url("close.png")}}" /></div>
-		{% trans %}You have no {{unit}} available!{% endtrans %}
-	</div>
-	{% endif %}
-	{% block body %}
-	{% endblock %}
-	<br style="clear: both;" />
-</div>
-<br style="clear: both;" />
-<div id="bottom">
-	<a href="http://pinvoke.com/" rel="nofollow">Fugue Icons</a> | <a href="http://famfamfam.com" rel="nofollow">FamFamFam</a> flag icons | <a href="http://whsgroup.ath.cx">whsgroup.ath.cx</a> | Google Charts API
-</div>
-</div>
 </body>
 </html>

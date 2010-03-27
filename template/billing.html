@@ -14,9 +14,13 @@
 {% for i in vmcost %}
 	<tr><td><a href="{{reverse_url('vminfo', i[0])}}"><img src="{{static_url('info.png')}}" /> {{i[0]}}</a>{% if i.burst %}<span title="{% trans burst=i.burst+1 %}This VM is in burst level {{burst}}{% endtrans %}"><img src="{{static_url('burst.png')}}" /></span>{% endif %}</td><td>{{i[1]}}</td></tr>
 {% endfor %}
+{% if cloud %}
+{% set cloud = ((config.getint("cloudcp", "price")/config.getint("cloudcp", "pricePer"))*(cloud/1000))|round(0, 'ceil')|int %}
+	<tr><td><a href="{{reverse_url('cloud')}}">Cloud Storage</a></td><td>{{cloud}}</td></tr>
+{% endif %}
 </tbody>
 <tfooter>
-	<tr><th>{% trans %}Total{% endtrans %}</th><td>{{totalcost}}</td></tr>
+	<tr><th>{% trans %}Total{% endtrans %}</th><td>{{totalcost+cloud}}</td></tr>
 	{% if totalcost %}<tr><th>{% trans %}Will deplete in{% endtrans %}</th><td class="time">{{((current_user.credit)/totalcost)*60}}</td></tr>{% endif %}
 </tfooter>
 </table>

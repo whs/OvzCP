@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OvzCP Credit</title>
+	<script src="{{static_url('jquery.js')}}" type="text/javascript"></script>
+	<style>
+body{
+	font-family: "Trebutchet MS", tahoma;
+	font-size: 24pt;
+	padding: 50px;
+	overflow: hidden;
+}
+#nonsense{width: 100%; height: 100%; position: absolute; top:0px; left:0px; z-index: 1000000;}
+.cat{
+	margin-top: 100px;
+	margin-bottom: 20px;
+	width: 95%;
+}
+.title{
+	color: #5555ee;
+	margin-top: -20px;
+	background: white;
+	width: 300px;
+	text-align: center;
+}
+.right{
+	float: right;
+}
+.hr{border-bottom: black solid 1px;}
+h1,h2{margin:0; font-family: "Segoe UI", "Trebuchet MS", verdana; text-align: center;}
+h2{color: gray; margin-top: -25px;}
+	</style>
+	<script type="text/javascript">
+var lside = true;
+function animateIn(){
+	$("#scroller > *:not(br)").each(function(){
+		if($(this).data("ani") == true) return true;
+		if($(this).offset()['top'] > $(window).height()) return true;
+		lside = !lside;
+		if(lside)
+			pos = -1 * $(window).width()
+		else
+			pos = $(window).width()
+		$(this).css("left", pos).data("ani", true).animate({left: 0}, 3000); //somehow animate2 make this tooooo fast
+	});
+	if(!$(".stopme").data("froze")){
+		if($(".stopme").offset()['top'] <= ($(window).height()/2) - ($(".stopme").height()/2)){
+			$(".stopme").css({
+				"position": "absolute",
+				"width": $("#scroller").width(),
+				"left": $("#scroller").position()['left'],
+				"top": $(".stopme").offset()['top']-($(".stopme").height()/1.5),
+			}).appendTo("body")
+			$(".stopme").data("froze", true)
+		}
+	}
+	setTimeout(animateIn, 100);
+}
+$(function(){
+	window.onresize = function(){
+		$("*").remove();
+		window.location.reload()
+	};
+	$("#scroller").css({
+		"position": "absolute",
+		"width": $("#scroller").width(),
+		"left": $("#scroller").position()['left'],
+		"top": $(window).height() - 40,
+	}).animate({
+		"top": $("#scroller").height() * -1
+	}, $("#scroller").height() * 35, function(){
+		$("#nonsense").remove()
+		$("#scroller").css({top: $(window).height()})
+		$("#scroller div[title][style]").css({color: "pink"})
+	});
+	$("#scroller > *:not(br)").css({left: -1000000, position: "relative"});
+	animateIn();
+});
+	</script>
+</head>
+<body>
+<div id="nonsense"></div>
+<div id="scroller">
+
+<h1>OvzCP</h1>
+<h2>OpenVZ Control Panel</h2>
+
+<div class="cat">
+	<div class="hr"></div>
+	<div class="title">Created by</div>
+</div>
+<div>Manatsawin Hanmongkolchai (@manatsawin)</div>
+<br style="clear: both; "/>
+
+<div class="cat">
+	<div class="hr"></div>
+	<div class="title right">Interfaces by</div>
+</div>
+<div>Nathanon Inplub (@WHHdotexe)</div>
+<div class="right">Manatsawin Hanmongkolchai (@manatsawin)</div>
+<br style="clear: both; "/>
+
+<div class="cat">
+	<div class="hr"></div>
+	<div class="title">Using</div>
+</div>
+<div class="right">FamFamFam Flag icons</div>
+<div>Fugue icons</div>
+<div style="color: green;" class="right">SQLite</div>
+<div>Varnish</div>
+<div class="right">Munin</div>
+<div>netfilter/iptables</div>
+<div class="right">The <b style="color: yellow;">Linux</b> Kernel & <b>OpenVZ</b></div>
+<div><b>Python</b></div>
+<div class="right">Tornadoweb</div>
+<div>SQLObject</div>
+<div class="right">Jinja2</div>
+<div>Babel</div>
+<div class="right"><b>jQuery</b></div>
+<div>Flot</div>
+<div class="right">Perl</div>
+<div><b style="color: blue;">PHP</b></div>
+<div class="right"><b>Nginx</b></div>
+<div><b style="color: red;">Debian</b></div>
+<div class="right">Bugzilla</div>
+<div><b style="color: blue;">Google</b></div>
+<div class="right">Google Chrome</div>
+<div>Google OpenID</div>
+<div class="right">Google Charts API</div>
+<div>Safari</div>
+<div class="right"><b>WebKit</b></div>
+<div>Palm webOS</div>
+<br style="clear: both; "/>
+
+<div class="cat">
+	<div class="hr"></div>
+	<div class="title right">Special Thanks to</div>
+</div>
+<div title="Nalinpa Jampanoi" style="color: white;">The Art-Math girl (I wish she have Twitter )= )</div>
+<div><b style="color: maroon;">NECTEC</b></div>
+<br style="clear: both; "/>
+
+<div class="cat">
+	<div class="hr"></div>
+	<div class="title">NECTEC license term</div>
+</div>
+<div>This software is a work developed by Manatsawin Hanmongkolchai and Natthanon Inplub from Bodindecha (Sing Singhaseni) 2 School under the provision of Ms. TODO which has been supported by the National Electronics and Computer Technology Center (NECTEC) and Software Industry Promotion Agency (SIPA), In order to encourage pupils and students to learn and practice their skills in developing softwares. Therefore, the intellectual property of this software shall belong to the developer and the developer gives NECTEC a permission to distribute this software as an "as is" and non-modified software for a temporary and non-exclusive use without remuneration to anyone for his or her own purpose or academic purpose, which are not commercial purposes. In this connection, NECTEC shall not be responsible to the user for taking care, maintaining, training or developing the efficiency of this software. Moreover, NECTEC shall not be liable for any error, software efficiency and damages in connection with or arising out of the use of the software.</div>
+<br style="clear: both; "/>
+
+<div class="cat">
+	<div class="hr"></div>
+	<div class="title right">Designed</div>
+</div>
+<div>OvzCP was designed by whsgroup.ath.cx with love &amp; care</div>
+<div class="right">OvzCP is based on the whsgroup.ath.cx server architecture</div>
+<br style="clear: both; "/>
+
+<div class="stopme">
+<h1 style="margin-top: 100px;">Thanks for using!</h1>
+<h2>Don't forget to report any bugs!</h2>
+<div style="text-align: center; color: lightgray; font-size: 14pt;">(and nice job finding this page)</div>
+</div>
+
+</div>
+</body>
+</html>
