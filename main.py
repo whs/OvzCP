@@ -96,6 +96,19 @@ class BaseHandler(tornado.web.RequestHandler):
 	def prepare(self):
 		self.gettext = gettext.translation('messages', os.path.join(os.getcwd(), "po"), [self.locale], fallback=True)
 		self.gettext.install(True)
+		# perform user agent detection
+		agent = self.request.headers['User-Agent']
+		# "Windows CE" is not in this list because it probably won't run the complex JavaScript
+		# "webOS" failed the check
+		# http://en.wikipedia.org/wiki/List_of_user_agents_for_mobile_phones
+		# Note that the library we use supports for Apple devices, but I do not have access to one
+		# so OvzCP is tested only against Android (N1 CyanogenMod) and webOS 1.4 emulator
+		#
+		# Also, we need to perform authentication which Google sucks and it just provide mobile web for Android
+		self._mobileWeb = False
+		for x in ["iPhone", "iPod", "iPad", "BlackBerry", "Android"]:
+			if x in agent:
+				self._mobileWeb = True
 	@property
 	def locale(self):
 		if not hasattr(self, "_locale"):
@@ -105,6 +118,7 @@ class BaseHandler(tornado.web.RequestHandler):
 				assert self._locale
 		return self._locale
 	def static_url(self, path):
+		""" Copied from Tornadoweb source, added static.domain support """
 		if not hasattr(self, "_static_hashes"):
 			self._static_hashes = {}
 		hashes = self._static_hashes
@@ -129,7 +143,10 @@ class BaseHandler(tornado.web.RequestHandler):
 			if i.vz.running:
 				totalcost += vmBilling(i.vz)
 		
-		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"), extensions=['jinja2.ext.i18n'])
+		tmplPath = ["template"]
+		if self._mobileWeb:
+			tmplPath.insert(0, "template/mobile")
+		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader(tmplPath), extensions=['jinja2.ext.i18n'])
 		jinja.install_gettext_translations(self.gettext)
 		localeList = {"en": babel.Locale(self.locale).languages["en"]}
 		for i in os.listdir("po"):
@@ -848,13 +865,14 @@ class CronRun(BaseHandler):
 				cloudusage = get_cloud_usage(sun)
 				u.credit -= math.ceil((_config.getint("cloudcp", "price")/_config.getint("cloudcp", "pricePer"))*(cloudusage/1000))
 			if u.credit <= 0:
-				print "CRON: User "+u.email+" run out of credit"
+				# debug message are disabled because it would repeat several times
+				#print "CRON: User "+u.email+" run out of credit"
 				self.write(u.email+" out of credit\n")
 				for i in myVM(u, True):
 					if i.vz.running:
 						proclist.append(i.vz.stop())
 				if _config.getboolean("cloudcp", "enabled"):
-					print "CRON: Removed CloudCP login"
+					#print "CRON: Removed CloudCP login"
 					try:
 						del acd[sun]
 					except KeyError:

@@ -16,7 +16,7 @@ function dmz {
 
 iptables -t nat --flush
 echo 1 > /proc/sys/net/ipv4/ip_forward
-iptables -t nat -A POSTROUTING -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.0.0.0/255.255.0.0 -j MASQUERADE
 
 {%- for i in port %}
 {%- if i.outport == -1 %}
