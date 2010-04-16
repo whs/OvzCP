@@ -30,9 +30,9 @@
 	</div>
 	<ul class="rounded">
 		{% for i in container %}
-		<li class="arrow" style="background: {% if i.vz.running %}green{% else %}red{% endif %};"><a href="#vm{{i.veid}}">{{i.vz.hostname}} ({{i.veid}})</a></li>
+		<li class="arrow" style="background: {% if i.vz.running %}green{% else %}red{% endif %};"><a href="#vm{{i.veid}}">{{i.vz.hostname}} <small>{{i.veid}}</small></a></li>
 		{% endfor %}
-		<li class="arrow"><a href="#billing" class="slideup">Billing</a></li>
+		<li>Total VM cost <small>{{billing}}</small></li>
 		{% if config.getboolean("munin", "enabled") %}
 		<li class="forward"><a href="/static/munin/{{current_user.id}}/index.html" target="_blank">Munin</a></li>
 		{% endif %}
@@ -53,7 +53,9 @@
 	{% endif %}
 	<ul class="edgetoedge vminfo">
 		<li>Burst <small>{{i.burst+1}}</small></li>
+		{% if i.vz.running %}
 		<li>Process count <small>{{i.vz.nproc}}</small></li>
+		{% endif %}
 		{% if i.munin %}
 		<li class="arrow"><a href="/static/munin/{% if i.user %}{{i.user.id}}{% else %}{{i.vz.hostname}}{% endif %}/{{i.vz.hostname}}.html" target="_blank">Munin</a></li>
 		{% endif %}
@@ -82,16 +84,5 @@
 	<div class="info"><p>{{current_user}} ({{current_user.credit|int}} {{unit}})</p></div>
 </div>
 {% endfor %}
-<div id="billing">
-	<div class="toolbar">
-		<h1>Billing</h1>
-		<a href="#home" class="back">Back</a>
-	</div>
-	<ul class="plastic">
-		<li>Fuck</li>
-		<li>Shit</li>
-	</ul>
-	<div class="info"><p>{{current_user}} ({{current_user.credit|int}} {{unit}})</p></div>
-</div>
 </body>
 </html>
