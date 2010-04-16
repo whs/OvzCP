@@ -1,0 +1,46 @@
+<div title="{{vz.hostname}} ({{veid}})" class="panel">
+	<fieldset><div class="row" style="padding: 10px;">
+		{% if vz.running %}
+		<a class="whiteButton" style="width: 30%; float: left;" type="button" target="_self" href="{{reverse_url('restartvm', veid)}}?_xsrf={{xsrf}}&return=/" onclick="return confirm('{% trans %}Restart {{veid}}?{% endtrans %}')">{% trans %}Restart{% endtrans %}</a>
+		<a class="redButton" style="width: 30%; float: right;" type="button" target="_self" href="{{reverse_url('stopvm', veid)}}?_xsrf={{xsrf}}&return=/" onclick="return confirm('{% trans %}Stop {{veid}}?{% endtrans %}')">{% trans %}Stop{% endtrans %}</a>
+		{% else %}
+		<a class="grayButton" type="button" target="_self" href="{{reverse_url('startvm', veid)}}?_xsrf={{xsrf}}&return=/" onclick="return confirm('{% trans %}Start {{veid}}?{% endtrans %}')">{% trans %}Start{% endtrans %}</a>
+		{% endif %}
+		<br style="clear: both;">
+	</div></fieldset>
+	
+	<h2>Info</h2>
+	<fieldset>
+		<div class="row"><label>Burst</label> <small>{{vm.burst+1}}</small></div>
+		{% if vz.running %}
+		<div class="row"><label>Process count</label> <small>{{vz.nproc}}</small></div>
+		{% endif %}
+		{% if vm.munin %}
+		<a href="/static/munin/{% if vm.user %}{{vm.user.id}}{% else %}{{vz.hostname}}{% endif %}/{{vz.hostname}}.html" target="_self" class="whiteButton" style="margin: 10px;" type="button">Munin</a>
+		{% endif %}
+	</fieldset>
+	
+	{% if vz.running %}
+	<h2>Load Average</h2>
+	<fieldset>
+		<div class="row"><label>5 minute</label> <small>{{vz.loadAvg[0]}}</small></div>
+		<div class="row"><label>10 minute</label> <small>{{vz.loadAvg[1]}}</small></div>
+		<div class="row"><label>15 minute</label> <small>{{vz.loadAvg[2]}}</small></div>
+	</fieldset>
+	{% endif %}
+	
+	<h2>Configuration</h2>
+	<fieldset>
+		<div class="row"><label>OS</label> <small>{{vz.os}}</small></div>
+		<div class="row"><label>Disk</label> <small>{{(vz.diskinfo[0]*1000)|filesizeformat}}</small></div>
+	</fieldset>
+	
+	<h2>Memory</h2>
+	<fieldset>
+		<div class="row"><label>Guaranteed</label> <small>{{vz.memlimit[0]|filesizeformat}}</small></div>
+		<div class="row"><label>Burst</label> <small>{{vz.memlimit[1]|filesizeformat}}</small></div>
+		{% if vz.running %}
+		<div class="row"><label>Currently used</label> <small>{{ (vz.meminfo['MemTotal']-vz.meminfo['MemFree'])|filesizeformat }}</small></div>
+		{% endif %}
+	</fieldset>
+</div>

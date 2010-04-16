@@ -3,86 +3,47 @@
 <head>
 	<meta http-equiv="Content-Type" value="text/html; charset=utf-8">
 	<title>OvzCP | {{current_user}}</title>
+	<meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<style type="text/css" media="screen">
-	@import url({{static_url("jqtouch/jqtouch.min.css")}});
-	@import url({{static_url("jqtouch/themes/jqt/theme.min.css")}});
+	@import url({{static_url("iui/iuix.css")}});
+	@import url({{static_url("iui/t/defaultgrad/defaultgrad-theme.css")}});
 	</style>
-	<script src="{{static_url('jquery.js')}}" type="text/javascript" charset="utf-8"></script>
-	<script src="{{static_url('jqtouch/jqtouch.min.js')}}" type="application/x-javascript" charset="utf-8"></script>
+	<script src="{{static_url('iui/iuix.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
+	iui.animOn = true;
 	strings = {};
 	strings['relogin'] = "{% trans %}To switch account, please logout from your account at google.com before click this link.\nOtherwise, you will be returned to this page.\n\nDo you want to continue?{% endtrans %}";
 	function ask(str){
 		return confirm(strings[str]);
 	}
-	$.jQTouch({});
 	</script>
 	<style type="text/css">
-.vminfo li{color: white;}
+li small{float: right; margin-right: 10px; font-size: 100%; font-weight: normal;}
+.panel small{
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	width: 100px;
+	height: 28px;
+	font-size: 120%;
+}
 	</style>
 </head>
 {% set unit=config.get("billing", "unit").decode("utf-8")%}
 <body>
-<div id="home">
-	<div class="toolbar">
-		<h1>OvzCP</h1>
-		<a href="{{reverse_url('auth')}}" onclick="return ask('relogin')" class="back">Relogin</a>
-	</div>
-	<ul class="rounded">
-		{% for i in container %}
-		<li class="arrow" style="background: {% if i.vz.running %}green{% else %}red{% endif %};"><a href="#vm{{i.veid}}">{{i.vz.hostname}} <small>{{i.veid}}</small></a></li>
-		{% endfor %}
-		<li>Total VM cost <small>{{billing}}</small></li>
-		{% if config.getboolean("munin", "enabled") %}
-		<li class="forward"><a href="/static/munin/{{current_user.id}}/index.html" target="_blank">Munin</a></li>
-		{% endif %}
-        </ul>
-        <div class="info"><p>{{current_user}} ({{current_user.credit|int}} {{unit}})</p></div>
+<div class="toolbar">
+	<h1 id="pageTitle"></h1>
+	<a id="backButton" class="button" href="#"></a>
 </div>
-{% for i in container %}
-<div id="vm{{i.veid}}">
-	<div class="toolbar">
-		<h1>{{i.vz.hostname}} ({{i.veid}})</h1>
-		<a href="#home" class="back">Back</a>
-	</div>
-	{% if i.vz.running %}
-	<a style="margin: 10px;" class="whiteButton" href="{{reverse_url('restartvm', i.veid)}}?_xsrf={{xsrf}}&return=/#vm{{i.veid}}" onclick="return confirm('{% trans veid=i.veid %}Restart {{veid}}?{% endtrans %}')">{% trans %}Restart{% endtrans %}</a>
-	<a style="margin: 10px;" class="grayButton" href="{{reverse_url('stopvm', i.veid)}}?_xsrf={{xsrf}}&return=/#vm{{i.veid}}" onclick="return confirm('{% trans veid=i.veid %}Stop {{veid}}?{% endtrans %}')">{% trans %}Stop{% endtrans %}</a>
-	{% else %}
-	<a style="margin: 10px;" class="whiteButton" href="{{reverse_url('startvm', i.veid)}}?_xsrf={{xsrf}}&return=/#vm{{i.veid}}" onclick="return confirm('{% trans veid=i.veid %}Start {{veid}}?{% endtrans %}')">{% trans %}Start{% endtrans %}</a>
-	{% endif %}
-	<ul class="edgetoedge vminfo">
-		<li>Burst <small>{{i.burst+1}}</small></li>
-		{% if i.vz.running %}
-		<li>Process count <small>{{i.vz.nproc}}</small></li>
-		{% endif %}
-		{% if i.munin %}
-		<li class="arrow"><a href="/static/munin/{% if i.user %}{{i.user.id}}{% else %}{{i.vz.hostname}}{% endif %}/{{i.vz.hostname}}.html" target="_blank">Munin</a></li>
-		{% endif %}
-	</ul>
-	{% if i.vz.running %}
-	<h2>Load Average</h2>
-	<ul class="edgetoedge vminfo">
-		<li>5 minute <small>{{i.vz.loadAvg[0]}}</small></li>
-		<li>10 minute <small>{{i.vz.loadAvg[1]}}</small></li>
-		<li>15 minute <small>{{i.vz.loadAvg[2]}}</small></li>
-	</ul>
-	{% endif %}
-	<h2>Configuration</h2>
-	<ul class="edgetoedge vminfo">
-		<li>OS <small>{{i.vz.os}}</small></li>
-		<li>Disk <small>{{(i.vz.diskinfo[0]*1000)|filesizeformat}}</small></li>
-	</ul>
-	<h2>Memory</h2>
-	<ul class="edgetoedge vminfo">
-		<li>Guaranteed <small>{{i.vz.memlimit[0]|filesizeformat}}</small></li>
-		<li>Burst <small>{{i.vz.memlimit[1]|filesizeformat}}</small></li>
-		{% if i.vz.running %}
-		<li>Currently used <small>{{ (i.vz.meminfo['MemTotal']-i.vz.meminfo['MemFree'])|filesizeformat }}</small></li>
-		{% endif %}
-	</ul>
-	<div class="info"><p>{{current_user}} ({{current_user.credit|int}} {{unit}})</p></div>
-</div>
-{% endfor %}
+<ul id="home" title="OvzCP" selected="true">
+	<li><a href="{{reverse_url('auth')}}" onclick="return ask('relogin')" target="_self">Logged in as {{current_user}}</a></li>
+	<li>Total VM cost <small>{{billing}} {{unit}}</small></li>
+	<li>{{unit|capitalize}} left <small>{{current_user.credit|int}}</small></li>
+	<li class="group">VM</li>
+	{% for i in container %}
+	<li style="background: {% if i.vz.running %}#cfc{% else %}#faa{% endif %};"><a href="/vm/{{i.veid}}">{{i.vz.hostname}} <small>{{i.veid}}</small></a></li>
+	{% endfor %}
+</ul>
 </body>
 </html>
