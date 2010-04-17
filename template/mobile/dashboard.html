@@ -12,11 +12,6 @@
 	<script src="{{static_url('iui/iuix.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 	iui.animOn = true;
-	strings = {};
-	strings['relogin'] = "{% trans %}To switch account, please logout from your account at google.com before click this link.\nOtherwise, you will be returned to this page.\n\nDo you want to continue?{% endtrans %}";
-	function ask(str){
-		return confirm(strings[str]);
-	}
 	</script>
 	<style type="text/css">
 li small{float: right; margin-right: 10px; font-size: 100%; font-weight: normal;}
@@ -37,7 +32,7 @@ li small{float: right; margin-right: 10px; font-size: 100%; font-weight: normal;
 	<a id="backButton" class="button" href="#"></a>
 </div>
 <ul id="home" title="OvzCP" selected="true">
-	<li><a href="{{reverse_url('auth')}}" onclick="return ask('relogin')" target="_self">Logged in as {{current_user}}</a></li>
+	<li><a href="https://www.google.com/accounts/Logout?continue={{auth_url}}&service=ah" target="_self">Logged in as {{current_user}}</a></li>
 	<li>Total VM cost <small>{{billing}} {{unit}}</small></li>
 	<li>{{unit|capitalize}} left <small>{{current_user.credit|int}}</small></li>
 	<li class="group">VM</li>

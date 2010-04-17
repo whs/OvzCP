@@ -20,7 +20,8 @@
 		{% endfor %}
 		</select></form>
 		</div>
-		<div id="user"><a href="{{reverse_url('auth')}}" onclick="return ask('relogin')"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
+		{# Actually, we need lso service, but Google does not allow external redirection #}
+		<div id="user"><a href="https://www.google.com/accounts/Logout?continue={{auth_url}}&service=ah"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
 		({{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="{% trans %}Time left until {{unit}} depletion{% endtrans %}">{{((current_user.credit)/totalcost)*60}}</span>{% endif %})</div>
 	</div>
 </div>
@@ -68,14 +69,6 @@
 </div>
 <script type="text/javascript" language="javascript" charset="utf-8">
 // <![CDATA[
-strings = {}
-strings['relogin'] = "{% trans %}To switch account, please logout from your account at google.com before click this link.\nOtherwise, you will be returned to this page.\n\nDo you want to continue?{% endtrans %}";
-function warn(str){
-	return alert(strings[str]);
-}
-function ask(str){
-	return confirm(strings[str]);
-}
 function formatTime(time, sh){
 	out = []
 	if(time >= 86400){

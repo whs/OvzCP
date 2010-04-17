@@ -1,4 +1,5 @@
 <div title="{{vz.hostname}} ({{veid}})" class="panel">
+	<h2>{% if vz.running %}Running{% else %}Stopped{% endif %}</h2>
 	<fieldset><div class="row" style="padding: 10px;">
 		{% if vz.running %}
 		<a class="whiteButton" style="width: 30%; float: left;" type="button" target="_self" href="{{reverse_url('restartvm', veid)}}?_xsrf={{xsrf}}&return=/" onclick="return confirm('{% trans %}Restart {{veid}}?{% endtrans %}')">{% trans %}Restart{% endtrans %}</a>
@@ -12,6 +13,8 @@
 	<h2>Info</h2>
 	<fieldset>
 		<div class="row"><label>Burst</label> <small>{{vm.burst+1}}</small></div>
+		<div class="row"><label>IP</label> <small>{{vz.ip}}</small></div>
+		<div class="row"><label>OS</label> <small>{{vz.os|capitalize}}</small></div>
 		{% if vz.running %}
 		<div class="row"><label>Process count</label> <small>{{vz.nproc}}</small></div>
 		{% endif %}
@@ -29,10 +32,20 @@
 	</fieldset>
 	{% endif %}
 	
-	<h2>Configuration</h2>
+	<h2>Billing</h2>
 	<fieldset>
-		<div class="row"><label>OS</label> <small>{{vz.os}}</small></div>
-		<div class="row"><label>Disk</label> <small>{{(vz.diskinfo[0]*1000)|filesizeformat}}</small></div>
+		<div class="row"><label>Per VM</label> <small>{{billing['perVM']}}</small></div>
+		<div class="row"><label>Memory</label> <small>{{billing['memory']}}</small></div>
+		<div class="row"><label>Disk</label> <small>{{billing['disk']}}</small></div>
+		<div class="row"><label>Burst</label> <small>{{billing['burst']}}</small></div>
+		<div class="row" style="color: cornflowerblue; background-color: #ffa"><label>Total</label> <small>{{billing['total']}}</small></div>
+	</fieldset>
+	
+	<h2>Disk</h2>
+	<fieldset>
+		<div class="row"><label>Allocated</label> <small>{{(vz.diskinfo[0]*1000)|filesizeformat}}</small></div>
+		<div class="row"><label>Free</label> <small>{{(vz.diskinfo[2]*1000)|filesizeformat}}</small></div>
+		<div class="row"><label>Used</label> <small>{{(vz.diskinfo[1]*1000)|filesizeformat}}</small></div>
 	</fieldset>
 	
 	<h2>Memory</h2>
@@ -40,7 +53,8 @@
 		<div class="row"><label>Guaranteed</label> <small>{{vz.memlimit[0]|filesizeformat}}</small></div>
 		<div class="row"><label>Burst</label> <small>{{vz.memlimit[1]|filesizeformat}}</small></div>
 		{% if vz.running %}
-		<div class="row"><label>Currently used</label> <small>{{ (vz.meminfo['MemTotal']-vz.meminfo['MemFree'])|filesizeformat }}</small></div>
+		<div class="row"><label>Free</label> <small>{{vz.meminfo['MemFree']|filesizeformat}}</small></div>
+		<div class="row"><label>Using</label> <small>{{ (vz.meminfo['MemTotal']-vz.meminfo['MemFree'])|filesizeformat }}</small></div>
 		{% endif %}
 	</fieldset>
 </div>

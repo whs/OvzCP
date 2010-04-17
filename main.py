@@ -20,7 +20,7 @@ sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 import models
 import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext
 import varnish, simplejson
-import tornado.httpserver, tornado.ioloop, tornado.web, tornado.auth, tornado.httpclient
+import tornado.httpserver, tornado.ioloop, tornado.web, tornado.auth, tornado.httpclient, urlparse
 
 # parse config
 _config = ConfigParser.SafeConfigParser()
@@ -99,14 +99,13 @@ class BaseHandler(tornado.web.RequestHandler):
 		# perform user agent detection
 		agent = self.request.headers['User-Agent']
 		# "Windows CE" is not in this list because it probably won't run the complex JavaScript
-		# "webOS" failed the check
 		# http://en.wikipedia.org/wiki/List_of_user_agents_for_mobile_phones
 		# Note that the library we use supports for Apple devices, but I do not have access to one
 		# so OvzCP is tested only against Android (N1 CyanogenMod) and webOS 1.4 emulator
 		#
 		# Also, we need to perform authentication which Google sucks and it just provide mobile web for Android
 		self._mobileWeb = False
-		for x in ["iPhone", "iPod", "iPad", "BlackBerry", "Android"]:
+		for x in ["iPhone", "iPod", "iPad", "BlackBerry", "Android", "webOS"]:
 			if x in agent:
 				self._mobileWeb = True
 	@property
@@ -168,6 +167,8 @@ class BaseHandler(tornado.web.RequestHandler):
 			# OvzCP stuff
 			"config": _config,
 			"totalcost": totalcost, 
+			"cur_url":  self.request.full_url(),
+			"auth_url": urlparse.urljoin(self.request.full_url(), "/auth")
 		}, **kwargs)
 		self.write(jinja.get_template(tmpl).render(*args, **margs))
 		return
@@ -826,6 +827,8 @@ class Cloud(BaseHandler):
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
 	def get(self):
+		# clear old cookie!!
+		self.set_secure_cookie("auth", "")
 		self.next = self.get_argument("next", "/")
 		if self.next == self.reverse_url("auth"):
 			self.next = self.reverse_url("dashboard")
