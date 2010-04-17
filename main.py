@@ -104,8 +104,10 @@ class BaseHandler(tornado.web.RequestHandler):
 		# so OvzCP is tested only against Android (N1 CyanogenMod) and webOS 1.4 emulator
 		#
 		# Also, we need to perform authentication which Google sucks and it just provide mobile web for Android
+		#
+		# TODO: Find Symbian^1's UA. Maybe asking @sahathai74?
 		self._mobileWeb = False
-		for x in ["iPhone", "iPod", "iPad", "BlackBerry", "Android", "webOS"]:
+		for x in ["iPhone", "iPod", "iPad", "BlackBerry", "Android", "webOS", "MSIEMobile 6.0", "Opera Mobi", "Opera Mini"]:
 			if x in agent:
 				self._mobileWeb = True
 	@property
