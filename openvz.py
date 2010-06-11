@@ -29,7 +29,12 @@ class VM(object):
 	@property
 	def running(self):
 		d = commands.getoutput("vzlist -a -H -o status %s"%self.veid)
-		return d.strip() == "running"
+		if d.strip() != "running": return False
+		try:
+			d = commands.getoutput("vzctl exec %s cat /proc/meminfo"%self.veid)
+			return True
+		except:
+			return False
 	
 	def get_ip(self):
 		d = commands.getoutput("vzlist -a -H -o ip %s"%self.veid)
@@ -153,15 +158,15 @@ class VM(object):
 	def start(self):
 		if self.running:
 			return False
-		return subprocess.Popen("vzctl start "+str(self.veid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		return open("ovzpipe", "w").write("start "+str(self.veid)+"\n")
 	def restart(self):
 		if not self.running:
 			return False
-		return subprocess.Popen("vzctl restart "+str(self.veid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		return open("ovzpipe", "w").write("restart "+str(self.veid)+"\n")
 	def stop(self):
 		if not self.running:
 			return False
-		return subprocess.Popen("vzctl stop "+str(self.veid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		return open("ovzpipe", "w").write("stop "+str(self.veid)+"\n")
 	def destroy(self):
 		if self.running:
 			return False

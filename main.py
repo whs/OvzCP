@@ -365,8 +365,7 @@ class RestartVM(BaseHandler):
 			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
 		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
-		proc = vm.restart()
-		proc.wait()
+		vm.restart()
 
 class StopVM(BaseHandler):
 	@tornado.web.authenticated
@@ -382,8 +381,7 @@ class StopVM(BaseHandler):
 			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
 		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
-		proc = vm.stop()
-		proc.wait()
+		vm.stop()
 
 class StartVM(BaseHandler):
 	@tornado.web.authenticated
@@ -402,8 +400,7 @@ class StartVM(BaseHandler):
 			self.redirect(self.reverse_url("containers")+"?error=2")
 			return
 		self.redirect(self.get_argument("return", self.reverse_url("vminfo", veid)))
-		proc = vm.start()
-		proc.wait()
+		vm.start()
 
 class ClaimVM(BaseHandler):
 	@tornado.web.authenticated

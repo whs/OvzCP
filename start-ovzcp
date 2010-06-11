@@ -12,3 +12,7 @@ cd `dirname $0`
 for i in 21215 21216 21217 21218; do
 	/opt/ovzcp/main.py $i >> /var/log/ovzcp.log 2>&1 &
 done
+rm ovzpipe 2>/dev/null || true
+touch ovzpipe
+chmod 600 ovzpipe
+./ovzpipe.py < ovzpipe >> /var/log/ovzcp.log 2>&1 &

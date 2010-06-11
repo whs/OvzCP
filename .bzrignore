@@ -3,3 +3,4 @@ db.sqlite
 whsgroup.handlers.py
 static/munin/*
 cloudcp
+ovzpipe

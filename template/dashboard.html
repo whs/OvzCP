@@ -4,7 +4,7 @@ var VMgraphdata={};
 var timeCount = 0;
 function updateVMload(){
 	$.post("{{reverse_url('dashboard')}}", {data: "vmload"}, function(d){
-		d=JSON.parse(d)
+		if(typeof d == "string") d=JSON.parse(d)
 		d=d[0]
 		hostlist = [];
 		for (var i in d) {
