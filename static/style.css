@@ -1,21 +1,22 @@
 @import url(reset.css);
 @import url(ui-dark.css);
 body{
-	font-family: tahoma, sans-serif; min-height: 100%; background: black;
+	font-family: tahoma, sans-serif; min-height: 100%;
+	background: #222;
 	line-height: 1.4em;
 }
 a{
-	color:inherit; text-decoration: none; text-shadow: #aaa 1px 1px 3px;
-	-webkit-transition: text-shadow .2s ease-out;
+	color:inherit; text-decoration: none;
 }
-a:hover{text-shadow: yellow 0px 0px 3px;}
+a:hover{font-weight: bold;}
 #container{
-	width: 100%; height: 100%;
+	width: 100%; min-height: 500px;
+	background: url(endmenubg.png) #161616 bottom left repeat-x;
 }
 #top-bar{
 	width: 100%;
 	height: 50px;
-	background: black;
+	background: #161616;
 	color: white;
 }
 #top-bar #logo a{
@@ -39,9 +40,7 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 }
 #left-bar{
 	width: 15%;
-	background: black;
 	color: white;
-	border-top: #777 solid 1px;
 	float: left;
 	min-height: 100%;
 }
@@ -49,34 +48,39 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 	display: block;
 	padding: 10px;
 }
-#left-bar ul li{
-	border-bottom: #777 solid 1px;
-	-webkit-transition: background .2s ease-in-out;
-}
-#left-bar ul li:hover{
-	background: #222;
-}
 #left-bar ul li:hover a{
-	color: white;
-	text-shadow: blue 0px 0px 5px;
+	font-weight: bold;
+	background: url(selected.png);
 }
 #user{float: right; margin-top: 2px;}
 #body{
 	padding: 10px;
 	width: 83%;
-	background: white;
+	background: 6e6e6e;
+	background: -moz-linear-gradient(center bottom, rgb(51,51,51) 0%, rgb(112,111,111) 50%);
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #333), color-stop(0.5, rgb(111,111,111)));
+	color: white;
 	float: right;
+	-webkit-box-shadow: black 0px 0px 10px;
+	-moz-box-shadow: black 0px 0px 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-bottom: white solid 1px;
+	border-top: #101010 solid 1px;
 }
+#body table{color: black; background: white;}
 #bottom{
-	color: gray; margin-top: 15px; font-size: 10pt;
+	color: white; margin-top: 50px; font-size: 10pt;
 	padding-left: 10px;
-	margin-bottom: 25px;
+	text-align: center;
+	margin-bottom: 30px;
 }
 .notify{
 	width: 95%;
 	padding: 10px;
 	margin-bottom: 10px;
 	background: rgb(255, 255, 100);
+	color: black;
 	border: yellow solid 2px;
 }
 .notify .close{
@@ -87,6 +91,7 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 }
 #error{
 	background: rgb(255, 100, 100);
+	color: black;
 	border: maroon solid 2px;
 }
 #error>pre{
@@ -115,7 +120,7 @@ a:hover{text-shadow: yellow 0px 0px 3px;}
 #subhead{
 	font-size: 15pt;
 	margin-bottom: 10px;
-	color: gray;
+	color: #ccc;
 }
 table{
 	width: 100%;
