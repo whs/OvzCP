@@ -158,15 +158,15 @@ class VM(object):
 	def start(self):
 		if self.running:
 			return False
-		return open("ovzpipe", "w").write("start "+str(self.veid)+"\n")
+		return open("ovzpipe", "a").write("start "+str(self.veid)+"\n")
 	def restart(self):
 		if not self.running:
 			return False
-		return open("ovzpipe", "w").write("restart "+str(self.veid)+"\n")
+		return open("ovzpipe", "a").write("restart "+str(self.veid)+"\n")
 	def stop(self):
 		if not self.running:
 			return False
-		return open("ovzpipe", "w").write("stop "+str(self.veid)+"\n")
+		return open("ovzpipe", "a").write("stop "+str(self.veid)+"\n")
 	def destroy(self):
 		if self.running:
 			return False
