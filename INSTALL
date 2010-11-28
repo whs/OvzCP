@@ -13,9 +13,8 @@ might be unable to run OvzCP.
 - python-sqlobject
 - python-pybabel
 - Varnish
-  Note that lenny's varnish is version 1 and the latest version is 2 which is in backports.
-  Version 2 brings new additions such as reloading without restarting. OvzCP does support
-  this feature and will use if detected so I recommends you to use backports' varnish package.
+  Note that lenny's varnish is version 1. This is not supported by OvzCP.
+  Please install Varnish from backports.
 - Of course, OpenVZ
   Read the instructions (in Thai) at http://www.thaitux.info/node/675 or http://debianclub.org/node/479
   (both are same) you don't need to create any VM right now.
@@ -44,7 +43,7 @@ might be unable to run OvzCP.
 
 sub vcl_recv{
 	include "/opt/ovzcp/sysconf/varnishrecv.vcl";
-	pipe;
+	return(pipe);
 }
 
     - Save
