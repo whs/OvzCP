@@ -7,7 +7,7 @@ _config.read("config.ini")
 
 def version(wantInt=True):
 	import commands, re
-	v=re.findall("\(varnish-(.*?)\)", commands.getoutput("/usr/sbin/varnishd -V").split("\n")[0])[0].split(".")
+	v=re.findall("\(varnish-(.*?)(?: |\))", commands.getoutput("/usr/sbin/varnishd -V").split("\n")[0])[0].split(".")
 	if wantInt:
 		return map(lambda x: int(x), v)
 	else:
