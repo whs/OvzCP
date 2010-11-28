@@ -110,6 +110,10 @@ class BaseHandler(tornado.web.RequestHandler):
 		for x in ["iPhone", "iPod", "iPad", "BlackBerry", "Android", "webOS", "MSIEMobile 6.0", "Opera Mobi", "Opera Mini"]:
 			if x in agent:
 				self._mobileWeb = True
+		if self.get_argument("_mobile", "auto") == "true":
+			self._mobileWeb = True
+		elif self.get_argument("_mobile", "auto") == "false":
+			self._mobileWeb = False
 	@property
 	def locale(self):
 		if not hasattr(self, "_locale"):
