@@ -54,7 +54,7 @@ $(function(){
 });
 {% endblock %}
 {% block body %}
-<h1>Editing {{veid}}</h1>
+<h1>{% trans %}Editing {{veid}}{% endtrans %}</h1>
 <div class="notify">{% trans %}Saving this page will result in VM being restarted{% endtrans %}</div>
 <form action="{{reverse_url('vmedit', veid)}}" method="post">
 {{ xsrf_form_html() }}

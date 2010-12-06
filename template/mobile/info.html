@@ -1,60 +1,186 @@
-<div title="{{vz.hostname}} ({{veid}})" class="panel">
-	<h2>{% if vz.running %}Running{% else %}Stopped{% endif %}</h2>
-	<fieldset><div class="row" style="padding: 10px;">
-		{% if vz.running %}
-		<a class="whiteButton" style="width: 30%; float: left;" type="button" target="_self" href="{{reverse_url('restartvm', veid)}}?_xsrf={{xsrf}}&return=/" onclick="return confirm('{% trans %}Restart {{veid}}?{% endtrans %}')">{% trans %}Restart{% endtrans %}</a>
-		<a class="redButton" style="width: 30%; float: right;" type="button" target="_self" href="{{reverse_url('stopvm', veid)}}?_xsrf={{xsrf}}&return=/" onclick="return confirm('{% trans %}Stop {{veid}}?{% endtrans %}')">{% trans %}Stop{% endtrans %}</a>
-		{% else %}
-		<a class="grayButton" type="button" target="_self" href="{{reverse_url('startvm', veid)}}?_xsrf={{xsrf}}&return=/" onclick="return confirm('{% trans %}Start {{veid}}?{% endtrans %}')">{% trans %}Start{% endtrans %}</a>
-		{% endif %}
-		<br style="clear: both;">
-	</div></fieldset>
-	
-	<h2>Info</h2>
-	<fieldset>
-		<div class="row"><label>Burst</label> <small>{{vm.burst+1}}</small></div>
-		<div class="row"><label>IP</label> <small>{{vz.ip}}</small></div>
-		<div class="row"><label>OS</label> <small>{{vz.os|capitalize}}</small></div>
-		{% if vz.running %}
-		<div class="row"><label>Process count</label> <small>{{vz.nproc}}</small></div>
-		{% endif %}
-		{% if vm.munin %}
-		<a href="/static/munin/{% if vm.user %}{{vm.user.id}}{% else %}{{vz.hostname}}{% endif %}/{{vz.hostname}}.html" target="_self" class="whiteButton" style="margin: 10px;" type="button">Munin</a>
-		{% endif %}
-	</fieldset>
-	
-	{% if vz.running %}
-	<h2>Load Average</h2>
-	<fieldset>
-		<div class="row"><label>5 minute</label> <small>{{vz.loadAvg[0]}}</small></div>
-		<div class="row"><label>10 minute</label> <small>{{vz.loadAvg[1]}}</small></div>
-		<div class="row"><label>15 minute</label> <small>{{vz.loadAvg[2]}}</small></div>
-	</fieldset>
-	{% endif %}
-	
-	<h2>Billing</h2>
-	<fieldset>
-		<div class="row"><label>Per VM</label> <small>{{billing['perVM']}}</small></div>
-		<div class="row"><label>Memory</label> <small>{{billing['memory']}}</small></div>
-		<div class="row"><label>Disk</label> <small>{{billing['disk']}}</small></div>
-		<div class="row"><label>Burst</label> <small>{{billing['burst']}}</small></div>
-		<div class="row" style="color: cornflowerblue; background-color: #ffa"><label>Total</label> <small>{{billing['total']}}</small></div>
-	</fieldset>
-	
-	<h2>Disk</h2>
-	<fieldset>
-		<div class="row"><label>Allocated</label> <small>{{(vz.diskinfo[0]*1000)|filesizeformat}}</small></div>
-		<div class="row"><label>Free</label> <small>{{(vz.diskinfo[2]*1000)|filesizeformat}}</small></div>
-		<div class="row"><label>Used</label> <small>{{(vz.diskinfo[1]*1000)|filesizeformat}}</small></div>
-	</fieldset>
-	
-	<h2>Memory</h2>
-	<fieldset>
-		<div class="row"><label>Guaranteed</label> <small>{{vz.memlimit[0]|filesizeformat}}</small></div>
-		<div class="row"><label>Burst</label> <small>{{vz.memlimit[1]|filesizeformat}}</small></div>
-		{% if vz.running %}
-		<div class="row"><label>Free</label> <small>{{vz.meminfo['MemFree']|filesizeformat}}</small></div>
-		<div class="row"><label>Using</label> <small>{{ (vz.meminfo['MemTotal']-vz.meminfo['MemFree'])|filesizeformat }}</small></div>
-		{% endif %}
-	</fieldset>
+{% extends "base.html" %}
+{% block body %}
+<div data-role="header" data-position="inline">
+	<a href="/" data-icon="arrow-l" rel="external">Back</a>
+	<h1>{{vz.hostname}} ({{veid}})</h1>
+	<div data-role="navbar">
+		<ul>
+			{% if vz.running %}
+			<li><a data-url="{{reverse_url('restartvm', veid)}}?_xsrf={{xsrf}}" href="#" onclick="if(confirm('{% trans %}Restart {{veid}}?{% endtrans %}')) window.location = this.getAttribute('data-url')">Restart</a></li>
+			<li><a data-url="{{reverse_url('stopvm', veid)}}?_xsrf={{xsrf}}"  href="#" onclick="if(confirm('{% trans %}Stop {{veid}}?{% endtrans %}')) window.location = this.getAttribute('data-url')">Stop</a></li>
+			{% else %}
+			<li><a data-url="{{reverse_url('startvm', veid)}}?_xsrf={{xsrf}}" href="#" onclick="if(confirm('{% trans %}Start {{veid}}?{% endtrans %}')) window.location = this.getAttribute('data-url')">Start</a></li>
+			{% endif %}
+			<li><a href="#burst" data-transition="slideup">{% trans burst=vm.burst+1 %}Burst ({{burst}}){% endtrans %}</a></li>
+{% if config.getboolean("varnish", "enabled") %}
+			<li><a href="#webedit">{% trans %}Web forward{% endtrans %}</a></li>
+{% endif %}
+{% if config.getboolean("iface", "enabled") %}
+			<li><a href="#portedit">{% trans %}Port forward{% endtrans %}</a></li>
+{% endif %}
+			<li><a href="#rootedit" data-transition="slideup">{% trans %}Root password{% endtrans %}</a></li>
+		</ul>
+	</div>
 </div>
+<div data-role="content">
+	<ul data-role="listview" data-inset="true">
+		<li data-role="list-divider">{% trans %}Billing{% endtrans %}</li>
+		<li style="text-align: center;">{% trans %}All calculations are rounded up.{% endtrans %}</li>
+		<li>{% trans %}Per VM{% endtrans %} <span class="ui-li-aside">{{billing['perVM']}}</span></li> 
+		<li>{% trans %}Memory{% endtrans %} <span class="ui-li-aside">{{billing['memory']}}</span></li> 
+		<li>{% trans %}Disk{% endtrans %} <span class="ui-li-aside">{{billing['disk']}}</span></li> 
+		<li>{% trans %}Burst{% endtrans %} ({% trans burst=vm.burst+1 %}level {{burst}}{% endtrans %}) <span class="ui-li-aside">{{billing['burst']}}</span></li> 
+	</ul>
+	<ul data-role="listview" data-inset="true">
+		<li data-role="list-divider">{% trans %}Information{% endtrans %}</li>
+		<li>{% trans %}IP{% endtrans %} <span class="ui-li-aside">{{vz.ip}}</span></li>
+		<li>{% trans %}OS Template{% endtrans %} <span class="ui-li-aside">{{vz.os|capitalize}}</span></li>
+		<li>{% trans %}Disk Capacity{% endtrans %} <span class="ui-li-aside">{{(vz.diskinfo[0]*1000)|filesizeformat}}</span></li>
+		{%- if vz.running %}
+		<li>{% trans %}Uptime{% endtrans %} <span class="ui-li-aside">{{vz.uptime}}</span></li>
+		<li>{% trans %}Load average{% endtrans %} <span class="ui-li-aside">{{vz.loadAvg|join(" ")}}</span></li>
+		<li>{% trans %}Process count{% endtrans %} <span class="ui-li-aside">{{vz.nproc}}</span></li> 
+		{%- endif %}
+		{%- if vm.munin %}
+		<li><a href="/static/munin/{% if vm.user %}{{vm.user.id}}{% else %}{{vz.hostname}}{% endif %}/{{vz.hostname}}.html" rel="external">{% trans %}Munin{% endtrans %}</a></li>
+		{%- endif %}
+		<li data-role="list-divider">Memory</li>
+		<li>{% trans %}Guaranteed{% endtrans %} <span class="ui-li-aside">{{vz.memlimit[0]|filesizeformat}}</span></li>
+		<li>{% trans %}Burstable{% endtrans %} <span class="ui-li-aside">{{vz.memlimit[1]|filesizeformat}}</span></li>
+	</ul>
+	<div data-role="collapsible" data-collapsed="true">
+		<h3>Graph</h3>
+		<p>
+			{%- if vz.running %}
+			{%- set memused=vz.meminfo['MemTotal']-vz.meminfo['MemFree'] %}
+			{%- if memused < vz.memlimit[0] %}
+			<div><img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vz.meminfo['MemTotal']|filesizeformat}})&amp;chl=Used {{memused|filesizeformat}}|Free {{vz.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{memused}},{{vz.meminfo['MemFree']}}&amp;chds=0,{{vz.meminfo['MemTotal']}}" /></div>
+			{%- else %}
+			<div><img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Memory usage for {{veid}} ({{vz.meminfo['MemTotal']|filesizeformat}})&amp;chl=Guaranteed Used {{vz.memlimit[0]|filesizeformat}}|Burst {{(memused-vz.memlimit[0])|filesizeformat}}|Free {{vz.meminfo['MemFree']|filesizeformat}}&amp;chd=t:{{vz.memlimit[0]}},{{memused-vz.memlimit[0]}},{{vz.meminfo['MemFree']}}&amp;chds=0,{{vz.meminfo['MemTotal']}}" /></div>
+			{%- endif %}
+			{%- endif %}
+			<div><img src="http://chart.apis.google.com/chart?cht=p3&amp;chs=500x200&amp;chtt=Disk usage for {{veid}} ({{(vz.diskinfo[0]*1000)|filesizeformat}})&amp;chl=Used {{(vz.diskinfo[1]*1000)|filesizeformat}}|Free {{(vz.diskinfo[2]*1000)|filesizeformat}}&amp;chd=t:{{vz.diskinfo[1]}},{{vz.diskinfo[2]}}&amp;chds=0,{{vz.diskinfo[0]}}" /></div>
+		</p>
+	</div>
+</div>
+{% endblock %}
+{% block page %}
+<div data-role="page" id="webedit">
+	<div data-role="header"><h1>{% trans %}Web forward{% endtrans %}</h1></div>
+	<div data-role="content">
+		{% if varnishRestart %}
+		{% trans %}After editing, please use the desktop UI to restart the proxy.{% endtrans %}
+		{% endif %}
+		<ul data-role="listview" data-split-icon="delete" data-filter="true">
+			{% for i in vm.varnishBackend %}
+			{% for i2 in i.cond %}
+				<li>
+					<img src='{{static_url((i2.subdomain|lower)+".png")}}' alt="Wildcard?" class="ui-li-icon" />
+					<a href='http://{{i2.hostname}}'>{{i2.hostname}}</a> -&gt; {{i.port}}
+					<a href="#" data-url="{{reverse_url('addvarnish', veid)}}?delete={{i2.id}}&_xsrf={{xsrf}}"  onclick="if(confirm('{% trans hostname=i2.hostname %}Delete {{hostname}}?{% endtrans %}')) window.location = this.getAttribute('data-url')">{% trans %}Delete{% endtrans %}</a> 
+				</li>
+			{% endfor %}
+			{% endfor %}
+		</ul>
+		<br style="clear: both;" />
+		<div data-role="collapsible">
+			<h3>{% trans %}Add new{% endtrans %}</h3>
+			<p>
+				<form action="{{reverse_url('addvarnish', veid)}}" method="post">
+					{{ xsrf_form_html() }}
+					<div data-role="fieldcontain"> 
+						<label for="v_host">{% trans %}Host{% endtrans %}:</label> 
+						<input type="text" name="host" id="v_host" />
+					</div>
+					<div data-role="fieldcontain"> 
+						<label for="v_port">{% trans %}Port{% endtrans %}:</label> 
+						<input type="number" name="port" id="v_port" value="80" />
+					</div>
+					<div data-role="fieldcontain">
+						<label for="v_wildcard">{% trans %}Wildcard{% endtrans %}:</label>
+						<select name="subdomain" id="v_wildcard" data-role="slider">
+							<option value="">{% trans %}Off{% endtrans %}</option>
+							<option value="true" selected>{% trans %}On{% endtrans %}</option>
+						</select> 
+					</div>
+					<button type="submit" data-theme="a">{% trans %}Submit{% endtrans %}</button> 
+				</form>
+			</p>
+		</div>
+	</div>
+</div>
+
+<div data-role="page" id="portedit">
+	<div data-role="header"><h1>{% trans %}Port forward{% endtrans %}</h1></div>
+	<div data-role="content">
+		<ul data-role="listview" data-split-icon="delete" data-filter="true">
+			{% for i in vm.portForward %}
+				<li>
+					<a>{{i.iface}}:{{i.outport}}{% if i.outport != -1 %} -> {{i.port}}{% else %} DMZ{% endif %}</a>
+					<a href="#" data-url="{{reverse_url('addport', veid)}}?delete={{i.id}}&_xsrf={{xsrf}}" onclick="if(confirm('{% if i.outport!=-1 %}{% trans iface=i.iface, port=i.port, outport=i.outport %}Delete {{iface}} in:{{port}} out:{{outport}}?{% endtrans %}{% else %}{% trans iface=i.iface %}Delete DMZ forwarding to {{iface}}?{% endtrans %}{% endif %}')) window.location = this.getAttribute('data-url')">{% trans %}Delete{% endtrans %}</a>
+				</li>
+			{% endfor %}
+		</ul>
+		<br style="clear: both;" />
+		<div data-role="collapsible">
+			<h3>{% trans %}Add new{% endtrans %}</h3>
+			<p>
+				<form action="{{reverse_url('addport', veid)}}" method="post">
+					{{ xsrf_form_html() }}
+					<div data-role="fieldcontain"> 
+						<label for="p_iface" class="select">{% trans %}Interface{% endtrans %}:</label> 
+						<select name="iface" id="p_iface">
+							{% for i in interface.items() %}
+							{% if not i[1][1] %}
+								<option value="{{i[0]}}">{{i[0]}} ({{i[1][0]}})</option>
+							{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div data-role="fieldcontain"> 
+						<label for="p_port">{% trans %}VM Port{% endtrans %}:</label> 
+						<input type="number" name="port" id="p_port" />
+					</div>
+					<div data-role="fieldcontain"> 
+						<label for="p_outport">{% trans %}External Port{% endtrans %}:</label> 
+						<input type="number" name="outport" id="p_outport" />
+					</div>
+					<button type="submit" data-theme="a">{% trans %}Submit{% endtrans %}</button> 
+				</form>
+			</p>
+		</div>
+	</div>
+</div>
+
+<div data-role="page" id="rootedit">
+	<div data-role="header"><h1>{% trans %}Root password{% endtrans %}</h1></div>
+	<div data-role="content">
+		<form action="{{reverse_url('rootpw', veid)}}" method="post">
+			{{ xsrf_form_html() }}
+			<div data-role="fieldcontain"> 
+				<label for="r_root">{% trans %}New Root password{% endtrans %}:</label> 
+				<input type="password" name="root" id="r_root" />
+			</div>
+			<div data-role="fieldcontain"> 
+				<label for="r_root2">{% trans %}Confirm Root password{% endtrans %}:</label> 
+				<input type="password" name="root2" id="r_root2" />
+			</div>
+			<button type="submit" data-theme="a">{% trans %}Submit{% endtrans %}</button> 
+		</form>
+	</div>
+</div>
+
+<div data-role="page" id="burst">
+	<div data-role="header"><h1>{% trans %}Burst{% endtrans %}</h1></div>
+	<div data-role="content">
+		<form action="{{reverse_url('rootpw', veid)}}" method="post">
+			{{ xsrf_form_html() }}
+			<div data-role="fieldcontain"> 
+				<label for="b_burst">{% trans %}Burst level{% endtrans %}:</label> 
+				<input type="range" name="burst" id="b_burst" value="{{vm.burst+1}}" min="1" max="10"  />
+			</div>
+			<button type="submit" data-theme="a">{% trans %}Submit{% endtrans %}</button> 
+		</form>
+	</div>
+</div>
+{% endblock %}

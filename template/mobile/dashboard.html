@@ -1,44 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta http-equiv="Content-Type" value="text/html; charset=utf-8">
-	<title>OvzCP | {{current_user}}</title>
-	<meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<style type="text/css" media="screen">
-	@import url({{static_url("iui/iuix.css")}});
-	@import url({{static_url("iui/t/defaultgrad/defaultgrad-theme.css")}});
-	</style>
-	<script src="{{static_url('iui/iuix.js')}}" type="text/javascript" charset="utf-8"></script>
-	<script type="text/javascript">
-	iui.animOn = true;
-	</script>
-	<style type="text/css">
-li small{float: right; margin-right: 10px; font-size: 100%; font-weight: normal;}
-.panel small{
-	position: absolute;
-	top: 6px;
-	right: 6px;
-	width: 100px;
-	height: 28px;
-	font-size: 120%;
-}
-	</style>
-</head>
-{% set unit=config.get("billing", "unit").decode("utf-8")%}
-<body>
-<div class="toolbar">
-	<h1 id="pageTitle"></h1>
-	<a id="backButton" class="button" href="#"></a>
+{% extends "base.html" %}
+{% block body %}
+<div data-role="header">
+	<h1>OvzCP</h1>
 </div>
-<ul id="home" title="OvzCP" selected="true">
-	<li><a href="https://www.google.com/accounts/Logout?continue={{auth_url}}&service=ah" target="_self">Logged in as {{current_user}}</a></li>
-	<li>Total VM cost <small>{{billing}} {{unit}}</small></li>
-	<li>{{unit|capitalize}} left <small>{{current_user.credit|int}}</small></li>
-	<li class="group">VM</li>
-	{% for i in container %}
-	<li style="background: {% if i.vz.running %}#cfc{% else %}#faa{% endif %};"><a href="/vm/{{i.veid}}">{{i.vz.hostname}} <small>{{i.veid}}</small></a></li>
-	{% endfor %}
-</ul>
-</body>
-</html>
+<div data-role="content"> 
+	<ul data-role="listview" data-inset="true" data-theme="d">
+		<li data-role="list-divider">Info</li> 
+		<li>{% trans %}Total VM cost{% endtrans %} <span class="ui-li-count">{% trans billing=billing, unit=uint %}{{billing}} {{unit}}{% endtrans %}</span></li> 
+		<li>{% trans unit=unit|capitalize %}{{unit}} left{% endtrans %} <span class="ui-li-count">{{current_user.credit|int}}</span></li> 
+	</ul>
+	<ul data-role="listview" data-filter="true"> 
+		<li data-role="list-divider">{% trans %}VM{% endtrans %}</li> 
+		{%- for i in container %}
+		<li style="background: {% if i.vz.running %}#afa{% else %}#faa{% endif %};"><a href="/vm/{{i.veid}}" rel="external">{{i.vz.hostname}}</a><span class="ui-li-aside">{{i.veid}}</span></li>
+		{%- endfor %}
+	</ul>
+</div>
+<div data-role="footer" class="ui-bar">
+	{% trans current_user=current_user %}Logged in as {{current_user}}{% endtrans %}
+	<a href="https://www.google.com/accounts/Logout?continue={{auth_url}}&service=ah" data-role="button" data-icon="delete">{% trans %}Logout{% endtrans %}</a>
+</div>
+{% endblock %}
