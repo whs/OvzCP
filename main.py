@@ -599,8 +599,7 @@ class Burst(BaseHandler):
 
 class Credit(BaseHandler):
 	def get(self):
-		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader("template"))
-		self.write(jinja.get_template("credit.html").render(static_url=self.static_url))
+		self.write(open("template/credit.html").read().replace("{{static_url('jquery.js')}}", self.static_url("jquery.js")))
 
 class AddPort(BaseHandler):
 	@tornado.web.authenticated
