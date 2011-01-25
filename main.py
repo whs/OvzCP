@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 
 import models
-import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext
+import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext, hashlib
 import varnish, simplejson
 import tornado.httpserver, tornado.ioloop, tornado.web, tornado.auth, tornado.httpclient, urlparse
 
@@ -71,19 +71,11 @@ def get_cloud_usage(user):
 	d=tornado.escape.json_decode(d)
 	return int(d['used'])
 
-class BaseHandler(tornado.web.RequestHandler):
+class BaseAuth(tornado.web.RequestHandler):
 	def get_current_user(self):
 		data = self.get_user()
 		if data:
 			return data
-	def get_user_locale(self):
-		out = None
-		if self.get_argument("_locale", None):
-			out = self.get_argument("_locale")
-			self.set_cookie("locale", out, expires_days=1000)
-		if not out:
-			out=self.get_cookie("locale", None)
-		return out
 	def get_user(self):
 		data = self.get_secure_cookie("auth")
 		if data:
@@ -93,6 +85,17 @@ class BaseHandler(tornado.web.RequestHandler):
 				return query[0]
 			else:
 				return models.User(email=userData['email'], credit=0)
+	
+
+class BaseHandler(BaseAuth):
+	def get_user_locale(self):
+		out = None
+		if self.get_argument("_locale", None):
+			out = self.get_argument("_locale")
+			self.set_cookie("locale", out, expires_days=1000)
+		if not out:
+			out=self.get_cookie("locale", None)
+		return out
 	def prepare(self):
 		self.gettext = gettext.translation('messages', os.path.join(os.getcwd(), "po"), [self.locale], fallback=True)
 		self.gettext.install(True)
@@ -178,6 +181,78 @@ class BaseHandler(tornado.web.RequestHandler):
 		}, **kwargs)
 		self.write(jinja.get_template(tmpl).render(*args, **margs))
 		return
+	def loading(self, act, vm=None, to="/"):
+		# act in (start, stop, destroy)
+		if not vm:
+			veid = 0
+		elif type(vm) == int:
+			veid = vm
+		else:
+			veid = vm.veid
+		if act == "start":
+			txt = "Starting "+str(veid)
+		elif act == "stop":
+			txt = "Stopping "+str(veid)
+		elif act == "destroy":
+			txt = "Destroying "+str(veid)
+		elif act == "create":
+			txt = "Creating VM"
+		else:
+			raise Exception, "Invalid act "+act
+		
+		tmplPath = ["template"]
+		if self._mobileWeb:
+			tmplPath.insert(0, "template/mobile")
+		jinja = jinja2.Environment(loader=jinja2.loaders.FileSystemLoader(tmplPath), extensions=['jinja2.ext.i18n'])
+		jinja.install_gettext_translations(self.gettext)
+		localeList = {"en": babel.Locale(self.locale).languages["en"]}
+		for i in os.listdir("po"):
+			if os.path.isdir(os.path.join("po", i)):
+				localeList[i] = babel.Locale(self.locale).languages[i]
+		self.write(jinja.get_template("poller.html").render(static_url=self.static_url, reverse_url=self.reverse_url, veid=veid, codeact=act, act=txt, to=to))
+
+class APIHandler(BaseAuth):
+	static_url = BaseHandler.static_url
+	def get_current_user(self):
+		data = self.get_user()
+		if data:
+			return data
+		# check the apikey
+		try:
+			key = self.get_argument("apikey")
+		except Exception, e:
+			self.error(`e`)
+			return
+		try:
+			key = models.APIKey.selectBy(id=key)[0]
+		except IndexError, e:
+			self.error("No such API key")
+			return
+		# then make sure the nonce is not used
+		try:
+			nonce = self.get_argument("nonce")
+		except Exception, e:
+			self.error(`e`)
+			return
+		if models.APINonce.selectBy(key=key, nonce=nonce).count() > 0:
+			self.error("Nonce used")
+			return
+		# check the  URL!
+		query = self.request.query
+		try:
+			query = re.sub("(?:&|)hash="+self.get_argument("hash"), "", query)
+		except Exception, e:
+			self.error(`e`)
+			return
+		if hashlib.sha1(query + key.key).hexdigest() != self.get_argument("hash"):
+			self.error("Invalid signature. The request part you need to be signed is "+query)
+			return
+		return key.user
+	def error(self, error):
+		return self.json({"error": error})
+	def json(self, dat):
+		self.set_header("Content-Type", "text/json; charset=UTF-8")
+		self.write(dat)
 
 class Containers(BaseHandler):
 	@tornado.web.authenticated
@@ -216,6 +291,11 @@ class Containers(BaseHandler):
 				txtmsg = _("VM destroyed")
 		self.render("container.html", container=myVM(self.current_user),
 			title=_("Containers"), error=errmsg, message=txtmsg)
+
+class Poller(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		self.loading(self.get_argument("act"), int(self.get_argument("veid")), self.get_argument("next"))
 
 class HostSpec(BaseHandler):
 	@tornado.web.authenticated
@@ -562,14 +642,6 @@ class Billing(BaseHandler):
 		cloud = get_cloud_usage(self.current_user.email)
 		self.render("billing.html", vmcost=vmcost, title=_("Billing"), cloud=cloud)
 
-class PayReceive(BaseHandler):
-	def check_xsrf_cookie(self):
-		""" Bypass XSRF check """
-		return
-	@tornado.web.authenticated
-	def post(self):
-		self.write(self.request.arguments)
-
 class RootPW(BaseHandler):
 	@tornado.web.authenticated
 	def post(self, veid):
@@ -826,6 +898,75 @@ class Cloud(BaseHandler):
 			fp.write("\t".join(i)+"\n")
 		self.write(simplejson.dumps({"user": u, "password": pw}))
 
+class APIInfo(APIHandler):
+	@tornado.web.authenticated
+	def get(self):
+		veid = self.get_argument("veid", None)
+		if not veid:
+			self.error("Please specify veid.")
+			return
+		try:
+			veid = int(veid)
+		except ValueError:
+			self.error("VEID is not int")
+			return
+		vm = models.VM.selectBy(veid=veid)
+		if vm.count() == 0:
+			self.error("No such VM")
+			return
+		vm = vm[0]
+		if vm.user != self.current_user:
+			self.error("VM not owned by current user")
+			return
+		data = {}
+		data['nproc'] = vm.vz.nproc
+		data['running'] = vm.vz.running
+		data['ip'] = vm.vz.ip
+		data['hostname'] = vm.vz.hostname
+		data['os'] = vm.vz.os
+		data['memlimit'] = vm.vz.memlimit
+		data['diskinfo'] = vm.vz.diskinfo
+		data['uptime'] = vm.vz.uptime
+		data['loadAvg'] = vm.vz.loadAvg
+		
+		if data['running']:
+			data['meminfo'] = vm.vz.meminfo
+		
+		self.json(data)
+
+class  APIAction(APIHandler):
+	def get(self):
+		veid = self.get_argument("veid", None)
+		if not veid:
+			self.error("Please specify veid.")
+			return
+		try:
+			veid = int(veid)
+		except ValueError:
+			self.error("VEID is not int")
+			return
+		vm = models.VM.selectBy(veid=veid)
+		if vm.count() == 0:
+			self.error("No such VM")
+			return
+		vm = vm[0]
+		if vm.user != self.current_user:
+			self.error("VM not owned by current user")
+			return
+		action = self.get_argument("action", None)
+		if not action:
+			self.error("Please specify action")
+			return
+		if action == "start":
+			self.json({"result": vm.vz.start()})
+		elif action == "stop":
+			self.json({"result": vm.vz.stop()})
+		elif action == "restart":
+			self.json({"result": vm.vz.restart()})
+		else:
+			self.error("Invalid action. Note that destroy is not supported for security reason.")
+		
+
 class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 	@tornado.web.asynchronous
 	def get(self):
@@ -938,10 +1079,10 @@ settings = {
 application = tornado.web.Application([
 	tornado.web.URLSpec(r"/auth", GoogleHandler, name="auth"),
 	tornado.web.URLSpec(r"/", Dashboard, name="dashboard"),
+	tornado.web.URLSpec(r"/poller", Poller, name="poller"),
 	tornado.web.URLSpec(r"/containers", Containers, name="containers"),
 	tornado.web.URLSpec(r"/create", CreateVM, name="createvm"),
 	tornado.web.URLSpec(r"/billing", Billing, name="billing"),
-	tornado.web.URLSpec(r"/payreceive", PayReceive, name="payreceive"),
 	tornado.web.URLSpec(r"/spec", HostSpec, name="hostspec"),
 	tornado.web.URLSpec(r"/varnishRestart", VarnishRestart, name="varnishrestart"),
 	tornado.web.URLSpec(r"/cloud", Cloud, name="cloud"),
@@ -960,6 +1101,10 @@ application = tornado.web.Application([
 	tornado.web.URLSpec(r"/vm/([0-9]+)/burst", Burst, name="burst"),
 	tornado.web.URLSpec(r"/_cron", CronRun, name="cron"),
 	
+	# API
+	tornado.web.URLSpec(r"/api/info", APIInfo, name="api_info"),
+	tornado.web.URLSpec(r"/api/action", APIAction, name="api_action"),
+	
 	tornado.web.URLSpec(r"/style.css", Stylesheet, name="css"),
 ], **settings)
 
@@ -968,5 +1113,7 @@ if __name__ == "__main__":
 	if len(sys.argv) > 1:
 		port = int(sys.argv[1])
 	http_server = tornado.httpserver.HTTPServer(application)
+	import tornado.autoreload
+	tornado.autoreload.start()
 	http_server.listen(port)
 	tornado.ioloop.IOLoop.instance().start()

@@ -118,6 +118,16 @@ function formatTime(time, sh){
 	else
 		return out.join(" ")
 }
+function poller(act,veid,next){
+	$("<iframe />").attr({
+		"src": "{{reverse_url('poller')}}?act="+act+"&veid="+veid+"&next="+next
+	}).css({
+		"position": "absolute",
+		"top": 0, "left": 0,
+		"width": "100%", "height": "100%",
+		"z-index": 100000000
+	}).appendTo("body");
+}
 $(function(){
 	$(".notify .close").dblclick(function(){
 		$(this).parent().slideUp(250);
@@ -130,6 +140,18 @@ $(function(){
 		return formatTime(parseFloat(i));
 	});
 	$("#langfrm select").change(function(){$(this).parent().submit();});
+	$(".link_start").click(function(e){
+		e.preventDefault();
+		if(confirm('{% trans veid="'+$(this).attr(\"data-veid\")+'" %}Start {{veid}}?{% endtrans %}') === false) return;
+		poller("start", $(this).attr("data-veid"), window.location);
+		$.get($(this).attr("href"));
+	});
+	$(".link_stop").click(function(e){
+		e.preventDefault();
+		if(confirm('{% trans veid="'+$(this).attr(\"data-veid\")+'" %}Stop {{veid}}?{% endtrans %}') === false) return;
+		poller("stop", $(this).attr("data-veid"), window.location);
+		$.get($(this).attr("href"));
+	});
 });
 {% block javascript %}
 {% endblock %}

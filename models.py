@@ -44,6 +44,14 @@ class VarnishCond(SQLObject):
 class Munin(SQLObject):
 	vm = ForeignKey('VM')
 
+class APIKey(SQLObject):
+	user = ForeignKey('User')
+	key = StringCol(unique=True)
+
+class APINonce(SQLObject):
+	key = ForeignKey('APIKey')
+	nonce = StringCol()
+
 class Nonce(SQLObject):
 	pass
 
@@ -55,3 +63,5 @@ if __name__ == "__main__":
 	PortForward.createTable(True)
 	Munin.createTable(True)
 	Nonce.createTable(True)
+	APIKey.createTable(True)
+	APINonce.createTable(True)

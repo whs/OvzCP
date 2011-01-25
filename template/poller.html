@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+	<title>OvzCP | {{act}}</title>
+	<script src="{{static_url('jquery.js')}}"></script>
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<style>
+body{
+	font-family: verdana;
+	background: white;
+}
+.in{
+	text-align: center;
+	margin-top: 20%;
+	font-size: 16pt;
+}
+	</style>
+	<script>
+{% if codeact == "create" %}
+setTimeout(function(){window.location = "{{to}}";}, 60000);
+{% else %}
+function poll(){
+	var newURL = "{{to}}";
+	$.getJSON("{{reverse_url('api_info')}}", {"veid": {{veid}}}, function(x){
+		{% if codeact == "start" %}
+		if(x.running){
+			parent.window.location = newURL;
+			clearTimeout(poller);
+		}
+		{% elif codeact == "stop" %}
+		if(!x.running){
+			parent.window.location = newURL;
+			clearTimeout(poller);
+		}
+		{% elif codeact == "destroy" %}
+		if(x.error == "No such VM"){
+			parent.window.location = newURL;
+			clearTimeout(poller);
+		}
+		{% elif codeact == "create" %}
+		{% else %}
+		alert("Invalid action {{codeact}}");
+		window.location = parent.newURL;
+		{% endif %}
+	});
+}
+var poller = setInterval(poll, 1500);
+{% endif %}
+	</script>
+</head>
+<body>
+<div class="in">
+<p>{% trans act=act|lower %}Please wait while OvzCP is {{act}}{% endtrans %}</p>
+<img src="{{static_url('load.gif')}}">
+</div>
+</body>
+</html>

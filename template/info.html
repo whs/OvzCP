@@ -83,9 +83,9 @@ $(function(){
 <span id="toolbar">
 {% if vz.running %}
 	<a href="{{reverse_url('restartvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Restart {{veid}}?{% endtrans %}')"><button><img src="{{static_url('restart.png')}}" / > {% trans %}Restart{% endtrans %}</button></a>
-	<a href="{{reverse_url('stopvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Stop {{veid}}?{% endtrans %}')"><button><img src="{{static_url('poweroff.png')}}" /> {% trans %}Stop{% endtrans %}</button></a>
+	<a href="{{reverse_url('stopvm', veid)}}?_xsrf={{xsrf}}" class="link_stop" data-veid="{{i.veid}}"><button><img src="{{static_url('poweroff.png')}}" /> {% trans %}Stop{% endtrans %}</button></a>
 {% else %}
-	<a href="{{reverse_url('startvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Start {{veid}}?{% endtrans %}')"><button><img src="{{static_url('start.png')}}" /> {% trans %}Start{% endtrans %}</button></a>
+	<a href="{{reverse_url('startvm', veid)}}?_xsrf={{xsrf}}" class="link_start" data-veid="{{i.veid}}"><button><img src="{{static_url('start.png')}}" /> {% trans %}Start{% endtrans %}</button></a>
 	<a href="{{reverse_url('destroyvm', veid)}}?_xsrf={{xsrf}}" onclick="return confirm('{% trans %}Destroy {{veid}}?{% endtrans %}')" title="{% trans %}Destroy all data on {{veid}}. Note that there are no backup made and <b>IRREVERSIBLE</b>.{% endtrans %}"><button><img src="{{static_url('destroy.png')}}" /> {% trans %}Destroy{% endtrans %}</button></a>
 {% endif %}
 	<a href="{{reverse_url('vmedit', veid)}}"><button><img src="{{static_url('edit.png')}}" /> {% trans %}Edit{% endtrans %}</button></a>

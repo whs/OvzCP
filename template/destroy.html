@@ -12,7 +12,7 @@ $(function(){
 <p>
 	<form action="{{reverse_url('destroyvm', veid)}}" method="post">
 	{{xsrf_form_html()}}
-	<input type="submit" value="{% trans %}I understand that this is irreversible, proceed to deletion{% endtrans %}" />
+	<input type="submit" value="{% trans %}I understand that this is irreversible, proceed to deletion{% endtrans %}" onclick="poller('destroy', {{veid}}, '/')" />
 	</form>
 	<noscript>{% trans %}Please enable JavaScript{% endtrans %}</noscript>
 </p>
