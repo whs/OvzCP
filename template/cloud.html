@@ -13,7 +13,7 @@ $(function(){
 {% endblock %}
 {% block body %}
 <div class="notify">
-{% trans price=config.get("cloudcp", "price"), per=config.get("cloudcp", "pricePer") %}Cloud Storage is an practically unlimited storage. This storage will be replicated to other hosts and it will be served by the host nearest to the user so your site will loads faster. However, cloud storage doesn't have scripting ability.<br />
+{% trans price=config.get("cloudcp", "price"), per=config.get("cloudcp", "pricePer") %}Cloud Storage is a practically unlimited storage. This storage will be replicated to other hosts and it will be served by the host nearest to the user so your site will loads faster. However, cloud storage doesn't have scripting ability.<br />
 Cloud storage costs {{price}} {{unit}} per {{per}} MB{% endtrans %}
 </div>
 <p>

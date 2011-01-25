@@ -213,6 +213,7 @@ class BaseHandler(BaseAuth):
 
 class APIHandler(BaseAuth):
 	static_url = BaseHandler.static_url
+	current_user = None
 	def get_current_user(self):
 		data = self.get_user()
 		if data:
@@ -234,9 +235,14 @@ class APIHandler(BaseAuth):
 		except Exception, e:
 			self.error(`e`)
 			return
-		if models.APINonce.selectBy(key=key, nonce=nonce).count() > 0:
-			self.error("Nonce used")
+		if len(nonce) > 50:
+			self.error("Nonce is too long")
 			return
+		sqlnonce = models.APINonce.select(models.APINonce.q.nonce==nonce)
+		if sqlnonce.count() > 0:
+			if sqlnonce[0].key == key:
+				self.error("Nonce used")
+				return
 		# check the  URL!
 		query = self.request.query
 		try:
@@ -247,6 +253,8 @@ class APIHandler(BaseAuth):
 		if hashlib.sha1(query + key.key).hexdigest() != self.get_argument("hash"):
 			self.error("Invalid signature. The request part you need to be signed is "+query)
 			return
+		# Add nonce to the database
+		models.APINonce(nonce=nonce, key=key)
 		return key.user
 	def error(self, error):
 		return self.json({"error": error})
@@ -898,9 +906,34 @@ class Cloud(BaseHandler):
 			fp.write("\t".join(i)+"\n")
 		self.write(simplejson.dumps({"user": u, "password": pw}))
 
-class APIInfo(APIHandler):
+class APIWeb(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
+		if self.get_argument("delete", None):
+			delk = self.get_argument("delete")
+			delk = models.APIKey.selectBy(id=delk)[0]
+			if delk.user == self.current_user:
+				delk.destroySelf()
+			else:
+				self.write("Hack?")
+				return
+			self.redirect(self.reverse_url("apiweb"))
+			return
+		self.render("api.html", title="API", apikey=models.APIKey.selectBy(user=self.current_user))
+	@tornado.web.authenticated
+	def post(self):
+		import hashlib, string, random
+		def genpw(length=8, chars=string.letters + string.digits):
+			return ''.join([random.choice(chars) for i in range(length)])
+		key = genpw(24)
+		models.APIKey(user=self.current_user, key=key)
+		return self.get()
+
+class APIInfo(APIHandler):
+	def get(self):
+		self.current_user = self.get_current_user()
+		if not self.current_user:
+			return
 		veid = self.get_argument("veid", None)
 		if not veid:
 			self.error("Please specify veid.")
@@ -919,7 +952,6 @@ class APIInfo(APIHandler):
 			self.error("VM not owned by current user")
 			return
 		data = {}
-		data['nproc'] = vm.vz.nproc
 		data['running'] = vm.vz.running
 		data['ip'] = vm.vz.ip
 		data['hostname'] = vm.vz.hostname
@@ -930,12 +962,16 @@ class APIInfo(APIHandler):
 		data['loadAvg'] = vm.vz.loadAvg
 		
 		if data['running']:
+			data['nproc'] = vm.vz.nproc
 			data['meminfo'] = vm.vz.meminfo
 		
 		self.json(data)
 
 class  APIAction(APIHandler):
 	def get(self):
+		self.current_user = self.get_current_user()
+		if not self.current_user:
+			return
 		veid = self.get_argument("veid", None)
 		if not veid:
 			self.error("Please specify veid.")
@@ -958,11 +994,14 @@ class  APIAction(APIHandler):
 			self.error("Please specify action")
 			return
 		if action == "start":
-			self.json({"result": vm.vz.start()})
+			vm.vz.start()
+			self.json({"result": True})
 		elif action == "stop":
-			self.json({"result": vm.vz.stop()})
+			vm.vz.stop()
+			self.json({"result": True})
 		elif action == "restart":
-			self.json({"result": vm.vz.restart()})
+			vm.vz.restart()
+			self.json({"result": True})
 		else:
 			self.error("Invalid action. Note that destroy is not supported for security reason.")
 		
@@ -1102,6 +1141,7 @@ application = tornado.web.Application([
 	tornado.web.URLSpec(r"/_cron", CronRun, name="cron"),
 	
 	# API
+	tornado.web.URLSpec(r"/api", APIWeb, name="apiweb"),
 	tornado.web.URLSpec(r"/api/info", APIInfo, name="api_info"),
 	tornado.web.URLSpec(r"/api/action", APIAction, name="api_action"),
 	

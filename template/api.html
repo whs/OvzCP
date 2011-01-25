@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block javascript %}
+$(function(){
+	$("button").button();
+});
+{% endblock %}
+{% block body %}
+<div class="notify">
+{% trans %}OvzCP provides API for advanced users. You'll need API key to use it. You can have unlimited keys. The API will return in JSON{% endtrans %}
+</div>
+{% if apikey %}
+<table>
+	<tr>
+		<th>API Key</th><th>API Secret</th><th>Action</th>
+	</tr>
+	{% for i in apikey %}
+	<tr><td>{{i.id}}</td><td>{{i.key}}</td><td><a href="{{reverse_url('apiweb')}}?delete={{i.id}}"><img src="{{static_url('delete.png')}}"></a></td></tr>
+	{% endfor %}
+</table>
+{% endif %}
+<form action="{{reverse_url('apiweb')}}" method="post">{{xsrf_form_html()}}<button type="submit">Request new key</button></form>
+<h1>{% trans %}Authentication {% endtrans %}</h1>
+<p>{% trans %}OvzCP API use SHA1-based signing system with nonce. To sign:
+<ul>
+	<li>Create your request.<br />
+	<code>/api/info?veid=101</code></li>
+	<li>Add a nonce. Nonce can be a string or an integer that have fewer than 50 letters and digits. Nonce must not be reused or the request would fail. Append it to the request.
+	<br /><code>/api/info?veid=101<strong>&nonce=asdf</strong></code></li>
+	<li>Add the API key.<br />
+	<code>/api/info?veid=101&nonce=asdf<strong>&apikey=1</strong></code></li>
+	<li>Finally, sign the query string with SHA1 with the API secret appended.
+		<ul>
+			<li>You get this query string: <code>veid=101&nonce=asdf&apikey=1</code></li>
+			<li>Append your API secret. For example if your API secret is abcdef: <code>veid=101&nonce=asdf&apikey=1abcdef</code></li>
+			<li>Sign it with SHA1: <code>eb6ec410cd401e9daa0c380e8934d4befec4a3b1</code></li>
+			<li>Append to the query string: <code>/api/info?veid=101&nonce=asdf&apikey=1<strong>&hash=eb6ec410cd401e9daa0c380e8934d4befec4a3b1</strong></code></li>
+		</ul>
+	</li>
+</ul>
+If this seems to be complex to you, you also can use your browser's cookie to login, but it would be less secure.
+{% endtrans %}</p>
+<h1>{% trans %}API Methods{% endtrans %}</h1>
+<h2>{% trans %}VM Info{% endtrans %}</h2>
+{% trans endpoint=config.get("varnish", "ovzcphost")+reverse_url('api_info') %}
+<ul>
+	<li><strong>Endpoint:</strong> http://{{endpoint}}</li>
+	<li><strong>Arguments:</strong>
+		<ul>
+			<li><strong>veid</strong>: VEID of the VM to query</li>
+		</ul>
+	</li>
+	<li><strong>Output:</strong><br />
+		<strong>Online host:</strong> <code>{"uptime": 1900621.8, "meminfo": {"WritebackTmp": 0, "SwapTotal": 0, "SwapFree": 0, "MemFree": 1022709760, "HighTotal": 0, "Committed_AS": 0, "SUnreclaim": 0, "NFS_Unstable": 0, "VmallocChunk": 0, "Writeback": 0, "MemTotal": 2056273920, "VmallocUsed": 0, "HugePages_Free": "0", "HugePages_Rsvd": "0", "AnonPages": 0, "Active": 0, "CommitLimit": 0, "Hugepagesize": 2097152, "Cached": 0, "SwapCached": 0, "LowTotal": 2056273920, "Dirty": 0, "Mapped": 0, "HighFree": 0, "SReclaimable": 0, "VmallocTotal": 0, "HugePages_Surp": "0", "Bounce": 0, "Inactive": 0, "PageTables": 0, "HugePages_Total": "0", "Slab": 0, "Buffers": 0, "LowFree": 1022709760}, "memlimit": [1048576000, 2097152000, 262144000], "ip": "10.0.0.101", "hostname": "online", "running": true, "loadAvg": [0.20999999999999999, 0.089999999999999997, 0.029999999999999999], "nproc": 89, "diskinfo": [100000000, 95331420, 4668580], "os": "gentoo"}</code><br />
+		<strong>Offline host:</strong> <code>{"uptime": 0, "memlimit": [500000000, 600000000, 600008000], "ip": "10.0.0.106", "hostname": "offline", "running": false, "loadAvg": [0, 0, 0], "diskinfo": [1000000, 609628, 390372], "os": "debian-4.0"}</code>
+	</li>
+</ul>
+{% endtrans %}
+<h2>{% trans %}VM Action{% endtrans %}</h2>
+{% trans endpoint=config.get("varnish", "ovzcphost")+reverse_url('api_action') %}
+<ul>
+	<li><strong>Endpoint:</strong> http://{{endpoint}}</li>
+	<li><strong>Arguments:</strong>
+		<ul>
+			<li><strong>veid</strong>: VEID of the VM</li>
+			<li><strong>action</strong>: One of these: start,stop,restart</li>
+		</ul>
+	</li>
+	<li><strong>Output:</strong>
+		<code>{"result": true}</code>
+	</li>
+</ul>
+{% endtrans %}
+{% endblock %}

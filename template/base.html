@@ -33,6 +33,7 @@
 			<li><a href="{{reverse_url('containers')}}">{% trans %}Containers{% endtrans %}</a></li>
 			<li><a href="{{reverse_url('billing')}}">{% trans %}Billing{% endtrans %}</a></li>
 			<li><a href="{{reverse_url('hostspec')}}">{% trans %}Host Info{% endtrans %}</a></li>
+			<li><a href="{{reverse_url('apiweb')}}">{% trans %}API{% endtrans %}</a></li>
 {% if config.getboolean("cloudcp", "enabled") %}
 			<li><a href="{{reverse_url('cloud')}}">{% trans %}Cloud Storage{% endtrans %}</a></li>
 {% endif %}
