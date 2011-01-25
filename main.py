@@ -146,10 +146,10 @@ class BaseHandler(BaseAuth):
 		else:
 			return base + path
 	def render(self, tmpl, *args, **kwargs):
-		totalcost = 0
-		for i in myVM(self.current_user, True):
-			if i.vz.running:
-				totalcost += vmBilling(i.vz)
+		#totalcost = 0
+		#for i in myVM(self.current_user, True):
+		#	if i.vz.running:
+		#		totalcost += vmBilling(i.vz)
 		
 		tmplPath = ["template"]
 		if self._mobileWeb:
@@ -175,7 +175,7 @@ class BaseHandler(BaseAuth):
 			"request": self.request,
 			# OvzCP stuff
 			"config": _config,
-			"totalcost": totalcost, 
+			#"totalcost": totalcost, 
 			"cur_url":  self.request.full_url(),
 			"auth_url": urlparse.urljoin(self.request.full_url(), "/auth")
 		}, **kwargs)
@@ -190,13 +190,13 @@ class BaseHandler(BaseAuth):
 		else:
 			veid = vm.veid
 		if act == "start":
-			txt = "Starting "+str(veid)
+			txt = _("Starting %s") % veid
 		elif act == "stop":
-			txt = "Stopping "+str(veid)
+			txt = _("Stopping %s") % veid
 		elif act == "destroy":
-			txt = "Destroying "+str(veid)
+			txt = _("Destroying %s") % veid
 		elif act == "create":
-			txt = "Creating VM"
+			txt = _("Creating VM")
 		else:
 			raise Exception, "Invalid act "+act
 		
@@ -648,7 +648,11 @@ class Billing(BaseHandler):
 			if i.vz.running:
 				vmcost.append((i.veid, vmBilling(i.vz)))
 		cloud = get_cloud_usage(self.current_user.email)
-		self.render("billing.html", vmcost=vmcost, title=_("Billing"), cloud=cloud)
+		totalcost = 0
+		for i in myVM(self.current_user, True):
+			if i.vz.running:
+				totalcost += vmBilling(i.vz)
+		self.render("billing.html", vmcost=vmcost, title=_("Billing"), cloud=cloud, totalcost=totalcost)
 
 class RootPW(BaseHandler):
 	@tornado.web.authenticated

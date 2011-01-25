@@ -2,106 +2,122 @@
 # Copyright (C) 2010 whsgroup.ath.cx
 # This file is distributed under the same license as the OvzCP project.
 # Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>, 2010.
+# WHS <manatsawin@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-03-09 00:15+0700\n"
-"PO-Revision-Date: 2010-03-17 14:42+0700\n"
-"Last-Translator: Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>\n"
-"Language-Team: Thai L10N <thai-l10n@googlegroups.com>\n"
+"PO-Revision-Date: 2011-01-25 21:35+0700\n"
+"Last-Translator: WHS <manatsawin@gmail.com>\n"
+"Language-Team: Thai L10n <thai-l10n@googlegroups.com>\n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Virtaal 0.5.2\n"
+"X-Generator: Virtaal 0.6.1\n"
 "Generated-By: Babel 0.9.1\n"
+
+#: ../main.py:193
+#, python-format
+msgid "Starting %s"
+msgstr "เปิดเครื่อง %s"
+
+#: ../main.py:195
+#, python-format
+msgid "Stopping %s"
+msgstr "ปิดเครื่อง %s"
+
+#: ../main.py:197
+#, python-format
+msgid "Destroying %s"
+msgstr "ทำลาย %s"
+
+#: ../main.py:199 ../main.py:362
+msgid "Creating VM"
+msgstr "สร้าง VM"
 
 #. When accessing /vm/<veid> but OvzCP detect that the VM is not belongs to the
 #. current user, it will return this error
-#: ../main.py:144 ../main.py:675
+#: ../main.py:278 ../main.py:812
 msgid "VM not owned by current user"
 msgstr "ผู้ใช้ปัจจุบันไม่ได้เป็นเจ้าของ VM นี้"
 
-#: ../main.py:146
+#: ../main.py:280
 msgid "VM is not running"
 msgstr "VM ไม่ได้ทำงานอยู่"
 
 #. Displayed when trying to claim a VM that belongs to yourself
-#: ../main.py:149
+#: ../main.py:283
 msgid "VM is already owned by current user"
 msgstr "ท่านเป็นเจ้าของ VM นี้อยู่แล้ว"
 
 #. Displayed when trying to start a VM but user's credit is lower than 1,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:152
+#: ../main.py:286
 #, python-format
 msgid "%s is under 1,000, please refill."
 msgstr "มี %s น้อยกว่า 1,000 กรุณาเติมเพิ่ม"
 
-#: ../main.py:154
+#: ../main.py:288
 msgid "VM is running"
 msgstr "VM กำลังทำงานอยู่"
 
 #. Displayed when trying to create a VM but user's credit is lower than 5,000
 #. credits. The %s is the unit name such as credit
-#: ../main.py:157
+#: ../main.py:291
 #, python-format
 msgid "You need 5,000 %s to create a VM."
 msgstr "คุณจะต้องมี 5,000 %s จึงจะสร้าง VM ได้"
 
-#: ../main.py:161
+#: ../main.py:295
 msgid "VM now belongs to you"
 msgstr "VM กลายเป็นของคุณแล้ว"
 
-#: ../main.py:163
+#: ../main.py:297
 msgid "VM ownership removed. Other can now claim this VM"
 msgstr "ยกเลิกความเป็นเจ้าของ VM แล้ว ผู้ใช้คนอื่นจะสามารถครอบครอง VM นี้ได้"
 
-#: ../main.py:165
+#: ../main.py:299
 msgid "VM destroyed"
 msgstr "ทำลาย VM แล้ว"
 
-#: ../main.py:167 ../template/base.html:306 ../template/container.html:3
+#: ../main.py:301 ../template/base.html:34 ../template/container.html:3
 msgid "Containers"
 msgstr "Containers"
 
-#: ../main.py:198
+#: ../main.py:337
 msgid "Host OS specification"
 msgstr "สเปคเครื่องหลัก"
 
-#: ../main.py:211
+#: ../main.py:350
 msgid "Terms of Service not accepted"
 msgstr "ไม่ได้ยอมรับเงื่อนไขในการให้บริการ"
 
-#: ../main.py:213
+#: ../main.py:352
 msgid "Invalid template name"
 msgstr "ชื่อเทมเพลตผิดรูปแบบ"
 
-#: ../main.py:215 ../main.py:415
+#: ../main.py:354 ../main.py:551
 msgid "Passwords do not match"
 msgstr "รหัสผ่านไม่ตรงกัน"
 
 #. Malformat hostname
-#: ../main.py:217 ../main.py:410
+#: ../main.py:356 ../main.py:546
 msgid "Invalid hostname"
 msgstr "ชื่อโฮสต์ไม่ถูกต้อง"
 
-#: ../main.py:219
+#: ../main.py:358
 msgid "Verification failed. Did you double-submitted the form?"
 msgstr "ไม่ผ่านการตรวจสอบ ท่านได้ส่งแบบฟอร์มสองครั้งหรือเปล่า?"
 
-#: ../main.py:223
-msgid "Creating VM"
-msgstr "สร้าง VM"
-
-#: ../main.py:276
+#: ../main.py:415
 #, python-format
 msgid "Destroy %s"
 msgstr "ทำลาย %s"
 
-#: ../main.py:398
+#: ../main.py:534
 msgid ""
 "VM disk usage exceed allocated amount. You will be billed by amount used "
 "instead"
@@ -110,13 +126,13 @@ msgstr ""
 "คุณจะถูกเรียกเก็บเงินตามจำนวนที่ใช้จริงแทน"
 
 #. Duplicate entry
-#: ../main.py:403
+#: ../main.py:539
 msgid "Entry already exists"
 msgstr "มีรายการอยู่แล้ว"
 
 #. <span class='time'>%s</span> is time in this format: 1 day 3 hours 4 minutes
 #. 5 seconds
-#: ../main.py:407
+#: ../main.py:543
 #, python-format
 msgid ""
 "You have to wait <span class='time'>%s</span> before you can restart the "
@@ -126,157 +142,346 @@ msgstr ""
 "proxy ได้อีกครั้ง"
 
 #. Network interface
-#: ../main.py:413
+#: ../main.py:549
 msgid "Invalid interface"
 msgstr "อินเทอร์เฟสไม่ถูกต้อง"
 
-#: ../main.py:417
+#: ../main.py:553
 msgid "Reverse HTTP proxy is enabled. Please use web forwarding instead"
 msgstr "เนื่องจากได้เปิดระบบ Reverse HTTP proxy กรุณาใช้ปุ่ม เปิดเว็บ แทน"
 
-#: ../main.py:419
+#: ../main.py:555
 msgid "Invalid burst level"
 msgstr "ระดับการ Burst ไม่ถูกต้อง"
 
-#: ../main.py:423
+#: ../main.py:559
 msgid "Settings commited."
 msgstr "บันทึกค่าแล้ว"
 
-#: ../main.py:425
+#: ../main.py:561
 msgid "No changes."
 msgstr "ไม่มีการเปลี่ยนแปลง"
 
-#: ../main.py:427
+#: ../main.py:563
 msgid "Root password successfully changed"
 msgstr "เปลี่ยนรหัสผ่าน root แล้ว"
 
-#: ../main.py:429
+#: ../main.py:565
 msgid "Burst level set"
 msgstr "กำหนดระดับ Burst แล้ว"
 
-#: ../main.py:446
+#: ../main.py:582
 #, python-format
 msgid "%s information"
 msgstr "ข้อมูล %s"
 
-#: ../main.py:465
+#: ../main.py:601
 #, python-format
 msgid "Edit %s"
 msgstr "แก้ไข %s"
 
-#: ../main.py:514 ../template/base.html:307 ../template/dashboard.html:95
-#: ../template/info.html:105
+#: ../main.py:655 ../template/base.html:35 ../template/dashboard.html:95
+#: ../template/info.html:105 ../template/mobile/info.html:27
 msgid "Billing"
 msgstr "การเงิน"
 
-#: ../main.py:684
+#: ../main.py:821
 msgid "Cannot connect to Munin on the VM."
 msgstr "ไม่สามารถเชื่อมต่อหา Munin บน VM"
 
-#: ../main.py:704
+#: ../main.py:841
 #, python-format
 msgid "Limit not reached. Please wait %s seconds"
 msgstr "ยังไม่ถึงกำหนดเวลา กรุณารออีก %s วินาที"
 
-#: ../main.py:727 ../template/base.html:305
+#: ../main.py:864 ../template/base.html:33
 msgid "Dashboard"
 msgstr "แผงควบคุม"
 
-#: ../main.py:739
+#: ../main.py:876
 msgid "Host OS"
 msgstr "ระบบหลัก"
 
-#: ../main.py:753 ../template/base.html:310
+#: ../main.py:890 ../template/base.html:39
 msgid "Cloud Storage"
 msgstr "พื้นที่บนกลุ่มเมฆ"
 
-#: ../template/base.html:213
+#: ../template/api.html:9
 msgid ""
-"To switch account, please logout from your account at google.com before "
-"click this link.\n"
-"Otherwise, you will be returned to this page.\n"
-"\n"
-"Do you want to continue?"
+"OvzCP provides API for advanced users. You'll need API key to use it. You"
+" can have unlimited keys. The API will return in JSON"
 msgstr ""
-"ในการเปลี่ยนบัญชีผู้ใช้ กรุณาออกจากระบบที่ google.com ก่อนกดที่ลิงก์นี้ "
-"มิเช่นนั้นแล้วคุณจะกลับมายังหน้านี้\n"
-"\n"
-"ต้องการดำเนินการต่อไปหรือไม่?"
+"OvzCP มี API สำหรับผู้ใช้งานที่เชี่ยวชาญ โดยท่านจะต้องมี API key ก่อน "
+"ซึ่งสามารถขอได้ไม่จำกัด และ API นี้จะคืนค่าเป็น JSON เสมอ"
 
-#: ../template/base.html:224 ../template/base.html:225
+#: ../template/api.html:21
+msgid "Request new key"
+msgstr "ขอคีย์ใหม่"
+
+#: ../template/api.html:22
+msgid "Authentication "
+msgstr "การยึนยันตน"
+
+#: ../template/api.html:23
+msgid ""
+"OvzCP API use SHA1-based signing system with nonce. To sign:\n"
+"<ul>\n"
+"\t<li>Create your request.<br />\n"
+"\t<code>/api/info?veid=101</code></li>\n"
+"\t<li>Add a nonce. Nonce can be a string or an integer that have fewer "
+"than 50 letters and digits. Nonce must not be reused or the request would"
+" fail. Append it to the request.\n"
+"\t<br /><code>/api/info?veid=101<strong>&nonce=asdf</strong></code></li>\n"
+"\t<li>Add the API key.<br />\n"
+"\t"
+"<code>/api/info?veid=101&nonce=asdf<strong>&apikey=1</strong></code></li>"
+"\n"
+"\t<li>Finally, sign the query string with SHA1 with the API secret "
+"appended.\n"
+"\t\t<ul>\n"
+"\t\t\t<li>You get this query string: "
+"<code>veid=101&nonce=asdf&apikey=1</code></li>\n"
+"\t\t\t<li>Append your API secret. For example if your API secret is "
+"abcdef: <code>veid=101&nonce=asdf&apikey=1abcdef</code></li>\n"
+"\t\t\t<li>Sign it with SHA1: "
+"<code>eb6ec410cd401e9daa0c380e8934d4befec4a3b1</code></li>\n"
+"\t\t\t<li>Append to the query string: "
+"<code>/api/info?veid=101&nonce=asdf&apikey=1<strong>&hash=eb6ec410cd401e9daa0c380e8934d4befec4a3b1</strong></code></li>"
+"\n"
+"\t\t</ul>\n"
+"\t</li>\n"
+"</ul>\n"
+"If this seems to be complex to you, you also can use your browser's "
+"cookie to login, but it would be less secure.\n"
+msgstr ""
+"OvzCP API ใช้ระบบการลงนาม SHA1 ที่มีรหัสใช้ครั้งเดียว การลงนามทำดังนี้\n"
+"<ul>\n"
+"\t<li>สร้างคำสั่งที่ใช้<br />\n"
+"\t<code>/api/info?veid=101</code></li>\n"
+"\t<li>เติมรหัสใช้ครั้งเดียว ซึ่งเป็นข้อความหรือตัวเลขที่มีความยาวน้อยกว่า"
+" 50 ตัวอักษร และใช้ซ้ำไม่ได้ จากนั้นเขียนต่อไปยัง request\n"
+"<code>/api/info?veid=101<strong>&nonce=asdf</strong></code></li>\n"
+"\t<li>เติม API key<br />\n"
+"\t"
+"<code>/api/info?veid=101&nonce=asdf<strong>&apikey=1</strong></code></li>"
+"\n"
+"\t<li>และสุดท้าย ต่อท้าย Query string ที่เติม API secret ต่อท้ายแล้ว "
+"ด้วยเลข SHA1\n"
+"\t\t<ul>\n"
+"\t\t\t<li>จากขั้นต่อก่อนนี้ จะได้ query string ดังนี้: "
+"<code>veid=101&nonce=asdf&apikey=1</code></li>\n"
+"\t\t\t<li>เติม API secret ลงไป เช่นหาก API secret คือ abcdef "
+"ให้เติมไปดังนี้: <code>veid=101&nonce=asdf&apikey=1abcdef</code></li>\n"
+"\t\t\t<li>ลง SHA1: "
+"<code>eb6ec410cd401e9daa0c380e8934d4befec4a3b1</code></li>\n"
+"\t\t\t<li>เขียนต่อไปยัง query string: "
+"<code>/api/info?veid=101&nonce=asdf&apikey=1<strong>&hash=eb6ec410cd401e9daa0c380e8934d4befec4a3b1</strong></code></li>"
+"\n"
+"\t\t</ul>\n"
+"\t</li>\n"
+"</ul>\n"
+"หากระบบนี้ซับซ้อน คุณยังสามารถใช้คุกกี้ของ browser "
+"เข้าระบบได้แต่จะมีความปลอดภัยน้อยกว่า\n"
+
+#: ../template/api.html:42
+msgid "API Methods"
+msgstr "API Methods"
+
+#: ../template/api.html:43
+msgid "VM Info"
+msgstr "ข้อมูล VM"
+
+#: ../template/api.html:44
+#, python-format
+msgid ""
+"\n"
+"<ul>\n"
+"\t<li><strong>Endpoint:</strong> http://%(endpoint)s</li>\n"
+"\t<li><strong>Arguments:</strong>\n"
+"\t\t<ul>\n"
+"\t\t\t<li><strong>veid</strong>: VEID of the VM to query</li>\n"
+"\t\t</ul>\n"
+"\t</li>\n"
+"\t<li><strong>Output:</strong><br />\n"
+"\t\t<strong>Online host:</strong> <code>{\"uptime\": 1900621.8, "
+"\"meminfo\": {\"WritebackTmp\": 0, \"SwapTotal\": 0, \"SwapFree\": 0, "
+"\"MemFree\": 1022709760, \"HighTotal\": 0, \"Committed_AS\": 0, "
+"\"SUnreclaim\": 0, \"NFS_Unstable\": 0, \"VmallocChunk\": 0, "
+"\"Writeback\": 0, \"MemTotal\": 2056273920, \"VmallocUsed\": 0, "
+"\"HugePages_Free\": \"0\", \"HugePages_Rsvd\": \"0\", \"AnonPages\": 0, "
+"\"Active\": 0, \"CommitLimit\": 0, \"Hugepagesize\": 2097152, \"Cached\":"
+" 0, \"SwapCached\": 0, \"LowTotal\": 2056273920, \"Dirty\": 0, "
+"\"Mapped\": 0, \"HighFree\": 0, \"SReclaimable\": 0, \"VmallocTotal\": 0,"
+" \"HugePages_Surp\": \"0\", \"Bounce\": 0, \"Inactive\": 0, "
+"\"PageTables\": 0, \"HugePages_Total\": \"0\", \"Slab\": 0, \"Buffers\": "
+"0, \"LowFree\": 1022709760}, \"memlimit\": [1048576000, 2097152000, "
+"262144000], \"ip\": \"10.0.0.101\", \"hostname\": \"online\", "
+"\"running\": true, \"loadAvg\": [0.20999999999999999, "
+"0.089999999999999997, 0.029999999999999999], \"nproc\": 89, \"diskinfo\":"
+" [100000000, 95331420, 4668580], \"os\": \"gentoo\"}</code><br />\n"
+"\t\t<strong>Offline host:</strong> <code>{\"uptime\": 0, \"memlimit\": "
+"[500000000, 600000000, 600008000], \"ip\": \"10.0.0.106\", \"hostname\": "
+"\"offline\", \"running\": false, \"loadAvg\": [0, 0, 0], \"diskinfo\": "
+"[1000000, 609628, 390372], \"os\": \"debian-4.0\"}</code>\n"
+"\t</li>\n"
+"</ul>\n"
+msgstr ""
+"\n"
+"<ul>\n"
+"\t<li><strong>ปลายทาง:</strong> http://%(endpoint)s</li>\n"
+"\t<li><strong>อากิวเมนต์:</strong>\n"
+"\t\t<ul>\n"
+"\t\t\t<li><strong>veid</strong>: VEID ของ VM ที่จะเรียกดูข้อมูล</li>\n"
+"\t\t</ul>\n"
+"\t</li>\n"
+"\t<li><strong>ผลลัพท์:</strong><br />\n"
+"\t\t<strong>เครื่องเปิดอยู่:</strong> <code>{\"uptime\": 1900621.8, "
+"\"meminfo\": {\"WritebackTmp\": 0, \"SwapTotal\": 0, \"SwapFree\": 0, "
+"\"MemFree\": 1022709760, \"HighTotal\": 0, \"Committed_AS\": 0, "
+"\"SUnreclaim\": 0, \"NFS_Unstable\": 0, \"VmallocChunk\": 0, "
+"\"Writeback\": 0, \"MemTotal\": 2056273920, \"VmallocUsed\": 0, "
+"\"HugePages_Free\": \"0\", \"HugePages_Rsvd\": \"0\", \"AnonPages\": 0, "
+"\"Active\": 0, \"CommitLimit\": 0, \"Hugepagesize\": 2097152, \"Cached\":"
+" 0, \"SwapCached\": 0, \"LowTotal\": 2056273920, \"Dirty\": 0, "
+"\"Mapped\": 0, \"HighFree\": 0, \"SReclaimable\": 0, \"VmallocTotal\": 0,"
+" \"HugePages_Surp\": \"0\", \"Bounce\": 0, \"Inactive\": 0, "
+"\"PageTables\": 0, \"HugePages_Total\": \"0\", \"Slab\": 0, \"Buffers\": "
+"0, \"LowFree\": 1022709760}, \"memlimit\": [1048576000, 2097152000, "
+"262144000], \"ip\": \"10.0.0.101\", \"hostname\": \"online\", "
+"\"running\": true, \"loadAvg\": [0.20999999999999999, "
+"0.089999999999999997, 0.029999999999999999], \"nproc\": 89, \"diskinfo\":"
+" [100000000, 95331420, 4668580], \"os\": \"gentoo\"}</code><br />\n"
+"\t\t<strong>เครื่องปิด:</strong> <code>{\"uptime\": 0, \"memlimit\": "
+"[500000000, 600000000, 600008000], \"ip\": \"10.0.0.106\", \"hostname\": "
+"\"offline\", \"running\": false, \"loadAvg\": [0, 0, 0], \"diskinfo\": "
+"[1000000, 609628, 390372], \"os\": \"debian-4.0\"}</code>\n"
+"\t</li>\n"
+"</ul>\n"
+
+#: ../template/api.html:58
+msgid "VM Action"
+msgstr "คำสั่ง VM"
+
+#: ../template/api.html:59
+#, python-format
+msgid ""
+"\n"
+"<ul>\n"
+"\t<li><strong>Endpoint:</strong> http://%(endpoint)s</li>\n"
+"\t<li><strong>Arguments:</strong>\n"
+"\t\t<ul>\n"
+"\t\t\t<li><strong>veid</strong>: VEID of the VM</li>\n"
+"\t\t\t<li><strong>action</strong>: One of these: start,stop,restart</li>\n"
+"\t\t</ul>\n"
+"\t</li>\n"
+"\t<li><strong>Output:</strong>\n"
+"\t\t<code>{\"result\": true}</code>\n"
+"\t</li>\n"
+"</ul>\n"
+msgstr ""
+"\n"
+"<ul>\n"
+"\t<li><strong>ปลายทาง:</strong> http://%(endpoint)s</li>\n"
+"\t<li><strong>อากิวเมนต์:</strong>\n"
+"\t\t<ul>\n"
+"\t\t\t<li><strong>veid</strong>: VEID ของ VM</li>\n"
+"\t\t\t<li><strong>action</strong>: อันใดอันหนึ่ง: start,stop,restart</li>"
+"\n"
+"\t\t</ul>\n"
+"\t</li>\n"
+"\t<li><strong>ผลลัพท์:</strong>\n"
+"\t\t<code>{\"result\": true}</code>\n"
+"\t</li>\n"
+"</ul>\n"
+
+#: ../template/base.html:17
+msgid "by whsgroup.ath.cx"
+msgstr "โดย whsgroup.ath.cx"
+
+#: ../template/base.html:27
+#, python-format
+msgid "Time left until %(unit)s depletion"
+msgstr "%(unit)s จะหมดภายใน"
+
+#: ../template/base.html:36
+msgid "Host Info"
+msgstr "ข้อมูลระบบหลัก"
+
+#: ../template/base.html:37
+msgid "API"
+msgstr "API"
+
+#: ../template/base.html:51
+msgid "Collapse/Expand"
+msgstr "ย่อ/ขยาย"
+
+#: ../template/base.html:62
+#, python-format
+msgid "You have no %(unit)s available!"
+msgstr "คุณไม่เหลือ %(unit)s แล้ว!"
+
+#: ../template/base.html:80 ../template/base.html:81
 msgid "day"
 msgid_plural "days"
 msgstr[0] "วัน"
 msgstr[1] "วัน"
 
 #. Shorter version of day
-#: ../template/base.html:227
+#: ../template/base.html:83
 msgid "d"
 msgstr "ว."
 
-#: ../template/base.html:234 ../template/base.html:235
+#: ../template/base.html:90 ../template/base.html:91
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "ชั่วโมง"
 msgstr[1] "ชั่วโมง"
 
 #. Shorter version of hour
-#: ../template/base.html:237
+#: ../template/base.html:93
 msgid "h"
 msgstr "ชม."
 
-#: ../template/base.html:244 ../template/base.html:245
+#: ../template/base.html:100 ../template/base.html:101
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "นาที"
 msgstr[1] "นาที"
 
 #. Shorter version of minutes
-#: ../template/base.html:247
+#: ../template/base.html:103
 msgid "m"
 msgstr "น."
 
-#: ../template/base.html:253 ../template/base.html:254
+#: ../template/base.html:109 ../template/base.html:110
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "วินาที"
 msgstr[1] "วินาที"
 
 #. Shorter version of seconds
-#: ../template/base.html:256
+#: ../template/base.html:112
 msgid "s"
 msgstr "วิ"
 
 #. Cron will be run in: now
-#: ../template/base.html:261
+#: ../template/base.html:117
 msgid "now"
 msgstr "ขณะนี้"
 
-#: ../template/base.html:270
+#: ../template/base.html:136
 msgid "Double click to close"
 msgstr "ดับเบิลคลิกเพื่อปิด"
 
-#: ../template/base.html:291
-msgid "by whsgroup.ath.cx"
-msgstr "โดย whsgroup.ath.cx"
-
-#: ../template/base.html:299
+#: ../template/base.html:147 ../template/mobile/info.html:12
 #, python-format
-msgid "Time left until %(unit)s depletion"
-msgstr "%(unit)s จะหมดภายใน"
+msgid "Start %(veid)s?"
+msgstr "เปิดเครื่อง %(veid)s?"
 
-#: ../template/base.html:308
-msgid "Host Info"
-msgstr "ข้อมูลระบบหลัก"
-
-#: ../template/base.html:321
-msgid "Collapse/Expand"
-msgstr "ย่อ/ขยาย"
-
-#: ../template/base.html:332
+#: ../template/base.html:153 ../template/mobile/info.html:10
 #, python-format
-msgid "You have no %(unit)s available!"
-msgstr "คุณไม่เหลือ %(unit)s แล้ว!"
+msgid "Stop %(veid)s?"
+msgstr "ปิดเครื่อง %(veid)s"
 
 #: ../template/billing.html:4
 #, python-format
@@ -301,6 +506,7 @@ msgid "Click each VM's ID to view detailed cost."
 msgstr "คลิกบน ID ของ VM แต่ละตัวเพื่อดูรายละเอียดของค่าใช้จ่าย"
 
 #: ../template/billing.html:7 ../template/info.html:106
+#: ../template/mobile/info.html:28
 msgid "All calculations are rounded up."
 msgstr "การคำนวนทั้งหมดนี้ปัดขึ้น"
 
@@ -330,27 +536,27 @@ msgstr "ราคา (%(unit)s)"
 msgid "This VM is in burst level %(burst)s"
 msgstr "VM นี้อยู่ใน Burst ขั้นที่ %(burst)s"
 
-#: ../template/billing.html:19 ../template/info.html:116
+#: ../template/billing.html:23 ../template/info.html:116
 msgid "Total"
 msgstr "รวม"
 
-#: ../template/billing.html:20
+#: ../template/billing.html:24
 msgid "Will deplete in"
 msgstr "จะหมดภายใน"
 
 #: ../template/cloud.html:16
 #, python-format
 msgid ""
-"Cloud Storage is an practically unlimited storage. This storage will be "
-"replicated to other hosts and it will be served by the host nearest to the "
-"user so your site will loads faster. However, cloud storage doesn't have "
-"scripting ability.<br />\n"
+"Cloud Storage is a practically unlimited storage. This storage will be "
+"replicated to other hosts and it will be served by the host nearest to "
+"the user so your site will loads faster. However, cloud storage doesn't "
+"have scripting ability.<br />\n"
 "Cloud storage costs %(price)s %(unit)s per %(per)s MB"
 msgstr ""
 "พื้นที่บนกลุ่มเมฆเป็นพื้นที่เก็บข้อมูลที่เรียกได้ว่าไม่มีจำกัด "
 "ข้อมูลในนี้จะถูกคัดลอกไปยังเครื่องอื่นๆ "
-"และผู้ใช้งานจะได้รับข้อมูลจากเครื่องที่ใกล้ที่สุด ทำให้เว็บไซต์โหลดไวขึ้น "
-"อย่างไรก็ตาม พื้นที่นี้ไม่สามารถรันสคริปต์ประมวลผลต่างๆ ได้ <br />\n"
+"และผู้ใช้งานจะได้รับข้อมูลจากเครื่องที่ใกล้ที่สุด ทำให้เว็บไซต์โหลดไวขึ้น"
+" อย่างไรก็ตาม พื้นที่นี้ไม่สามารถรันสคริปต์ประมวลผลต่างๆ ได้ <br />\n"
 "พื้นที่บนกลุ่มเมฆคิดราคา %(price)s %(unit)s ต่อ %(per)s MB"
 
 #: ../template/cloud.html:20
@@ -379,10 +585,12 @@ msgstr "ขอรหัสผ่าน"
 #: ../template/cloud.html:27
 msgid ""
 "After you receive your password, click the button again will change your "
-"password to a new one. If you happen to lost your old password, it's lost "
-"forever.<br />Note that no data would be lost if you reset your password."
+"password to a new one. If you happen to lost your old password, it's lost"
+" forever.<br />Note that no data would be lost if you reset your "
+"password."
 msgstr ""
-"หลังจากคุณได้รับรหัสผ่านแล้ว การคลิกปุ่มนี้อีกครั้งจะเป็นการเปลี่ยนรหัสผ่าน "
+"หลังจากคุณได้รับรหัสผ่านแล้ว "
+"การคลิกปุ่มนี้อีกครั้งจะเป็นการเปลี่ยนรหัสผ่าน "
 "หากคุณทำรหัสผ่านหายจะไม่สามารถกู้คืนได้ <br/>หมายเหตุ: "
 "หากมีการรีเซตรหัสผ่านข้อมูลจะไม่สูญหาย"
 
@@ -405,11 +613,12 @@ msgid "Hostname"
 msgstr "ชื่อโฮสต์"
 
 #: ../template/container.html:7 ../template/dashboard.html:75
-#: ../template/info.html:126
+#: ../template/info.html:126 ../template/mobile/info.html:36
 msgid "IP"
 msgstr "IP"
 
 #: ../template/container.html:8 ../template/info.html:127
+#: ../template/mobile/info.html:37
 msgid "OS Template"
 msgstr "แม่แบบระบบ"
 
@@ -451,7 +660,7 @@ msgid "Edit %(veid)s"
 msgstr "แก้ไข %(veid)s"
 
 #: ../template/container.html:21 ../template/dashboard.html:83
-#: ../template/info.html:85
+#: ../template/info.html:85 ../template/mobile/info.html:9
 #, python-format
 msgid "Restart %(veid)s?"
 msgstr "รีสตาร์ท %(veid)s?"
@@ -462,21 +671,9 @@ msgid "Restart %(veid)s"
 msgstr "รีสตาร์ท %(veid)s"
 
 #: ../template/container.html:22 ../template/dashboard.html:84
-#: ../template/info.html:86
-#, python-format
-msgid "Stop %(veid)s?"
-msgstr "ปิดเครื่อง %(veid)s"
-
-#: ../template/container.html:22 ../template/dashboard.html:84
 #, python-format
 msgid "Stop %(veid)s"
 msgstr "ปิดเครื่อง %(veid)s"
-
-#: ../template/container.html:24 ../template/dashboard.html:86
-#: ../template/info.html:88
-#, python-format
-msgid "Start %(veid)s?"
-msgstr "เปิดเครื่อง %(veid)s?"
 
 #: ../template/container.html:24 ../template/dashboard.html:86
 #, python-format
@@ -535,7 +732,7 @@ msgstr "ชนิด"
 
 #: ../template/create.html:87 ../template/edit.html:31 ../template/edit.html:36
 #: ../template/edit.html:82 ../template/edit.html:89 ../template/info.html:113
-#: ../template/info.html:137
+#: ../template/info.html:137 ../template/mobile/info.html:30
 msgid "Memory"
 msgstr "หน่วยความจำ"
 
@@ -602,11 +799,13 @@ msgstr ""
 "หลังจากเสร็จขั้นตอนเหล่านี้แล้ว"
 
 #: ../template/create.html:128 ../template/info.html:6
-#: ../template/info.html:102
+#: ../template/info.html:102 ../template/mobile/info.html:21
+#: ../template/mobile/info.html:156
 msgid "Root password"
 msgstr "รหัสผ่าน root"
 
 #: ../template/create.html:129 ../template/info.html:225
+#: ../template/mobile/info.html:165
 msgid "Confirm Root password"
 msgstr "ยึนยันรหัสผ่าน root"
 
@@ -633,8 +832,13 @@ msgid "Create"
 msgstr "สร้าง"
 
 #: ../template/create.html:137
-msgid "After click \"Create\", it takes while to create the VM."
-msgstr "หลังจากคลิก \"สร้าง\" แล้วจะใช้เวลาครู่หนึ่งในการสร้าง VM"
+msgid ""
+"After click \"Create\", it takes while to create the VM. If your browser "
+"display a timeout error page, just hit back twice and refresh the page."
+msgstr ""
+"หลังจากกดปุ่ม \"สร้าง\" แล้วจะใช้เวลาครู่หนึ่งในการสร้างเครื่องเสมือน "
+"หากเบราว์เซอร์ของคุณแสดงหน้า Timeout กรุณากดปุ่ม back "
+"ไปสองครั้งแล้วรีเฟรชหน้านั้น"
 
 #: ../template/dashboard.html:72
 msgid "VM List"
@@ -694,9 +898,14 @@ msgid "Please enable JavaScript"
 msgstr "กรุณาเปิด JavaScript"
 
 #: ../template/edit.html:20 ../template/edit.html:25 ../template/edit.html:62
-#: ../template/info.html:114
+#: ../template/info.html:114 ../template/mobile/info.html:31
 msgid "Disk"
 msgstr "ดิสก์"
+
+#: ../template/edit.html:57
+#, python-format
+msgid "Editing %(veid)s"
+msgstr "แก้ไข %(veid)s"
 
 #: ../template/edit.html:58
 msgid "Saving this page will result in VM being restarted"
@@ -708,14 +917,17 @@ msgid "Save"
 msgstr "บันทึก"
 
 #: ../template/info.html:10 ../template/info.html:115
+#: ../template/mobile/info.html:32 ../template/mobile/info.html:174
 msgid "Burst"
 msgstr "Burst"
 
 #: ../template/info.html:15 ../template/info.html:94
+#: ../template/mobile/info.html:16 ../template/mobile/info.html:69
 msgid "Web forward"
 msgstr "เปิดเว็บ"
 
 #: ../template/info.html:21 ../template/info.html:97
+#: ../template/mobile/info.html:19 ../template/mobile/info.html:114
 msgid "Port forward"
 msgstr "เปิดพอร์ต"
 
@@ -771,7 +983,7 @@ msgstr "แก้ไข"
 msgid "Set burst level"
 msgstr "กำหนดระดับ Burst"
 
-#: ../template/info.html:92
+#: ../template/info.html:92 ../template/mobile/info.html:14
 #, python-format
 msgid "Burst (%(burst)s)"
 msgstr "Burst (%(burst)s)"
@@ -813,7 +1025,7 @@ msgstr ""
 msgid "Every VM created must paid this amount."
 msgstr "VM ทุกตัวจะต้องจ่ายค่านี้"
 
-#: ../template/info.html:112
+#: ../template/info.html:112 ../template/mobile/info.html:29
 msgid "Per VM"
 msgstr "ราย VM"
 
@@ -821,7 +1033,7 @@ msgstr "ราย VM"
 msgid "Total times (0.5 x burst level)"
 msgstr "ราคารวม คูณ (0.5 x ระดับ Burst)"
 
-#: ../template/info.html:115
+#: ../template/info.html:115 ../template/mobile/info.html:32
 #, python-format
 msgid "level %(burst)s"
 msgstr "ระดับ %(burst)s"
@@ -831,7 +1043,7 @@ msgstr "ระดับ %(burst)s"
 msgid "%(unit)s will run out in <small>(not counting other VM)</small>"
 msgstr "%(unit)s จะหมดใน <small>(เมื่อไม่นับ VM ตัวอื่นๆ)</small>"
 
-#: ../template/info.html:120
+#: ../template/info.html:120 ../template/mobile/info.html:35
 msgid "Information"
 msgstr "ข้อมูล"
 
@@ -861,7 +1073,7 @@ msgid ""
 "capacity temporary."
 msgstr "VM นี้ใช้เนื้อที่ได้เท่าไร โดยคุณอาจจะใช้เกินได้ชั่วคราว"
 
-#: ../template/info.html:128
+#: ../template/info.html:128 ../template/mobile/info.html:38
 msgid "Disk Capacity"
 msgstr "ความจุดิสก์"
 
@@ -870,10 +1082,12 @@ msgid "How long does this VM have been started"
 msgstr "ระยะเวลาที่เปิด VM นี้มา"
 
 #: ../template/info.html:130 ../template/spec.html:14
+#: ../template/mobile/info.html:40
 msgid "Uptime"
 msgstr "Uptime"
 
 #: ../template/info.html:131 ../template/spec.html:15
+#: ../template/mobile/info.html:41
 msgid "Load average"
 msgstr "โหลดเฉลี่ย"
 
@@ -894,6 +1108,7 @@ msgid "The more process, the slower your machine"
 msgstr "ยิ่งมีโพรเซสมากเครื่องก็ยิ่งช้า"
 
 #: ../template/info.html:132 ../template/spec.html:12
+#: ../template/mobile/info.html:42
 msgid "Process count"
 msgstr "จำนวนโพรเซส"
 
@@ -902,6 +1117,7 @@ msgid "Monitoring & Graphing"
 msgstr "การเฝ้าระวังและกราฟ"
 
 #: ../template/info.html:135 ../template/spec.html:17
+#: ../template/mobile/info.html:45
 msgid "Munin"
 msgstr "Munin"
 
@@ -917,7 +1133,7 @@ msgstr ""
 "โปรแกรมของท่านใช้หน่วยความจำได้มากเท่าใด "
 "ถ้าส่วนนี้เต็มโปรแกรมยังอาจจะรันได้ในส่วนของ Burstable"
 
-#: ../template/info.html:138
+#: ../template/info.html:138 ../template/mobile/info.html:48
 msgid "Guaranteed"
 msgstr "การันตี"
 
@@ -931,7 +1147,7 @@ msgstr ""
 "ที่ต้องการใช้หน่วยความจำและส่วนการันตียังไม่เต็ม "
 "โปรแกรมของท่านจะถูกปิดแทน"
 
-#: ../template/info.html:139
+#: ../template/info.html:139 ../template/mobile/info.html:49
 msgid "Burstable"
 msgstr "Burstable"
 
@@ -966,11 +1182,11 @@ msgstr "รีสตาร์ทพร็อกซี่"
 msgid "Domain"
 msgstr "โดเมน"
 
-#: ../template/info.html:164
+#: ../template/info.html:164 ../template/mobile/info.html:96
 msgid "Port"
 msgstr "พอร์ต"
 
-#: ../template/info.html:164
+#: ../template/info.html:164 ../template/mobile/info.html:100
 msgid "Wildcard"
 msgstr "Wildcard"
 
@@ -978,13 +1194,13 @@ msgstr "Wildcard"
 msgid "Delete this item"
 msgstr "ลบรายการนี้"
 
-#: ../template/info.html:170
+#: ../template/info.html:170 ../template/mobile/info.html:80
 #, python-format
 msgid "Delete %(hostname)s?"
 msgstr "ลบ %(hostname)s?"
 
 #. Network interface
-#: ../template/info.html:193
+#: ../template/info.html:193 ../template/mobile/info.html:131
 msgid "Interface"
 msgstr "อินเทอร์เฟส"
 
@@ -992,16 +1208,16 @@ msgstr "อินเทอร์เฟส"
 msgid "Internal Port"
 msgstr "พอร์ตภายใน"
 
-#: ../template/info.html:193
+#: ../template/info.html:193 ../template/mobile/info.html:145
 msgid "External Port"
 msgstr "พอร์ตภายนอก"
 
-#: ../template/info.html:198
+#: ../template/info.html:198 ../template/mobile/info.html:120
 #, python-format
 msgid "Delete %(iface)s in:%(port)s out:%(outport)s?"
 msgstr "ลบ %(iface)s ภายใน:%(port)s ภายนอก:%(outport)s?"
 
-#: ../template/info.html:198
+#: ../template/info.html:198 ../template/mobile/info.html:120
 #, python-format
 msgid "Delete DMZ forwarding to %(iface)s?"
 msgstr "ลบการส่งต่อแบบ DMZ ไปยัง %(iface)s?"
@@ -1015,7 +1231,7 @@ msgstr ""
 "ในการส่งต่อทุกพอร์ต พิมพ์ DMZ ในช่องพอร์ตภายนอก ช่องอื่นๆ "
 "ไม่จำเป็นต้องกรอก"
 
-#: ../template/info.html:224
+#: ../template/info.html:224 ../template/mobile/info.html:161
 msgid "New Root password"
 msgstr "รหัสผ่าน root ใหม่"
 
@@ -1032,7 +1248,7 @@ msgstr ""
 " มันจะได้ 66%<br />\n"
 "หากว่ามี VM ตัวเดียวใช้งาน CPU จะได้ CPU 100% เสมอ"
 
-#: ../template/info.html:235
+#: ../template/info.html:235 ../template/mobile/info.html:179
 msgid "Burst level"
 msgstr "ระดับ Burst"
 
@@ -1044,6 +1260,11 @@ msgid ""
 msgstr ""
 "คุณจะต้องชำระเงินเป็นจำนวนเท่ากับราคาปกติ คูณ 0.5 เท่าของระดับ Burst เช่น"
 " VM ที่ใช้ 200 %(unit)s และมี Burst ระดับ 5 จะใช้ 500 %(unit)s"
+
+#: ../template/poller.html:53
+#, python-format
+msgid "Please wait while OvzCP is %(act)s"
+msgstr "กรุณารอขณะที่ OvzCP กำลัง%(act)s"
 
 #: ../template/spec.html:7
 msgid "Data"
@@ -1076,3 +1297,63 @@ msgstr "VM กำลังทำงาน"
 #: ../template/spec.html:14
 msgid "How long does this machine have been started"
 msgstr "เครื่องนี้เปิดได้นานเท่าใดแล้ว"
+
+#: ../template/mobile/dashboard.html:9
+msgid "Total VM cost"
+msgstr "ราคาค่า VM ทั้งหมด"
+
+#: ../template/mobile/dashboard.html:9
+#, python-format
+msgid "%(billing)s %(unit)s"
+msgstr "%(billing)s %(unit)s"
+
+#: ../template/mobile/dashboard.html:10
+#, python-format
+msgid "%(unit)s left"
+msgstr "คงเหลือ %(unit)s"
+
+#: ../template/mobile/dashboard.html:13
+msgid "VM"
+msgstr "VM"
+
+#: ../template/mobile/dashboard.html:20
+#, python-format
+msgid "Logged in as %(current_user)s"
+msgstr "เข้าสู่ระบบเป็น %(current_user)s"
+
+#: ../template/mobile/dashboard.html:21
+msgid "Logout"
+msgstr "ออกจากระบบ"
+
+#: ../template/mobile/info.html:72
+msgid "After editing, please use the desktop UI to restart the proxy."
+msgstr "หลังจากแก้ไขแล้ว กรุณาใช้เว็บบนคอมพิวเตอร์รีสตาร์ทพร็อกซี่"
+
+#: ../template/mobile/info.html:80 ../template/mobile/info.html:120
+msgid "Delete"
+msgstr "ลบ"
+
+#: ../template/mobile/info.html:87 ../template/mobile/info.html:126
+msgid "Add new"
+msgstr "เพิ่ม"
+
+#: ../template/mobile/info.html:92
+msgid "Host"
+msgstr "โฮสต์"
+
+#: ../template/mobile/info.html:102
+msgid "Off"
+msgstr "ปิด"
+
+#: ../template/mobile/info.html:103
+msgid "On"
+msgstr "เปิด"
+
+#: ../template/mobile/info.html:106 ../template/mobile/info.html:148
+#: ../template/mobile/info.html:168 ../template/mobile/info.html:182
+msgid "Submit"
+msgstr "ส่ง"
+
+#: ../template/mobile/info.html:141
+msgid "VM Port"
+msgstr "พอร์ทใน VM"

@@ -18,7 +18,7 @@ $(function(){
 	{% endfor %}
 </table>
 {% endif %}
-<form action="{{reverse_url('apiweb')}}" method="post">{{xsrf_form_html()}}<button type="submit">Request new key</button></form>
+<form action="{{reverse_url('apiweb')}}" method="post">{{xsrf_form_html()}}<button type="submit">{% trans %}Request new key{% endtrans %}</button></form>
 <h1>{% trans %}Authentication {% endtrans %}</h1>
 <p>{% trans %}OvzCP API use SHA1-based signing system with nonce. To sign:
 <ul>

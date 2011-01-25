@@ -13,8 +13,9 @@
 <div id="container">
 <div id="top-bar">
 	<div id="top-bar-in">
-		<div id="logo"><a href="/">OvzCP</a></div>
-		<div id="version">0.2 {% trans %}by whsgroup.ath.cx{% endtrans %} | <img src="{{static_url('flags/'+locale+'.gif')}}" />
+		<div id="logo"><a href="/"><img src="{{static_url('logo.png')}}" alt="OvzCP" title="OvzCP" /></a></div>
+		<div id="version">1.0 {% trans %}by whsgroup.ath.cx{% endtrans %}<br />
+		<img src="{{static_url('flags/'+locale+'.gif')}}" />
 		<form method="get" style="display: inline;" id="langfrm"><select name="_locale">
 		{% for i in localeList.iteritems() %}
 			<option value="{{i[0]}}"{% if i[0] == locale %} selected{% endif %}>{{i[1]}}</option>
@@ -22,8 +23,8 @@
 		</select></form>
 		</div>
 		{# Actually, we need lso service, but Google does not allow external redirection #}
-		<div id="user"><a href="https://www.google.com/accounts/Logout?continue={{auth_url}}&service=ah"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a> 
-		({{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="{% trans %}Time left until {{unit}} depletion{% endtrans %}">{{((current_user.credit)/totalcost)*60}}</span>{% endif %})</div>
+		<div id="user"><a href="https://www.google.com/accounts/Logout?continue={{auth_url}}&service=ah"><img src='{{static_url("logout.png")}}' /><b>{{current_user.email}}</b></a><br />
+		{{current_user.credit|int}} {{unit}}{% if totalcost %} | <span class="time" title="{% trans %}Time left until {{unit}} depletion{% endtrans %}">{{((current_user.credit)/totalcost)*60}}</span>{% endif %}</div>
 	</div>
 </div>
 <div id="left-bar">
