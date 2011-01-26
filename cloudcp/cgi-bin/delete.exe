@@ -1,0 +1,47 @@
+#!/usr/bin/php-cgi
+<?php
+set_time_limit(0);
+include "../users.inc.php";
+$user = auth();
+
+function recursiveDelete($str){
+	if(is_file($str)){
+		return @unlink($str);
+	}elseif(is_dir($str)){
+		$scan = glob(rtrim($str,'/').'/*');
+		foreach($scan as $index=>$path){
+			recursiveDelete($path);
+		}
+		return @rmdir($str);
+	}
+}
+
+header("Content-type: text/json");
+
+if($_REQUEST['file']){
+	$f = $_REQUEST['file'];
+	if(!preg_match("~^/~", $f)){
+		error_die("File's path must start with /");
+	}
+	if(strstr("..", $f)) error_die("No directory traversing");
+	die(json_encode(array(
+		"success"=> unlink("../storage/".$user.$f)
+	)));
+}else if($_REQUEST['dir']){
+	$d = $_REQUEST['dir'];
+	if(!preg_match("~^/~", $d)){
+		error_die("File's path must start with /");
+	}
+	if(strstr("..", $d)) error_die("No directory traversing");
+	if(!$_REQUEST['recursive']){
+		die(json_encode(array(
+			"success"=> rmdir("../storage/".$user.$d)
+		)));
+	}else{
+		die(json_encode(array(
+			"success"=> recursiveDelete("../storage/".$user.$d)
+		)));
+	}
+}else{
+	error_die("What you want? file? dir?");
+}

@@ -1,0 +1,59 @@
+#!/usr/bin/php-cgi
+<?php
+set_time_limit(0);
+include "../users.inc.php";
+$user = auth();
+
+header("Content-type: text/json");
+
+$f = $_FILES["file"];
+if(!$f){
+	error_die("No upload file.");
+}
+if($f['error']){
+	error_die("Upload failed with code ".$f['error']);
+}
+$sha1 = $_REQUEST['sha1'];
+$md5 = $_REQUEST['md5'];
+if($sha1){
+	if(sha1_file($_FILES["file"]["tmp_name"]) != $sha1){
+		error_die("SHA1 Check Failed");
+	}
+}else if($md5){
+	if(md5_file($_FILES["file"]["tmp_name"]) != $md5){
+		error_die("MD5 Check Failed");
+	}
+}
+
+$path = $_REQUEST['path'];
+if(!preg_match("~^/~", $path) && !empty($path)){
+	error_die("Path must starts with /");
+}
+if(!preg_match("~/$~", $path) && !empty($path)){
+	error_die("Path must ends with /");
+}
+if(strstr("..", $path)) error_die("No directory traversing");
+if(count(explode("/", $path))-2 > 8){
+	error_die("Path mustn't deeper than 8 levels");
+}
+$pathn = "../storage/".$user.$path;
+$name = $_REQUEST['name'];
+if(!$name) $name = $f["name"];
+if(strstr($name, "..")) error_die("hack?");
+if(is_dir($pathn.$name)){
+	error_die("That path is a directory");
+}
+@mkdir($pathn, 0755, true);
+$replace=false;
+if(is_file($pathn.$name)){
+	$replace=true;
+	if(!$_REQUEST['overwrite']) error_die("File exists");
+}
+
+move_uploaded_file($f["tmp_name"], $pathn.$name);
+die(json_encode(array(
+	"success"=> true,
+	"path" => "/".$user.$path,
+	"url" => "http://".$_SERVER['HTTP_HOST']."/".$user.$path.$name,
+	"replaced" => $replace
+)));

@@ -1,0 +1,13 @@
+#!/usr/bin/php-cgi
+<?php
+set_time_limit(0);
+
+header("Content-type: text/json");
+
+$user = $_REQUEST['user'];
+if(strstr($user, "..") || strstr($user, "/")) die(json_encode(array("error" => "hack?")));
+if(!is_dir("../storage/$user")) die(json_encode(array("used" => 0)));
+$usage = `du ../storage/$user|tail -n1`;
+$usage = preg_split("~ [ ]*~", $usage);
+$usage = (int) $usage[0];
+die(json_encode(array("used" => $usage)));

@@ -1,0 +1,5 @@
+#!/bin/sh
+cd `dirname $0`
+./cgi-fcgi.pl > /dev/null 2>&1 &
+sleep 2
+chown www-data:www-data cgi-socket

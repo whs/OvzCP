@@ -1,0 +1,29 @@
+#!/usr/bin/php-cgi
+<?php
+$nextMirror = "";
+if($nextMirror){
+	header("Location: ".$nextMirror.$_SERVER['REQUEST_URI']);
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Object not found</title>
+	<style type="text/css">
+body{
+	background: black;
+	font-family: verdana, sans-serif;
+	color: white;
+	text-shadow: #ccc 0px 0px 5px;
+	font-size: 14pt;
+}
+	</style>
+</head>
+<body>
+<h1>Object not found</h1>
+<ul>
+	<li><b>Object:</b> <?=htmlspecialchars($_SERVER['REQUEST_URI']);?></li>
+	<li><b>Server:</b> <?=$_SERVER['SERVER_ADDR']?></li>
+</ul>
+</body>
+</html>

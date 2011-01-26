@@ -2,5 +2,8 @@ sysconf/*
 db.sqlite
 whsgroup.handlers.py
 static/munin/*
-cloudcp
+cloudcp/users
+cloudcp/sysconf/rsync.passwd
+cloudcp/storage/*
+cloudcp/sysconf/cgi-socket
 ovzpipe

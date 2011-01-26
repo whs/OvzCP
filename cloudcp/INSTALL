@@ -1,0 +1,24 @@
+1. $ sudo apt-get install nginx php5-cgi php5-curl libfcgi-perl libfcgi-procmanager-perl
+2. /etc/rc.local add:
+
+   /opt/ovzcp/cloudcp/sysconf/run-cgi
+
+3. # rm /etc/nginx/sites-available/default
+   # ln -s /opt/ovzcp/cloudcp/sysconf/default /etc/nginx/sites-available/default
+4. touch /opt/ozvcp/cloudcp/users
+5. Edit /etc/default/rsync:
+
+   RSYNC_ENABLE=true
+   RSYNC_CONFIG_FILE=/opt/ovzcp/cloudcp/sysconf/rsyncd.conf
+
+6. Create /opt/ovzcp/cloudcp/sysconf/rsync.passwd with username:password (used in rsync)
+7. $ sudo /etc/init.d/rsync start
+8. On the other server setup cron to run: (sudo crontab -e)
+
+   */5 * * * * RSYNC_PASSWORD="password" rsync rsync://username@server/cloudcp /path/to/storage -qrptz --del --log-file=/var/log/cloudcp.sync.log
+
+   (Note: other server can use any server, including one without scriptablity. However I recommends that you should run 404.exe as your
+   404 handler. This in fact a PHP file. Make sure you set the $nextMirror to your master server's URL WITH trailing slash. If something couldn't
+   be found on your replication server, it will redirect the client to the master server instead.)
+    
+Note that you should run nginx at port 80 on an IP by change the listen line in /opt/ovzcp/cloudcp/sysconf/default
