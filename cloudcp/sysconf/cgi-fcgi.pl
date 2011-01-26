@@ -32,7 +32,7 @@ sub daemonize() {
  
 sub main {
   $proc_manager = FCGI::ProcManager->new( {n_processes => 5} );
-  $socket = FCGI::OpenSocket( "/opt/ovzcp/cloudcp/sysconf/cgi-socket", 10 )
+  $socket = FCGI::OpenSocket( "cgi-socket", 10 )
   ; #use UNIX sockets - user running this script must have w access to the 'nginx' folder!!
   $request =
   FCGI::Request( \*STDIN, \*STDOUT, \*STDERR, \%req_params, $socket,
