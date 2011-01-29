@@ -12,7 +12,7 @@ except OSError:
 	pass
 
 import sys
-sys.path.insert(0, os.path.join(os.getcwd(), "tornado-0.2-py2.5-linux-i686.egg"))
+sys.path.insert(0, os.path.join(os.getcwd(), "tornado-1.1-py2.5-linux-i686.egg"))
 # Debian lenny's Jinja2 is older than 2.2 thus cannot be used
 sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
@@ -20,7 +20,7 @@ sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 import models
 import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext, hashlib
 import varnish, simplejson
-import tornado.httpserver, tornado.ioloop, tornado.web, tornado.auth, tornado.httpclient, urlparse
+import tornado.httpserver, tornado.ioloop, tornado.web, tornado.auth, tornado.httpclient, tornado.options, urlparse
 
 # parse config
 _config = ConfigParser.SafeConfigParser()
@@ -1149,15 +1149,16 @@ application = tornado.web.Application([
 	tornado.web.URLSpec(r"/api/info", APIInfo, name="api_info"),
 	tornado.web.URLSpec(r"/api/action", APIAction, name="api_action"),
 	
-	tornado.web.URLSpec(r"/style.css", Stylesheet, name="css"),
+	tornado.web.URLSpec(r"/style.css", Stylesheet, name="css")
 ], **settings)
 
 if __name__ == "__main__":
-	port = 21212
-	if len(sys.argv) > 1:
-		port = int(sys.argv[1])
+	tornado.options.define('port', type=int, default=21215)
+	tornado.options.parse_command_line()
+	debug = True
+	if debug:
+		import tornado.autoreload
+		tornado.autoreload.start()
 	http_server = tornado.httpserver.HTTPServer(application)
-	import tornado.autoreload
-	tornado.autoreload.start()
-	http_server.listen(port)
+	http_server.listen(tornado.options.options.port)
 	tornado.ioloop.IOLoop.instance().start()
