@@ -1116,7 +1116,7 @@ settings = {
 	"xsrf_cookies": True,
 	"static_path": "static",
 	"gzip": True,
-	"debug": True
+	"debug": False
 }
 
 application = tornado.web.Application([
@@ -1155,7 +1155,7 @@ application = tornado.web.Application([
 if __name__ == "__main__":
 	tornado.options.define('port', type=int, default=21215)
 	tornado.options.parse_command_line()
-	debug = True
+	debug = False
 	if debug:
 		import tornado.autoreload
 		tornado.autoreload.start()

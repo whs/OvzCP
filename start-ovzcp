@@ -10,7 +10,7 @@ if [ "$?" != 0 ]; then
 fi
 cd `dirname $0`
 for i in 21215 21216 21217 21218; do
-	/opt/ovzcp/main.py --port $i >> /var/log/ovzcp.log 2>&1 &
+	/opt/ovzcp/main.py --port=$i >> /var/log/ovzcp.log 2>&1 &
 done
 rm ovzpipe 2>/dev/null || true
 touch ovzpipe

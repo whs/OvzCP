@@ -7,3 +7,4 @@ cloudcp/sysconf/rsync.passwd
 cloudcp/storage/*
 cloudcp/sysconf/cgi-socket
 ovzpipe
+ovzcp.*.pid

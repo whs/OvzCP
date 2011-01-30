@@ -98,7 +98,10 @@ class VM(object):
 		else:
 			cmd = "show"
 		d = commands.getoutput("vzquota %s %s"%(cmd, self.veid))
-		d = re.split("[ ]+", d.split("\n")[1].strip())
+		try:
+			d = re.split("[ ]+", d.split("\n")[1].strip())
+		except IndexError:
+			d = [0,0,0]
 		usage = d[1]
 		if usage.endswith("*"): usage = usage[:-1]
 		try:
