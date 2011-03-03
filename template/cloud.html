@@ -4,7 +4,8 @@
 $(function(){
 	$("button").button().click(function(){
 		$.post("{{reverse_url('cloud')}}", {"_xsrf": "{{xsrf}}"}, function(d){
-			d = JSON.parse(d);
+			if(typeof d != "object")
+				d = JSON.parse(d);
 			prompt("Your username is '"+d.user+"' and password is:", d.password);
 		});
 	});
