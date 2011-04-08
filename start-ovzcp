@@ -1,5 +1,5 @@
-#!/bin/sh
-if [ "$USER" != "root" ]; then
+#!/bin/bash
+if [ "$UID" != "root" ]; then
 	echo "OvzCP must be run as root"
 	exit 1
 fi
