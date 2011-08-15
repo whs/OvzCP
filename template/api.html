@@ -20,7 +20,7 @@ $(function(){
 {% endif %}
 <form action="{{reverse_url('apiweb')}}" method="post">{{xsrf_form_html()}}<button type="submit">{% trans %}Request new key{% endtrans %}</button></form>
 <h1>{% trans %}Authentication {% endtrans %}</h1>
-<p>{% trans %}OvzCP API use SHA1-based signing system with nonce. To sign:
+<p>{% trans %}OvzCP API use HMAC-SHA1 based signing system with nonce. To sign:
 <ul>
 	<li>Create your request.<br />
 	<code>/api/info?veid=101</code></li>
@@ -28,14 +28,7 @@ $(function(){
 	<br /><code>/api/info?veid=101<strong>&nonce=asdf</strong></code></li>
 	<li>Add the API key.<br />
 	<code>/api/info?veid=101&nonce=asdf<strong>&apikey=1</strong></code></li>
-	<li>Finally, sign the query string with SHA1 with the API secret appended.
-		<ul>
-			<li>You get this query string: <code>veid=101&nonce=asdf&apikey=1</code></li>
-			<li>Append your API secret. For example if your API secret is abcdef: <code>veid=101&nonce=asdf&apikey=1abcdef</code></li>
-			<li>Sign it with SHA1: <code>eb6ec410cd401e9daa0c380e8934d4befec4a3b1</code></li>
-			<li>Append to the query string: <code>/api/info?veid=101&nonce=asdf&apikey=1<strong>&hash=eb6ec410cd401e9daa0c380e8934d4befec4a3b1</strong></code></li>
-		</ul>
-	</li>
+	<li>Sign the query string with HMAC-SHA1 using your API Secret as your key.</li>
 </ul>
 If this seems to be complex to you, you also can use your browser's cookie to login, but it would be less secure.
 {% endtrans %}</p>

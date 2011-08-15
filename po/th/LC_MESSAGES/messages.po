@@ -5,18 +5,16 @@
 # WHS <manatsawin@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1\n"
+"Project-Id-Version:  0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-03-09 00:15+0700\n"
-"PO-Revision-Date: 2011-01-25 21:35+0700\n"
+"PO-Revision-Date: 2011-08-15 18:52+0700\n"
 "Last-Translator: WHS <manatsawin@gmail.com>\n"
 "Language-Team: Thai L10n <thai-l10n@googlegroups.com>\n"
-"Language: th\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Virtaal 0.6.1\n"
 "Generated-By: Babel 0.9.1\n"
 
 #: ../main.py:193
@@ -224,7 +222,7 @@ msgstr "การยึนยันตน"
 
 #: ../template/api.html:23
 msgid ""
-"OvzCP API use SHA1-based signing system with nonce. To sign:\n"
+"OvzCP API use HMAC-SHA1 based signing system with nonce. To sign:\n"
 "<ul>\n"
 "\t<li>Create your request.<br />\n"
 "\t<code>/api/info?veid=101</code></li>\n"
@@ -236,62 +234,39 @@ msgid ""
 "\t"
 "<code>/api/info?veid=101&nonce=asdf<strong>&apikey=1</strong></code></li>"
 "\n"
-"\t<li>Finally, sign the query string with SHA1 with the API secret "
-"appended.\n"
-"\t\t<ul>\n"
-"\t\t\t<li>You get this query string: "
-"<code>veid=101&nonce=asdf&apikey=1</code></li>\n"
-"\t\t\t<li>Append your API secret. For example if your API secret is "
-"abcdef: <code>veid=101&nonce=asdf&apikey=1abcdef</code></li>\n"
-"\t\t\t<li>Sign it with SHA1: "
-"<code>eb6ec410cd401e9daa0c380e8934d4befec4a3b1</code></li>\n"
-"\t\t\t<li>Append to the query string: "
-"<code>/api/info?veid=101&nonce=asdf&apikey=1<strong>&hash=eb6ec410cd401e9daa0c380e8934d4befec4a3b1</strong></code></li>"
-"\n"
-"\t\t</ul>\n"
-"\t</li>\n"
+"\t<li>Sign the query string with HMAC-SHA1 using your API Secret as your "
+"key.</li>\n"
 "</ul>\n"
 "If this seems to be complex to you, you also can use your browser's "
 "cookie to login, but it would be less secure.\n"
 msgstr ""
-"OvzCP API ใช้ระบบการลงนาม SHA1 ที่มีรหัสใช้ครั้งเดียว การลงนามทำดังนี้\n"
+"OvzCP API ใช้การลงนามแบบ HMAC-SHA1 พร้อม nounce โดยทำดังนี้:\n"
 "<ul>\n"
-"\t<li>สร้างคำสั่งที่ใช้<br />\n"
+"\t<li>สร้าง Request ที่ต้องการ<br />\n"
 "\t<code>/api/info?veid=101</code></li>\n"
-"\t<li>เติมรหัสใช้ครั้งเดียว ซึ่งเป็นข้อความหรือตัวเลขที่มีความยาวน้อยกว่า"
-" 50 ตัวอักษร และใช้ซ้ำไม่ได้ จากนั้นเขียนต่อไปยัง request\n"
-"<code>/api/info?veid=101<strong>&nonce=asdf</strong></code></li>\n"
-"\t<li>เติม API key<br />\n"
+"\t<li>เพิ่มค่า Nounce โดยเป็นข้อความหรือตัวเลขที่มีความยาวน้อยกว่า "
+"50 ตัว ค่า Nounce นี้ห้ามใช้ซ้ำ มิเช่นนั้นแล้ว request จะล้มเหลว"
+" เสร็จแล้วให้เขียนต่อท้าย request\n"
+"\t<br /><code>/api/info?veid=101<strong>&nonce=asdf</strong></code></li>\n"
+"\t<li>เพิ่ม API Key<br />\n"
 "\t"
 "<code>/api/info?veid=101&nonce=asdf<strong>&apikey=1</strong></code></li>"
 "\n"
-"\t<li>และสุดท้าย ต่อท้าย Query string ที่เติม API secret ต่อท้ายแล้ว "
-"ด้วยเลข SHA1\n"
-"\t\t<ul>\n"
-"\t\t\t<li>จากขั้นต่อก่อนนี้ จะได้ query string ดังนี้: "
-"<code>veid=101&nonce=asdf&apikey=1</code></li>\n"
-"\t\t\t<li>เติม API secret ลงไป เช่นหาก API secret คือ abcdef "
-"ให้เติมไปดังนี้: <code>veid=101&nonce=asdf&apikey=1abcdef</code></li>\n"
-"\t\t\t<li>ลง SHA1: "
-"<code>eb6ec410cd401e9daa0c380e8934d4befec4a3b1</code></li>\n"
-"\t\t\t<li>เขียนต่อไปยัง query string: "
-"<code>/api/info?veid=101&nonce=asdf&apikey=1<strong>&hash=eb6ec410cd401e9daa0c380e8934d4befec4a3b1</strong></code></li>"
-"\n"
-"\t\t</ul>\n"
-"\t</li>\n"
+"\t<li>ลงนามโดยใช้ HMAC-SHA1 โดยใช้ API Secret เป็น"
+"คีย์</li>\n"
 "</ul>\n"
-"หากระบบนี้ซับซ้อน คุณยังสามารถใช้คุกกี้ของ browser "
-"เข้าระบบได้แต่จะมีความปลอดภัยน้อยกว่า\n"
+"นอกจากนี้ยังสามารถใช้คุกกี้ของเบราว์เซอร์เข้าระบบได้"
+"ด้วย แต่จะมีความปลอดภัยน้อยกว่า\n"
 
-#: ../template/api.html:42
+#: ../template/api.html:35
 msgid "API Methods"
 msgstr "API Methods"
 
-#: ../template/api.html:43
+#: ../template/api.html:36
 msgid "VM Info"
 msgstr "ข้อมูล VM"
 
-#: ../template/api.html:44
+#: ../template/api.html:37
 #, python-format
 msgid ""
 "\n"
@@ -358,11 +333,11 @@ msgstr ""
 "\t</li>\n"
 "</ul>\n"
 
-#: ../template/api.html:58
+#: ../template/api.html:51
 msgid "VM Action"
 msgstr "คำสั่ง VM"
 
-#: ../template/api.html:59
+#: ../template/api.html:52
 #, python-format
 msgid ""
 "\n"
@@ -544,7 +519,7 @@ msgstr "รวม"
 msgid "Will deplete in"
 msgstr "จะหมดภายใน"
 
-#: ../template/cloud.html:16
+#: ../template/cloud.html:17
 #, python-format
 msgid ""
 "Cloud Storage is a practically unlimited storage. This storage will be "
@@ -559,12 +534,12 @@ msgstr ""
 " อย่างไรก็ตาม พื้นที่นี้ไม่สามารถรันสคริปต์ประมวลผลต่างๆ ได้ <br />\n"
 "พื้นที่บนกลุ่มเมฆคิดราคา %(price)s %(unit)s ต่อ %(per)s MB"
 
-#: ../template/cloud.html:20
+#: ../template/cloud.html:21
 #, python-format
 msgid "You're using %(used)s of the cloud storage."
 msgstr "คุณกำลังใช้งานพื้นที่บนกลุ่มเมฆ %(used)s"
 
-#: ../template/cloud.html:21
+#: ../template/cloud.html:22
 #, python-format
 msgid ""
 "It'll cost you %(amt)s %(unit)s. This amount will not count into any VM "
@@ -573,16 +548,16 @@ msgstr ""
 "เป็นมูลค่า %(amt)s %(unit)s มูลค่านี้จะไม่นับรวมในการใช้งาน VM "
 "ดังนั้นข้อมูลประมาณเวลาเครดิตหมดจะไม่คิดในส่วนนี้"
 
-#: ../template/cloud.html:22
+#: ../template/cloud.html:23
 #, python-format
 msgid "<b>Endpoint:</b> %(endpoint)s"
 msgstr "<b>ปลายทาง:</b> %(endpoint)s"
 
-#: ../template/cloud.html:25
+#: ../template/cloud.html:26
 msgid "Get password"
 msgstr "ขอรหัสผ่าน"
 
-#: ../template/cloud.html:27
+#: ../template/cloud.html:28
 msgid ""
 "After you receive your password, click the button again will change your "
 "password to a new one. If you happen to lost your old password, it's lost"
@@ -594,11 +569,11 @@ msgstr ""
 "หากคุณทำรหัสผ่านหายจะไม่สามารถกู้คืนได้ <br/>หมายเหตุ: "
 "หากมีการรีเซตรหัสผ่านข้อมูลจะไม่สูญหาย"
 
-#: ../template/cloud.html:30
+#: ../template/cloud.html:31
 msgid "API binding"
 msgstr "API"
 
-#: ../template/cloud.html:36
+#: ../template/cloud.html:37
 msgid "argument 2 is overwrite, default to false"
 msgstr "อากิวเมนต์ที่ 2 คือการเขียนทับ ค่าปริยายคือ เท็จ"
 

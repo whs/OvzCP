@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-01-25 21:35+0700\n"
+"POT-Creation-Date: 2011-08-15 18:52+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,7 +216,7 @@ msgstr ""
 
 #: ../template/api.html:23
 msgid ""
-"OvzCP API use SHA1-based signing system with nonce. To sign:\n"
+"OvzCP API use HMAC-SHA1 based signing system with nonce. To sign:\n"
 "<ul>\n"
 "\t<li>Create your request.<br />\n"
 "\t<code>/api/info?veid=101</code></li>\n"
@@ -228,34 +228,22 @@ msgid ""
 "\t"
 "<code>/api/info?veid=101&nonce=asdf<strong>&apikey=1</strong></code></li>"
 "\n"
-"\t<li>Finally, sign the query string with SHA1 with the API secret "
-"appended.\n"
-"\t\t<ul>\n"
-"\t\t\t<li>You get this query string: "
-"<code>veid=101&nonce=asdf&apikey=1</code></li>\n"
-"\t\t\t<li>Append your API secret. For example if your API secret is "
-"abcdef: <code>veid=101&nonce=asdf&apikey=1abcdef</code></li>\n"
-"\t\t\t<li>Sign it with SHA1: "
-"<code>eb6ec410cd401e9daa0c380e8934d4befec4a3b1</code></li>\n"
-"\t\t\t<li>Append to the query string: "
-"<code>/api/info?veid=101&nonce=asdf&apikey=1<strong>&hash=eb6ec410cd401e9daa0c380e8934d4befec4a3b1</strong></code></li>"
-"\n"
-"\t\t</ul>\n"
-"\t</li>\n"
+"\t<li>Sign the query string with HMAC-SHA1 using your API Secret as your "
+"key.</li>\n"
 "</ul>\n"
 "If this seems to be complex to you, you also can use your browser's "
 "cookie to login, but it would be less secure.\n"
 msgstr ""
 
-#: ../template/api.html:42
+#: ../template/api.html:35
 msgid "API Methods"
 msgstr ""
 
-#: ../template/api.html:43
+#: ../template/api.html:36
 msgid "VM Info"
 msgstr ""
 
-#: ../template/api.html:44
+#: ../template/api.html:37
 #, python-format
 msgid ""
 "\n"
@@ -291,11 +279,11 @@ msgid ""
 "</ul>\n"
 msgstr ""
 
-#: ../template/api.html:58
+#: ../template/api.html:51
 msgid "VM Action"
 msgstr ""
 
-#: ../template/api.html:59
+#: ../template/api.html:52
 #, python-format
 msgid ""
 "\n"
@@ -459,7 +447,7 @@ msgstr ""
 msgid "Will deplete in"
 msgstr ""
 
-#: ../template/cloud.html:16
+#: ../template/cloud.html:17
 #, python-format
 msgid ""
 "Cloud Storage is a practically unlimited storage. This storage will be "
@@ -469,28 +457,28 @@ msgid ""
 "Cloud storage costs %(price)s %(unit)s per %(per)s MB"
 msgstr ""
 
-#: ../template/cloud.html:20
+#: ../template/cloud.html:21
 #, python-format
 msgid "You're using %(used)s of the cloud storage."
 msgstr ""
 
-#: ../template/cloud.html:21
+#: ../template/cloud.html:22
 #, python-format
 msgid ""
 "It'll cost you %(amt)s %(unit)s. This amount will not count into any VM "
 "usage price thus the credit depletion date estimation won't count this."
 msgstr ""
 
-#: ../template/cloud.html:22
+#: ../template/cloud.html:23
 #, python-format
 msgid "<b>Endpoint:</b> %(endpoint)s"
 msgstr ""
 
-#: ../template/cloud.html:25
+#: ../template/cloud.html:26
 msgid "Get password"
 msgstr ""
 
-#: ../template/cloud.html:27
+#: ../template/cloud.html:28
 msgid ""
 "After you receive your password, click the button again will change your "
 "password to a new one. If you happen to lost your old password, it's lost"
@@ -498,11 +486,11 @@ msgid ""
 "password."
 msgstr ""
 
-#: ../template/cloud.html:30
+#: ../template/cloud.html:31
 msgid "API binding"
 msgstr ""
 
-#: ../template/cloud.html:36
+#: ../template/cloud.html:37
 msgid "argument 2 is overwrite, default to false"
 msgstr ""
 

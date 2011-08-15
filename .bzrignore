@@ -8,3 +8,6 @@ cloudcp/storage/*
 cloudcp/sysconf/cgi-socket
 ovzpipe
 ovzcp.*.pid
+._*
+.DS_Store
+cloudcp/sysconf/rsyncd.conf

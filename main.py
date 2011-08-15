@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
 
 import models
-import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext, hashlib
+import ConfigParser, cPickle, openvz, math, time, re, jinja2, netifaces, babel, gettext, hashlib, hmac
 import varnish, simplejson
 import tornado.httpserver, tornado.ioloop, tornado.web, tornado.auth, tornado.httpclient, tornado.options, urlparse
 
@@ -250,7 +250,7 @@ class APIHandler(BaseAuth):
 		except Exception, e:
 			self.error(`e`)
 			return
-		if hashlib.sha1(query + key.key).hexdigest() != self.get_argument("hash"):
+		if hmac.new(key.key, query, hashlib.sha1).hexdigest() != self.get_argument("hash"):
 			self.error("Invalid signature. The request part you need to be signed is "+query)
 			return
 		# Add nonce to the database
