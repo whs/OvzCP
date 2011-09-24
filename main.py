@@ -12,7 +12,7 @@ except OSError:
 	pass
 
 import sys
-sys.path.insert(0, os.path.join(os.getcwd(), "tornado-1.1-py2.5-linux-i686.egg"))
+sys.path.insert(0, os.path.join(os.getcwd(), "tornado-2.1git-py2.5-linux-i686.egg"))
 # Debian lenny's Jinja2 is older than 2.2 thus cannot be used
 sys.path.insert(0, os.path.join(os.getcwd(), "Jinja2-2.3-py2.5.egg"))
 sys.path.append(os.path.join(os.getcwd(), "netifaces-0.5-py2.5-linux-i686.egg"))
@@ -25,6 +25,9 @@ import tornado.httpserver, tornado.ioloop, tornado.web, tornado.auth, tornado.ht
 # parse config
 _config = ConfigParser.SafeConfigParser()
 _config.read("config.ini")
+
+# Tornado 2.2 does not works on lenny by default
+tornado.httpclient.AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
 def xsrf_check(func):
 	def f(self, *args, **kwargs):
@@ -1016,16 +1019,15 @@ class GoogleHandler(BaseHandler, tornado.auth.GoogleMixin):
 		# clear old cookie!!
 		self.set_secure_cookie("auth", "")
 		self.next = self.get_argument("next", "/")
-		if self.next == self.reverse_url("auth"):
+		if self.next.startswith(self.reverse_url("auth")):
 			self.next = self.reverse_url("dashboard")
 		if self.get_argument("openid.mode", None):
 			self.get_authenticated_user(self.async_callback(self._on_auth))
 			return
-		self.authenticate_redirect()
+		self.authorize_redirect("https://www.google.com/m8/feeds/")
 	def _on_auth(self, user):
 		if not user:
-			self.authenticate_redirect()
-			return
+			raise tornado.web.HTTPError(500, "Google auth failed")
 		self.set_secure_cookie("auth", cPickle.dumps(user))
 		self.redirect(self.next)
 
